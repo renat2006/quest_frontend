@@ -30,7 +30,7 @@ export default function Header() {
             isMenuOpen={isMenuOpen}
             onMenuOpenChange={setIsMenuOpen}
         >
-            <NavbarContent className="sm:hidden" justify="start">
+            <NavbarContent className="md:hidden" justify="start">
                 <NavbarMenuToggle aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}/>
             </NavbarContent>
 
@@ -65,11 +65,11 @@ export default function Header() {
             </NavbarContent>
 
             <NavbarContent justify="end">
-                <NavbarItem className="hidden lg:flex">
+                <NavbarItem className="hidden md:flex">
                     <Link href="#">Войти</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} color="warning" href="#" variant="flat">
+                    <Button as={Link} className="hidden md:flex" color="warning" href="#" variant="flat">
                         Регистрация
                     </Button>
                 </NavbarItem>
