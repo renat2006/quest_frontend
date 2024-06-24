@@ -18,12 +18,8 @@ export default class UserMap extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener('load', this.handleLoad);
+        this.handleLoad();
 
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('load', this.handleLoad)
     }
 
     handleLoad() {
