@@ -29,8 +29,8 @@ export default function AppBar() {
             }
         />));
     return (
-        <div className="w-full flex-col app_nav--container ">
-            <Tabs className="sm:hidden" aria-label="Options" color="primary" variant="bordered">
+        <div className="w-full flex-col app_nav--container">
+            <Tabs className="sm:hidden app_nav--tabs" aria-label="Tabs" color="primary" variant="solid">
                 {listTabItems}
             </Tabs>
         </div>
