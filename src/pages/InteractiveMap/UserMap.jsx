@@ -14,7 +14,7 @@ export default class UserMap extends Component {
     }
 
     shouldComponentUpdate() {
-        return true;
+        return false;
     }
 
     componentDidMount() {

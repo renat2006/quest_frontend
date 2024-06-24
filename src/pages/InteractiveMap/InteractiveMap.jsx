@@ -14,17 +14,14 @@ export default class InteractiveMap extends Component {
     }
 
     shouldComponentUpdate() {
-        return true;
+        return false;
     }
 
     componentDidMount() {
-        window.addEventListener('load', this.handleLoad);
+        this.handleLoad();
 
     }
 
-    componentWillUnmount() {
-        window.removeEventListener('load', this.handleLoad)
-    }
 
     handleLoad() {
         mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -81,7 +78,7 @@ export default class InteractiveMap extends Component {
     render() {
         return (
             <div className="map--container">
-            <div id="map" ref={this.divRef}></div>
+                <div id="map" ref={this.divRef}></div>
             </div>
         );
     }
