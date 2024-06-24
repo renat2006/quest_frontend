@@ -40,7 +40,7 @@ const InteractiveMap = () => {
             mapRef.current.on('draw.update', saveData);
             mapRef.current.on('draw.delete', saveData);
 
-            // Закомментированные части для геолокации, если необходимо
+
             // const geolocate = new mapboxgl.GeolocateControl({
             //     positionOptions: {
             //         enableHighAccuracy: true,
