@@ -1,85 +1,62 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
-import React, {Component, useEffect} from "react";
-
+import React, { useEffect, useRef } from "react";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
+const InteractiveMap = () => {
+    const mapContainerRef = useRef(null);
+    const mapRef = useRef(null);
+    const initialPositionSet = useRef(false);
 
-export default class InteractiveMap extends Component {
-
-    constructor(props) {
-        super(props);
-        this.divRef = React.createRef();
-        this.handleLoad = this.handleLoad.bind(this);
-    }
-
-    shouldComponentUpdate() {
-        return false;
-    }
-
-    componentDidMount() {
-        this.handleLoad();
-
-    }
-
-
-    handleLoad() {
+    useEffect(() => {
         mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
+        if (!mapRef.current) {
+            mapRef.current = new mapboxgl.Map({
+                container: mapContainerRef.current,
+                style: import.meta.env.VITE_MAP_STYLE,
+                center: [49.106414, 55.796127],
+                zoom: 10,
+            });
 
-        const adminMap = new mapboxgl.Map({
-            container: 'map',
-            style: import.meta.env.VITE_MAP_STYLE,
-            center: [49.106414, 55.796127],
-            zoom: 10,
-        });
+            const Draw = new MapboxDraw({
+                displayControlsDefault: false,
+                controls: {
+                    point: true,
+                    line_string: true,
+                    trash: true,
+                },
+            });
 
+            mapRef.current.addControl(Draw);
 
-        const Draw = new MapboxDraw({
-            displayControlsDefault: false,
-            controls: {
-                point: true,
-                line_string: true,
-                trash: true
-            }
-        });
+            const saveData = () => {
+                const data = Draw.getAll();
+                console.log(data);
+                localStorage.setItem('mapData', JSON.stringify(data));
+            };
 
-        adminMap.addControl(Draw);
+            mapRef.current.on('draw.create', saveData);
+            mapRef.current.on('draw.update', saveData);
+            mapRef.current.on('draw.delete', saveData);
 
-        // const geolocate = new mapboxgl.GeolocateControl({
-        //     positionOptions: {
-        //         enableHighAccuracy: true
-        //     },
-        //     trackUserLocation: true,
-        //     showUserHeading: true
-        // });
+            // Закомментированные части для геолокации, если необходимо
+            // const geolocate = new mapboxgl.GeolocateControl({
+            //     positionOptions: {
+            //         enableHighAccuracy: true,
+            //     },
+            //     trackUserLocation: true,
+            //     showUserHeading: true,
+            // });
 
-        // adminMap.addControl(geolocate);
+            // mapRef.current.addControl(geolocate);
+            // mapRef.current.on('load', () => {
+            //     geolocate.trigger();
+            // });
+        }
+    }, []);
 
-        // adminMap.on('load', () => {
-        //
-        //     geolocate.trigger();
-        // });
+    return <div className="map--container"><div id="map" ref={mapContainerRef}></div></div>;
+};
 
-
-        const saveData = () => {
-            const data = Draw.getAll();
-            console.log(data)
-            localStorage.setItem('mapData', JSON.stringify(data));
-
-        };
-
-
-        adminMap.on('draw.create', saveData);
-        adminMap.on('draw.update', saveData);
-        adminMap.on('draw.delete', saveData);
-    }
-
-    render() {
-        return (
-            <div className="map--container">
-                <div id="map" ref={this.divRef}></div>
-            </div>
-        );
-    }
-}
+export default React.memo(InteractiveMap);
