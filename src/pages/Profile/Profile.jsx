@@ -11,11 +11,11 @@ const Profile = () => {
             </CardHeader>
             <Image
                 removeWrapper
-                alt="Card example background"
+                alt="Cardbackground"
                 className="z-0 w-full h-full scale-125 -translate-y-6 object-cover"
                 src="https://yurmino.ru/wp-content/uploads/2021/09/scale_1200-4.jpg"
             />
-            <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
+            <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-end">
 
                 <TelegramAuthButton/>
             </CardFooter>
