@@ -12,16 +12,18 @@ import {
 } from "@nextui-org/react";
 
 import {Logo} from "../Logo/Logo.jsx";
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 
 export default function Header() {
+    const auth = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
         "Профиль",
         "О нас",
         "Обратная связь",
-        "Выйти",
+
     ];
 
     return (
@@ -80,16 +82,29 @@ export default function Header() {
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
                             className="w-full"
-                            color={
-                                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
+                            color="foreground"
+
                             href="#"
                             size="lg"
                         >
                             {item}
                         </Link>
                     </NavbarMenuItem>
+
                 ))}
+
+                <NavbarMenuItem>
+                    <Link
+                        className="w-full"
+                        color="danger"
+                        onPress={() => auth.logOut()}
+                        href="#"
+                        size="lg"
+
+                    >
+                        Выйти
+                    </Link>
+                </NavbarMenuItem>
             </NavbarMenu>
         </Navbar>
     );

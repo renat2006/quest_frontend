@@ -9,7 +9,7 @@ const Profile = () => {
 
     return (
         <div className="profile--container">
-            {user ? (
+            {user.hash ? (
                 <Card className="w-full max-w-[400px] h-[450px] col-span-12 sm:col-span-7">
                     <CardHeader className="absolute z-10 top-1 flex-col items-start">
                         <p className="text-[0.6rem] text-black/70 uppercase font-bold">Ваш профиль</p>
