@@ -16,7 +16,7 @@ import {useAuth} from "../../providers/AuthProvider.jsx";
 
 
 export default function Header() {
-    const {token} = useAuth();
+    const {token, logOut} = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
@@ -92,11 +92,11 @@ export default function Header() {
                     </NavbarMenuItem>
 
                 ))}
-                {token ? (<NavbarMenuItem>
+                {!token ? (<NavbarMenuItem>
                     <Link
                         className="w-full"
                         color="danger"
-                        onPress={() => auth.logOut()}
+                        onPress={() => logOut()}
                         href="#"
                         size="lg"
 
