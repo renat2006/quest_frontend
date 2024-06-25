@@ -4,7 +4,7 @@ import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthB
 
 const Profile = () => {
     const { user } = useAuth();
-    console.log(user);
+
 
     return (
         <div className="profile--container">
