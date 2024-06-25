@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthButton.jsx";
 import { Card, CardFooter, CardHeader, Image } from "@nextui-org/react";
-import UserContext from '../../UserContext';
+
 import {useAuth} from "../../providers/AuthProvider.jsx";
 
 const Profile = () => {
