@@ -17,7 +17,7 @@ function App() {
 
     return (
         <NextUIProvider navigate={navigate}>
-            {/*<AuthProvider>*/}
+            <AuthProvider>
 
                 <Header/>
                 <Routes>
@@ -35,7 +35,7 @@ function App() {
                     }/>
                 </Routes>
                 <AppBar/>
-            {/*</AuthProvider>*/}
+            </AuthProvider>
         </NextUIProvider>
     );
 }

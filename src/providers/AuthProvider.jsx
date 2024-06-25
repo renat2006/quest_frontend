@@ -11,9 +11,9 @@ const AuthProvider = ({ children }) => {
 
             if (user) {
                 setUser(user);
-                setToken(res.token);
-                localStorage.setItem("site", res.token);
-                navigate("/dashboard");
+                setToken(user.hash);
+                localStorage.setItem("site", user.hash);
+
                 return;
             }
             throw new Error("Telegram oauth error");
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
         setUser(null);
         setToken("");
         localStorage.removeItem("site");
-        navigate("/login");
+        navigate("/profile");
     };
 
     return (
