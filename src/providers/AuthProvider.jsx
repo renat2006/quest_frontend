@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
             localStorage.setItem("site", data.hash);
             localStorage.setItem("user", JSON.stringify(data));
             toast.success(`{${data.name}, Вы успешно вошли!`)
-            navigate("/profile");
+            // navigate("/profile");
             return;
         }
         throw new Error("Telegram oauth error");
