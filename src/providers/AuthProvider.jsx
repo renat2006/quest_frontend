@@ -1,6 +1,6 @@
 import { useContext, createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import toast from 'react-hot-toast';
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -15,12 +15,13 @@ const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    const loginAction = async (user) => {
-        if (user) {
-            setUser(user);
-            setToken(user.hash);
-            localStorage.setItem("site", user.hash);
-            localStorage.setItem("user", JSON.stringify(user));
+    const loginAction = async (data) => {
+        if (data) {
+            setUser(data);
+            setToken(data.hash);
+            localStorage.setItem("site", data.hash);
+            localStorage.setItem("user", JSON.stringify(data));
+            toast.success(`{${data.name}, Вы успешно вошли!`)
             navigate("/profile");
             return;
         }
@@ -28,10 +29,13 @@ const AuthProvider = ({ children }) => {
     };
 
     const logOut = () => {
+        toast.error(`{${user.name}, Вы успешно вышли!`)
         setUser(null);
         setToken("");
+
         localStorage.removeItem("site");
         localStorage.removeItem("user");
+
         navigate("/profile");
     };
 
