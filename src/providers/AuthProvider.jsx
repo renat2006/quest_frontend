@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
             setToken(data.hash);
             localStorage.setItem("site", data.hash);
             localStorage.setItem("user", JSON.stringify(data));
-            toast.success(`{${data.name}, Вы успешно вошли!`)
+            toast.success(`${data.first_name}, Вы успешно вошли!`)
             navigate("/profile");
             return;
         }
@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
     };
 
     const logOut = () => {
-        toast.error(`{${user.name}, Вы успешно вышли!`)
+        toast.error(`${user.first_name}, Вы успешно вышли!`)
         setUser(null);
         setToken("");
 
