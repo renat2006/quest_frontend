@@ -16,7 +16,7 @@ function App() {
 
     return (
         <NextUIProvider navigate={navigate}>
-            <div className="App">
+
                 <Header />
                 <Routes>
                     <Route path="/" element={<QuestInfo />} />
@@ -33,7 +33,7 @@ function App() {
                     } />
                 </Routes>
                 <AppBar />
-            </div>
+
         </NextUIProvider>
     );
 }

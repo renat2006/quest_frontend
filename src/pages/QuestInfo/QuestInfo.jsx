@@ -2,7 +2,7 @@ import {Card, CardHeader, CardBody, CardFooter, Image, Button} from "@nextui-org
 
 const QuestInfo = () => {
     return (
-        <div className="quest--container"><Card isFooterBlurred className="max-w-[400px] h-[450px]  ]  col-span-12 sm:col-span-7">
+        <div className="quest--container"><Card isFooterBlurred className="max-w-[400px] h-[450px] col-span-12 sm:col-span-7">
             <CardHeader className="absolute z-10 top-1 flex-col items-start">
                 <h4 className="text-white/90 font-medium text-xl">Тайны города</h4>
                 <p className="text-tiny text-white/60 ">Движение первых</p>

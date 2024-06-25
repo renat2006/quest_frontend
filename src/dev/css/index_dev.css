@@ -6,10 +6,11 @@ body{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
+    height: 100%;
 
 
 }
+
 .map--container{width: 100%;  height: 100vh}
 #map { width: 100%; height: 100%}
 .quest--container{
@@ -39,9 +40,11 @@ body{
 
 .profile--container{
     height: 100%;
-    width: 100%;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
+   align-items: center;
     justify-content: center;
+    padding: 0 30px;
+    margin-top: 30px;
 }
