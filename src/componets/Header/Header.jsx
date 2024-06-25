@@ -18,7 +18,7 @@ import {useAuth} from "../../providers/AuthProvider.jsx";
 export default function Header() {
     const {token, logOut} = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
+    console.log(token, !token, !!token)
     const menuItems = [
         "Профиль",
         "О нас",
