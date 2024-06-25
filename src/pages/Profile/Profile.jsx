@@ -6,7 +6,7 @@ const Profile = () => {
         <Card isFooterBlurred isHea className="w-full max-w-[400px] h-[450px] col-span-12 sm:col-span-7">
             <CardHeader className="absolute z-10 top-1 flex-col items-start">
                 <p className="text-[0.6rem] text-black/70 uppercase font-bold">Будь ближе к сотням увлекательных квестов!</p>
-                <h4 className="text-black font-medium text-2xl">Войди через телеграм</h4>
+                <h4 className="text-black font-medium text-2xl">Войди через Telegram</h4>
             </CardHeader>
             <Image
                 removeWrapper
