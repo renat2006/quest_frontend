@@ -16,7 +16,7 @@ import {useAuth} from "../../providers/AuthProvider.jsx";
 
 
 export default function Header() {
-    const auth = useAuth();
+    const {token} = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
@@ -92,8 +92,7 @@ export default function Header() {
                     </NavbarMenuItem>
 
                 ))}
-
-                <NavbarMenuItem>
+                {token ? (<NavbarMenuItem>
                     <Link
                         className="w-full"
                         color="danger"
@@ -104,7 +103,8 @@ export default function Header() {
                     >
                         Выйти
                     </Link>
-                </NavbarMenuItem>
+                </NavbarMenuItem>) : (<></>)}
+
             </NavbarMenu>
         </Navbar>
     );
