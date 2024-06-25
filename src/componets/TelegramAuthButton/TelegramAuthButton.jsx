@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useAuth } from "../../providers/AuthProvider.jsx";
-import toast from "react-hot-toast";
 
 const TelegramAuthButton = () => {
     const { loginAction } = useAuth();
@@ -17,7 +16,7 @@ const TelegramAuthButton = () => {
         document.getElementById('telegram-login-button').appendChild(script);
 
         window.onTelegramAuth = function (user) {
-
+            // console.log(user);
 
             loginAction(user);
         };

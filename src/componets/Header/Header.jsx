@@ -51,6 +51,7 @@ export default function Header() {
                 <p className="font-bold text-inherit">Нулевой километр</p>
                 <NavbarItem>
                     <Link color="foreground" href="#">
+
                         Главная
                     </Link>
                 </NavbarItem>

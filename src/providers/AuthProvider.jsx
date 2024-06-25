@@ -1,9 +1,9 @@
-import {useContext, createContext, useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-
+import { useContext, createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 const AuthContext = createContext();
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("site") || "");
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ const AuthProvider = ({children}) => {
             setToken(data.hash);
             localStorage.setItem("site", data.hash);
             localStorage.setItem("user", JSON.stringify(data));
-
+            toast.success(`{${data.name}, Вы успешно вошли!`)
             navigate("/profile");
             return;
         }
@@ -29,7 +29,7 @@ const AuthProvider = ({children}) => {
     };
 
     const logOut = () => {
-
+        toast.error(`{${user.name}, Вы успешно вышли!`)
         setUser(null);
         setToken("");
 
@@ -40,7 +40,7 @@ const AuthProvider = ({children}) => {
     };
 
     return (
-        <AuthContext.Provider value={{token, user, loginAction, logOut}}>
+        <AuthContext.Provider value={{ token, user, loginAction, logOut }}>
             {children}
         </AuthContext.Provider>
     );

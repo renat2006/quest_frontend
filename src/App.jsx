@@ -7,6 +7,7 @@ import Header from "./componets/Header/Header.jsx";
 import AppBar from "./componets/AppBar/AppBar.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import AuthProvider from "./providers/AuthProvider.jsx";
+import {Toaster} from "react-hot-toast";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -18,7 +19,7 @@ function App() {
     return (
         <NextUIProvider navigate={navigate}>
             <AuthProvider>
-
+                <div><Toaster/></div>
                 <Header/>
                 <Routes>
                     <Route path="/" element={<QuestInfo/>}/>
