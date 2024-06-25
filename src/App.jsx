@@ -5,6 +5,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import QuestInfo from "./pages/QuestInfo/QuestInfo.jsx";
 import Header from "./componets/Header/Header.jsx";
 import AppBar from "./componets/AppBar/AppBar.jsx";
+import Profile from "./pages/Profile/Profile.jsx";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -19,6 +20,7 @@ function App() {
                 <Header />
                 <Routes>
                     <Route path="/" element={<QuestInfo />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/map" element={
                         <Suspense fallback={<div>Loading...</div>}>
                             <UserMap />
