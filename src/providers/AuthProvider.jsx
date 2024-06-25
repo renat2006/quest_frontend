@@ -1,4 +1,4 @@
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -7,23 +7,30 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("site") || "");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
     const loginAction = async (user) => {
-
-            if (user) {
-                setUser(user);
-                setToken(user.hash);
-                localStorage.setItem("site", user.hash);
-
-                return;
-            }
-            throw new Error("Telegram oauth error");
-
+        if (user) {
+            setUser(user);
+            setToken(user.hash);
+            localStorage.setItem("site", user.hash);
+            localStorage.setItem("user", JSON.stringify(user));
+            return;
+        }
+        throw new Error("Telegram oauth error");
     };
 
     const logOut = () => {
         setUser(null);
         setToken("");
         localStorage.removeItem("site");
+        localStorage.removeItem("user");
         navigate("/profile");
     };
 
@@ -32,7 +39,6 @@ const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
-
 };
 
 export default AuthProvider;
