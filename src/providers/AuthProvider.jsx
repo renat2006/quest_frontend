@@ -8,10 +8,10 @@ const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("site") || "");
     const navigate = useNavigate();
     const loginAction = async (user) => {
-
+    console.log("from oath" + user)
             if (user) {
                 setUser(user);
-                setToken(user.hash);
+                setToken("efefef");
                 localStorage.setItem("site", user.hash);
 
                 return;
