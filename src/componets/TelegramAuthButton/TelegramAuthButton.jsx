@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 const TelegramAuthButton = () => {
-
+    const auth = useAuth();
     useEffect(() => {
         const script = document.createElement('script');
         script.src = 'https://telegram.org/js/telegram-widget.js?22';
@@ -15,7 +16,7 @@ const TelegramAuthButton = () => {
 
         window.onTelegramAuth = function (user) {
             console.log(user)
-            alert('Logged in as ' + user.first_name + ' ' + user + ''  + user.last_name + ' (' + user.id + (user.username ? ', @' + user.username : '') + ')');
+            auth.loginAction(user);
         };
 
     }, []);
