@@ -96,7 +96,10 @@ export default function Header() {
                     <Link
                         className="w-full"
                         color="danger"
-                        onPress={() => logOut()}
+                        onPress={() => {
+                            logOut();
+                            setIsMenuOpen(false);
+                        }}
                         href="#"
                         size="lg"
 
