@@ -3680,11 +3680,6 @@ body{
   bottom: 30px;
 }
 
-.tgme_widget_login_button{
-  background-color: #ff0000 !important;
-  border-radius: 20px;
-}
-
 .profile--container{
   height: 100%;
   width: 100%;
