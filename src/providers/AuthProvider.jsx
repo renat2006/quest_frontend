@@ -1,11 +1,19 @@
-import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {useContext, createContext, useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
+
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem("site") || "");
+const AuthProvider = ({children}) => {
+    const [user, setUser] = import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? useState({
+        "id": 857932226,
+        "first_name": "Renat",
+        "last_name": "Gubaydullin",
+        "username": "belorusstaner",
+        "auth_date": 1719389934,
+        "hash": "a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714"
+    }) : useState(null);
+    const [token, setToken] = import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? useState("a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714") : useState(localStorage.getItem("site") || "");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +48,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, loginAction, logOut }}>
+        <AuthContext.Provider value={{token, user, loginAction, logOut}}>
             {children}
         </AuthContext.Provider>
     );
