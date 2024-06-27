@@ -1,16 +1,61 @@
 import {useAuth} from "../../providers/AuthProvider.jsx";
-import {Avatar, Button, Card, CardBody, CardFooter, CardHeader, Image, Link, User} from "@nextui-org/react";
+import {
+    Avatar,
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Chip,
+    Image,
+    Input,
+    Link,
+    User
+} from "@nextui-org/react";
 import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthButton.jsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+    faCircleCheck,
+    faGear,
+    faInfoCircle,
+    faChartPie,
+    faScaleBalanced,
+    faShield,
+    faQuestionCircle
+} from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+
 
 const Profile = () => {
-    const {user} = useAuth();
+    const {user, logOut} = useAuth();
+    const settingsButtons = [{
+        name: "Настройки",
+        link: "/settings",
+        icon: <FontAwesomeIcon icon={faGear}/>
+    }, {
+        name: "Справка и обратная связь",
+        link: "/contact",
+        icon: <FontAwesomeIcon icon={faQuestionCircle}/>
+    }, {
+        name: "Статистика",
+        link: "/stats",
+        icon: <FontAwesomeIcon icon={faChartPie}/>,
+    }, {
+        name: "Политика конфиденциальности",
+        link: "/conf_politics",
+        icon: <FontAwesomeIcon icon={faScaleBalanced}/>,
+    }, {
+        name: "Условия использования",
+        link: "/terms_of_use",
+        icon: <FontAwesomeIcon icon={faShield}/>,
+    }]
     // console.log(user);
 
     return (
         <div className="profile--container">
             {user ? (
-                <Card className="w-full max-w-[400px] h-[450px] col-span-12 sm:col-span-7">
-                    <CardHeader className="justify-between">
+                <Card className="w-full max-w-[800px]  lg:h-[600px] col-span-12 sm:col-span-7">
+                    <CardHeader className="justify-between ">
                         <User
                             name={user.first_name + " " + user.last_name}
                             description={(
@@ -24,30 +69,36 @@ const Profile = () => {
                                 isBordered: false
                             }}
                         />
-
+                        {user.is_admin ?
+                            <Chip
+                                startContent={<FontAwesomeIcon style={{width: "18px", height: "18px"}}
+                                                               icon={faCircleCheck}/>}
+                                variant="faded"
+                                color="success"
+                            >
+                                Админ
+                            </Chip> : <></>
+                        }
                     </CardHeader>
-                    <CardBody className="px-3 py-0 text-small text-default-400">
-                        <p>
-                            Хоп хей
-                        </p>
+                    <CardBody className="px-4">
+                        <div className="profile-input__container flex flex-col gap-3">
+                            {settingsButtons.map((button => <Button color="primary" as={Link} className=""
+                                                                    href={button.link} key={button.link}
+                                                                    startContent={button.icon}
+                                                                    variant="faded">{button.name}</Button>))}
+                            <Button color="danger" className=""
+                                    onPress={() => logOut()}
 
+                                    variant="flat">Выйти из аккаунта</Button>
+
+                        </div>
 
                         <span className="pt-2">
-          {/*#FrontendWithZoey*/}
-          {/*<span className="py-2" aria-label="computer" role="img">*/}
-          {/*  💻*/}
-          {/*</span>*/}
+
         </span>
                     </CardBody>
                     <CardFooter className="gap-3">
-                        {/*<div className="flex gap-1">*/}
-                        {/*    <p className="font-semibold text-default-400 text-small">4</p>*/}
-                        {/*    <p className=" text-default-400 text-small">Following</p>*/}
-                        {/*</div>*/}
-                        {/*<div className="flex gap-1">*/}
-                        {/*    <p className="font-semibold text-default-400 text-small">97.1K</p>*/}
-                        {/*    <p className="text-default-400 text-small">Followers</p>*/}
-                        {/*</div>*/}
+
                     </CardFooter>
                 </Card>
             ) : (

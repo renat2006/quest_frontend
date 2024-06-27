@@ -11,7 +11,8 @@ const AuthProvider = ({children}) => {
         "last_name": "Gubaydullin",
         "username": "belorusstaner",
         "auth_date": 1719389934,
-        "hash": "a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714"
+        "hash": "a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714",
+        "is_admin":true
     }) : useState(null);
     const [token, setToken] = import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? useState("a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714") : useState(localStorage.getItem("site") || "");
     const navigate = useNavigate();
