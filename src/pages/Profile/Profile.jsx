@@ -57,7 +57,7 @@ const Profile = () => {
                 <Card className="w-full max-w-[800px]  lg:h-[600px] col-span-12 sm:col-span-7">
                     <CardHeader className="justify-between ">
                         <User
-                            name={user.first_name + " " + user.last_name}
+                            name={(user?.first_name ? user.first_name + (user?.last_name ? " " + user.last_name : "") : `Пользователь ${user.id}`)}
                             description={(
                                 <Link href={`https://t.me/${user.username}`} size="sm" isExternal>
                                     @{user.username}
