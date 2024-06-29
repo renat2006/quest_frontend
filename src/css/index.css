@@ -3714,14 +3714,14 @@ video {
           mask-image: linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent);
 }
 
-body{
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   height: 100%;
 }
 
-.map--container{
+.map--container {
   width: 100%;
   height: 100vh
 }
@@ -3731,8 +3731,8 @@ body{
   height: 100%
 }
 
-.quest--container{
-  height: calc(80vh);
+.quest--container {
+  height: calc(100vh - 141px - 70px);
   margin-top: 20px;
   display: flex;
   justify-content: center;
@@ -3742,14 +3742,14 @@ body{
   padding: 0 30px;
 }
 
-.quest--button_group{
+.quest--button_group {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.app_nav--container{
+.app_nav--container {
   display: flex;
   justify-content: end;
   flex-direction: column;
@@ -3758,7 +3758,7 @@ body{
   bottom: 30px;
 }
 
-.profile--container{
+.profile--container {
   height: 100%;
   display: flex;
   flex-direction: column;

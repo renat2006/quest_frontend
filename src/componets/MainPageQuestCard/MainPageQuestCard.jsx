@@ -4,7 +4,7 @@ import {faLocationDot, faStar} from "@fortawesome/free-solid-svg-icons";
 
 const MainPageQuestCard = ({ title, author, img, author_img, description, type, location, cost, rate, rate_sum }) => {
     return (
-        <Card isPressable isFooterBlurred
+        <Card isPressable isFooterBlurred shadow="none"
               onPress={() => console.log("Карточка нажата")}
               className="max-w-[400px] min-h-[200px] col-span-12 sm:col-span-7">
             <CardHeader className="absolute z-10 top-1 flex-col items-start">
