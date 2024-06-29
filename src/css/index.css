@@ -1131,6 +1131,10 @@ video {
   min-height: 2rem;
 }
 
+.min-h-\[200px\] {
+  min-height: 200px;
+}
+
 .min-h-\[32px\] {
   min-height: 32px;
 }
@@ -2289,6 +2293,10 @@ video {
   background-color: hsl(var(--nextui-default-400) / var(--nextui-default-400-opacity, var(--tw-bg-opacity)));
 }
 
+.bg-default-400\/20 {
+  background-color: hsl(var(--nextui-default-400) / 0.2);
+}
+
 .bg-default-50 {
   --tw-bg-opacity: 1;
   background-color: hsl(var(--nextui-default-50) / var(--nextui-default-50-opacity, var(--tw-bg-opacity)));
@@ -2626,6 +2634,10 @@ video {
   text-align: end;
 }
 
+.indent-0 {
+  text-indent: 0px;
+}
+
 .align-middle {
   vertical-align: middle;
 }
@@ -2706,6 +2718,10 @@ video {
   font-weight: 600;
 }
 
+.font-thin {
+  font-weight: 100;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -2740,6 +2756,11 @@ video {
 
 .text-black\/70 {
   color: rgb(0 0 0 / 0.7);
+}
+
+.text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
 .text-current {
@@ -2807,6 +2828,11 @@ video {
 
 .text-foreground\/50 {
   color: hsl(var(--nextui-foreground) / 0.5);
+}
+
+.text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 
 .text-inherit {
@@ -2909,12 +2935,25 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.text-white\/50 {
+  color: rgb(255 255 255 / 0.5);
+}
+
 .text-white\/60 {
   color: rgb(255 255 255 / 0.6);
 }
 
+.text-white\/70 {
+  color: rgb(255 255 255 / 0.7);
+}
+
 .text-white\/90 {
   color: rgb(255 255 255 / 0.9);
+}
+
+.text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -3693,10 +3732,13 @@ body{
 }
 
 .quest--container{
-  height: 100%;
-  margin-top: 30px;
+  height: calc(100vh - 170px);
+  margin-top: 20px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
   padding: 0 30px;
 }
 
@@ -7644,6 +7686,10 @@ body{
   background-color: hsl(var(--nextui-default) / var(--nextui-default-opacity, var(--tw-bg-opacity)));
 }
 
+.dark\:bg-default-500\/20:is(.dark *) {
+  background-color: hsl(var(--nextui-default-500) / 0.2);
+}
+
 .dark\:bg-transparent:is(.dark *) {
   background-color: transparent;
 }
@@ -7859,6 +7905,10 @@ body{
 
   .sm\:hidden {
     display: none;
+  }
+
+  .sm\:max-w-\[400px\] {
+    max-width: 400px;
   }
 
   .sm\:items-start {

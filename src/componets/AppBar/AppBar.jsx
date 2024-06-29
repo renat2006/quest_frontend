@@ -44,9 +44,9 @@ export default function AppBar() {
     ));
 
     return (
-        <div className="w-full flex-col app_nav--container">
+        <div className="w-full flex-col app_nav--container z-40">
             <Tabs
-                className="sm:hidden app_nav--tabs"
+                className=" app_nav--tabs"
                 selectedKey={selectedKey}
                 onSelectionChange={handleTabChange}
                 aria-label="Tabs"
