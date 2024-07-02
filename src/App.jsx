@@ -8,6 +8,7 @@ import AppBar from "./componets/AppBar/AppBar.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import AuthProvider from "./providers/AuthProvider.jsx";
 import {Toaster} from "react-hot-toast";
+import Admin from "./pages/Admin/Admin.jsx";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -31,7 +32,7 @@ function App() {
                     }/>
                     <Route path="/admin" element={
                         <Suspense fallback={<div>Loading...</div>}>
-                            <InteractiveMap/>
+                            <Admin/>
                         </Suspense>
                     }/>
                 </Routes>
