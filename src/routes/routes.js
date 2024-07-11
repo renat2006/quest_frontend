@@ -5,7 +5,7 @@ const routes = {
     admin: {
         root: {url: '/admin', name: "Админ"},
         routeAdmin: {url: '/admin/route', name: "Маршрут"},
-        routeAdminInfo: {url: '/admin/route/info', name: "Информация"},
+        routeAdminInfo: {url: '/admin/route/info', name: "Инфо"},
         routeAdminMedia: {url: '/admin/route/media', name: "Медиа"},
         routeAdminMap: {url: '/admin/route/map', name: "Карта"}
     },
