@@ -127,7 +127,7 @@ const QuestInfo = () => {
                 }}
                 placeholder="Поиск квестов"
                 size="sm"
-                startContent={<FontAwesomeIcon size={18} icon={faSearch}/>}
+                startContent={<FontAwesomeIcon  icon={faSearch}/>}
                 type="search"
             />
             <ScrollShadow className="flex flex-col gap-4 h-full" size={20} hideScrollBar>

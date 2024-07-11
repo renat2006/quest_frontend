@@ -8,7 +8,17 @@ import {
     Image,
     Divider,
     Accordion,
-    AccordionItem, Badge, Chip, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem
+    AccordionItem,
+    Badge,
+    Chip,
+    Button,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    useDisclosure,
+    Modal,
+    ModalContent, Input, ModalFooter, ModalHeader, ModalBody, AutocompleteItem, Autocomplete
 } from "@nextui-org/react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -19,8 +29,125 @@ import {
     faFolderOpen,
     faPlus
 } from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import classNames from "classnames";
+import {languageList, pathTypes} from "../../data/types.js";
+import {useNavigate} from "react-router-dom";
+import routes from "../../routes/routes.js";
+
+
+const FormModal = (props) => {
+    const {
+        isOpen,
+        onOpenChange,
+        routeLanguage,
+        routeName,
+        routeType,
+        setRouteType,
+        setRouteLanguage,
+        setRouteName,
+        handleNext
+    } = props;
+
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (isOpen) {
+            setErrors({});
+        }
+    }, [isOpen]);
+
+    const validate = () => {
+        const newErrors = {};
+
+        if (!routeName) {
+            newErrors.routeName = "Название не может быть пустым.";
+        } else if (routeName.length > 30) {
+            newErrors.routeName = "Название не должно превышать 30 символов.";
+        } else if (!/^[\p{L}\p{N}\s]+$/u.test(routeName)) {
+            newErrors.routeName = "Название может содержать только стандартные символы Unicode.";
+        }
+
+        if (!routeType) {
+            newErrors.routeType = "Тип маршрута должен быть выбран.";
+        }
+
+        if (!routeLanguage) {
+            newErrors.routeLanguage = "Язык маршрута должен быть выбран.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleButtonClick = () => {
+        if (validate()) {
+            handleNext();
+        }
+    };
+
+    return (
+        <>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="auto">
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Создать маршрут</ModalHeader>
+                            <ModalBody>
+                                <Input
+                                    autoFocus
+                                    isRequired
+                                    isClearable
+                                    label="Название"
+                                    placeholder="Введите название маршрута"
+                                    variant="bordered"
+                                    value={routeName}
+                                    onValueChange={setRouteName}
+                                    errorMessage={errors.routeName}
+                                    isInvalid={!!errors.routeName}
+                                />
+                                <Autocomplete
+                                    isRequired
+                                    label="Тип маршрута"
+                                    variant="bordered"
+                                    defaultItems={pathTypes}
+                                    placeholder="Выберите тип для маршрута"
+                                    selectedKey={routeType}
+                                    onSelectionChange={setRouteType}
+                                    errorMessage={errors.routeType}
+                                    isInvalid={!!errors.routeType}
+                                >
+                                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                                </Autocomplete>
+                                <Autocomplete
+                                    isRequired
+                                    label="Язык"
+                                    variant="bordered"
+                                    defaultItems={languageList}
+                                    placeholder="Выберите основной язык маршрута"
+                                    selectedKey={routeLanguage}
+                                    onSelectionChange={setRouteLanguage}
+                                    errorMessage={errors.routeLanguage}
+                                    isInvalid={!!errors.routeLanguage}
+                                >
+                                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                                </Autocomplete>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="flat" onPress={onClose}>
+                                    Отмена
+                                </Button>
+                                <Button color="primary" onPress={handleButtonClick}>
+                                    Далее
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+        </>
+    );
+};
 
 const AdminCard = ({item}) => {
     return (<Card
@@ -30,13 +157,24 @@ const AdminCard = ({item}) => {
         className="flex flex-row gap-5 justify-center items-center"><Image
         alt={item.title} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1" src={item.cover}/>
         <div className="flex-1">
-            <p className="font-bold line-clamp-1">{item.title}</p><p className="font-thin text-sm">{item.type}</p>
+            <p className="font-bold line-clamp-1">{item.title}</p>
+            <p className="font-thin text-sm">{item.type}</p>
         </div>
     </CardBody></Card>)
 }
 const Admin = () => {
     const [openItem, setOpenItem] = useState(null);
     const [pointList, setPointList] = useState([])
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+    // Данные для маршрута
+    const [routeName, setRouteName] = useState("");
+    const [routeType, setRouteType] = useState(pathTypes[0].value);
+    const [routeLanguage, setRouteLanguage] = useState(languageList[0].value);
+
+    // Props
+
+
     const [routeList, setRouteList] = useState([{
         cover: "https://turgeek.ru/upload/tour/image_main/10577/big-tur-v-kazan-zolotoe-kolco-povolze.jpg",
         title: "Казань - моя родина",
@@ -86,6 +224,32 @@ const Admin = () => {
         title: "Название",
         type: "Тип"
     }
+
+    const navigate = useNavigate();
+    const handleNext = () => {
+        navigate(routes.admin.routeAdminInfo.url, {
+            state: {
+                routeName,
+                routeType,
+                routeLanguage,
+            },
+        });
+    };
+
+
+    const formModalProps = {
+        isOpen,
+        onOpenChange,
+        routeLanguage,
+        routeName,
+        routeType,
+        setRouteType,
+        setRouteLanguage,
+        setRouteName,
+        setRouteList,
+        handleNext
+
+    }
     const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
     const accordionComponents = accordionInfo.map(item => <AccordionItem key={item.key} aria-label={item.title}
                                                                          disableIndicatorAnimation
@@ -93,10 +257,10 @@ const Admin = () => {
                                                                              <FontAwesomeIcon icon={faFolderOpen}/> :
                                                                              <FontAwesomeIcon icon={faFolder}/>)}
                                                                          className="transition-all"
-                                                                         title={<><p>{item.title} <Chip
+                                                                         title={<><span>{item.title} <Chip
                                                                              className="transition-all" variant="flat"
                                                                              color={selectedKeys.has(item.key) ? "primary" : "default"}>{item.content.length}</Chip>
-                                                                         </p></>}
+                                                                         </span></>}
                                                                          startContent={<FontAwesomeIcon
                                                                              className={classNames("text-xl", "transition-all", {
                                                                                  "text-primary": selectedKeys.has(item.key),
@@ -110,9 +274,11 @@ const Admin = () => {
             <AdminCard
                 item={item}/>) : <p>Добавьте первый объект</p>}</div>
     </AccordionItem>)
+
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
 
+            <FormModal {...formModalProps} />
 
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3 justify-between">
@@ -131,7 +297,7 @@ const Admin = () => {
 
                                 description="Добавить новый маршрут с новыми или ранее созданными точками"
                                 startContent={<FontAwesomeIcon icon={faMapLocationDot}/>}
-                                onPress={() => setRouteList(oldRouteList => [...oldRouteList, blanckCrad])}
+                                onPress={onOpen}
                             >
                                 Маршрут
 

@@ -1,6 +1,7 @@
 import {useContext, createContext, useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
+import routes from "../routes/routes.js";
 
 const AuthContext = createContext();
 
@@ -31,7 +32,7 @@ const AuthProvider = ({children}) => {
             localStorage.setItem("site", data.hash);
             localStorage.setItem("user", JSON.stringify(data));
             toast.success(`${data.first_name}, Вы успешно вошли!`)
-            navigate("/profile");
+            navigate(routes.profile.url);
             return;
         }
         throw new Error("Telegram oauth error");
@@ -45,7 +46,7 @@ const AuthProvider = ({children}) => {
         localStorage.removeItem("site");
         localStorage.removeItem("user");
 
-        navigate("/profile");
+        navigate(routes.profile.url);
     };
 
     return (

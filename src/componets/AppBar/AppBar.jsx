@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Tabs, Tab } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faMap, faUser, faTools } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {Tabs, Tab} from "@nextui-org/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHouse, faMap, faUser, faTools, faRoad} from "@fortawesome/free-solid-svg-icons";
+import {useLocation, useNavigate} from "react-router-dom";
+import routes from "../../routes/routes.js";
 
 export default function AppBar() {
-    const { pathname } = useLocation();
+    const {pathname} = useLocation();
     const [selectedKey, setSelectedKey] = useState(pathname);
     const navigate = useNavigate();
 
@@ -13,22 +14,28 @@ export default function AppBar() {
         setSelectedKey(pathname);
     }, [pathname]);
 
-    const homeIcon = <FontAwesomeIcon style={{ width: "24px", height: "24px" }} icon={faHouse} />;
-    const mapIcon = <FontAwesomeIcon style={{ width: "24px", height: "24px" }} icon={faMap} />;
-    const userIcon = <FontAwesomeIcon style={{ width: "24px", height: "24px" }} icon={faUser} />;
-    const adminIcon = <FontAwesomeIcon style={{ width: "24px", height: "24px" }} icon={faTools} />;
+    const homeIcon = <FontAwesomeIcon style={{width: "24px", height: "24px"}} icon={faHouse}/>;
+    const mapIcon = <FontAwesomeIcon style={{width: "24px", height: "24px"}} icon={faMap}/>;
+    const userIcon = <FontAwesomeIcon style={{width: "24px", height: "24px"}} icon={faUser}/>;
+    const adminIcon = <FontAwesomeIcon style={{width: "24px", height: "24px"}} icon={faTools}/>;
+    const routeAdminIcon = <FontAwesomeIcon style={{width: "24px", height: "24px"}} icon={faRoad}/>;
 
     const tabItems = [
-        { t_id: "/", img_src: homeIcon, title: "Главная", key: "/" },
-        { t_id: "/map", img_src: mapIcon, title: "Маршрут", key: "/map" },
-        { t_id: "/profile", img_src: userIcon, title: "Профиль", key: "/profile" },
-        { t_id: "/admin", img_src: adminIcon, title: "Админ", key: "/admin" },
+        {t_id: routes.home.url, img_src: homeIcon, title: "Главная", key: routes.home.url},
+        {t_id: routes.map.url, img_src: mapIcon, title: "Маршрут", key: routes.map.url},
+        {t_id: routes.profile.url, img_src: userIcon, title: "Профиль", key: routes.profile.url},
+        {t_id: routes.admin.root.url, img_src: adminIcon, title: "Админ", key: routes.admin.root.url},
     ];
+    // if (pathname === routes.admin.routeAdmin) {
+    //     tabItems.push({t_id: routes.admin.routeAdmin, img_src: routeAdminIcon, title: "Редактор Маршрута", key: routes.admin.routeAdmin})
+    // }
 
     const handleTabChange = (key) => {
         setSelectedKey(key);
-        navigate(key);
+        navigate(key)
+
     };
+
 
     const listTabItems = tabItems.map(tabItem => (
         <Tab
@@ -39,7 +46,7 @@ export default function AppBar() {
                     {tabItem.img_src}
                 </div>
             }
-            onClick={() => handleTabChange(tabItem.key)}
+
         />
     ));
 
