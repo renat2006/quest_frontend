@@ -40,7 +40,7 @@ export default function AdminBreadCrumbs() {
         const pathnames = location.pathname.split("/").filter(x => x);
         const breadcrumbs = pathnames.map((_, index) => {
             const url = `/${pathnames.slice(0, index + 1).join("/")}`;
-            let routeName = "Unknown";
+            let routeName = "Не найдено";
 
             Object.keys(routes).forEach((key) => {
                 if (routes[key].url === url) {
@@ -92,6 +92,11 @@ export default function AdminBreadCrumbs() {
                                                   onClick={() => handleNavigate(routes.admin.routeAdminMedia.url)}
                                                   isDisabled={location.pathname === routes.admin.routeAdminMedia.url}>
                                         {routes.admin.routeAdminMedia.name}
+                                    </DropdownItem>
+                                    <DropdownItem key="map"
+                                                  onClick={() => handleNavigate(routes.admin.routeAdminMap.url)}
+                                                  isDisabled={location.pathname === routes.admin.routeAdminMap.url}>
+                                        {routes.admin.routeAdminMap.name}
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>

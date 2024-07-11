@@ -1,6 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo } from "react";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 const InteractiveMap = () => {
@@ -41,22 +41,31 @@ const InteractiveMap = () => {
             mapRef.current.on('draw.delete', saveData);
 
 
-            // const geolocate = new mapboxgl.GeolocateControl({
-            //     positionOptions: {
-            //         enableHighAccuracy: true,
-            //     },
-            //     trackUserLocation: true,
-            //     showUserHeading: true,
-            // });
+            const geolocate = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true,
+                },
+                trackUserLocation: true,
+                showUserHeading: true,
+                showAccuracyCircle: false,
+            });
 
-            // mapRef.current.addControl(geolocate);
-            // mapRef.current.on('load', () => {
-            //     geolocate.trigger();
-            // });
+            mapRef.current.addControl(geolocate);
+            mapRef.current.on('load', () => {
+                geolocate.on('geolocate', (e) => {
+                    const coords = [e.coords.longitude, e.coords.latitude];
+
+                    if (!initialPositionSet.current) {
+                        mapRef.current.setCenter(coords);
+                        initialPositionSet.current = true;
+                    }
+                });
+                geolocate.trigger();
+            });
         }
     }, []);
 
-    return <div className="map--container"><div id="map" ref={mapContainerRef}></div></div>;
+    return <div className="w-full h-[calc(100dvh_-_200px)]"><div id="map" ref={mapContainerRef}></div></div>;
 };
 
-export default React.memo(InteractiveMap);
+export default memo(InteractiveMap);

@@ -12,6 +12,8 @@ import Admin from "./pages/Admin/Admin.jsx";
 import RouteAdmin from "./pages/RouteAdmin/RouteAdmin.jsx";
 import routes from "./routes/routes.js";
 import {RouteProvider} from "./providers/RouteProvider.jsx";
+import Custom404 from "./pages/NotFound/NotFound.jsx";
+import NotFound from "./pages/NotFound/NotFound.jsx";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -31,16 +33,18 @@ function App() {
                         <Route path={routes.home.url} element={<QuestInfo/>}/>
                         <Route path={routes.admin.routeAdmin.url + "/*"} element={<RouteAdmin/>}/>
                         <Route path={routes.profile.url} element={<Profile/>}/>
+
                         <Route path={routes.map.url} element={
-                            <Suspense fallback={<div>Loading...</div>}>
+                            <Suspense fallback={<div>Загрузка...</div>}>
                                 <UserMap/>
                             </Suspense>
                         }/>
                         <Route path={routes.admin.root.url} element={
-                            <Suspense fallback={<div>Loading...</div>}>
+                            <Suspense fallback={<div>Загрузка...</div>}>
                                 <Admin/>
                             </Suspense>
                         }/>
+                        <Route path="*" element={<NotFound/>}/>
                     </Routes>
                     {appBarPathList.includes(pathname) && <AppBar/>}
                 </RouteProvider>

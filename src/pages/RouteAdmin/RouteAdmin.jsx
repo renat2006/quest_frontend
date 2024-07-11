@@ -1,5 +1,5 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {Suspense, useEffect, useState} from "react";
 import routes from "../../routes/routes.js";
 import {
     Card,
@@ -9,15 +9,16 @@ import {
 } from "@nextui-org/react";
 import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
 import RouteInfo from "../../forms/RouteInfo.jsx";
-import { RouteMedia } from "../../forms/RouteMedia.jsx";
-import { getLastPathPart } from "../../methods/methods.js";
+import {RouteMedia} from "../../forms/RouteMedia.jsx";
+import {getLastPathPart} from "../../methods/methods.js";
 import {useRoute} from "../../providers/RouteProvider.jsx";
+import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
 
 
 const RouteAdmin = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { routeState, setRouteState } = useRoute();
+    const {routeState, setRouteState} = useRoute();
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
@@ -31,9 +32,9 @@ const RouteAdmin = () => {
         }
     }, [location]);
 
-    const { routeName, routeType, routeLanguage } = routeState;
+    const {routeName, routeType, routeLanguage} = routeState;
 
-    const routeInfoProps = { routeName, routeLanguage, routeType };
+    const routeInfoProps = {routeName, routeLanguage, routeType};
 
     if (!isLoaded) {
         return null;
@@ -41,15 +42,20 @@ const RouteAdmin = () => {
 
     return (
         <div className="flex flex-col items-center p-5 w-full">
-            <Card className="w-full max-w-[1000px] m">
+            <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
-                    <AdminBreadCrumbs />
+                    <AdminBreadCrumbs/>
                 </CardHeader>
-                <Divider />
+                <Divider/>
                 <CardBody>
                     <Routes>
-                        <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia />} />
-                        <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)} element={<RouteInfo {...routeInfoProps} />} />
+                        <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
+                        <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
+                               element={<RouteInfo {...routeInfoProps} />}/>
+                        <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
+                            fallback={<div>Загрузка...</div>}>
+                            <InteractiveMap/>
+                        </Suspense>} />
                     </Routes>
                 </CardBody>
             </Card>
