@@ -188,6 +188,7 @@ const InteractiveMap = () => {
         el.style.height = '75px';
         el.style.backgroundSize = 'cover';
         el.style.transition = 'width 0.3s, height 0.3s, opacity 0.3s';
+        el.style.position = 'relative';
 
         const textDiv = document.createElement('div');
         textDiv.className = 'marker-text';
@@ -197,6 +198,9 @@ const InteractiveMap = () => {
         textDiv.style.transition = 'opacity 0.3s';
 
         const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
         wrapper.appendChild(el);
         wrapper.appendChild(textDiv);
 
