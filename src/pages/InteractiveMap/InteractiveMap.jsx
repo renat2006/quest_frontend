@@ -1,6 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
-import React, { useEffect, useRef, useState, memo } from "react";
+import React, {useEffect, useRef, useState, memo} from "react";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import {
     Modal,
@@ -14,9 +14,9 @@ import {
     Autocomplete,
     AutocompleteItem
 } from "@nextui-org/react";
-import { Formik, Form, Field } from "formik";
+import {Formik, Form, Field} from "formik";
 import * as Yup from "yup";
-import { languageList } from "../../data/types.js";
+import {languageList} from "../../data/types.js";
 
 const validationSchema = Yup.object().shape({
     pointName: Yup.string()
@@ -26,25 +26,25 @@ const validationSchema = Yup.object().shape({
     pointLanguage: Yup.string().required("Язык точки должен быть выбран."),
 });
 
-const PointFormModal = ({ isOpen, onClose, onSubmit }) => {
+const PointFormModal = ({isOpen, onClose, onSubmit}) => {
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} placement="auto">
             <ModalContent>
                 {(onClose) => (
                     <Formik
-                        initialValues={{ pointName: "", pointLanguage: languageList[0].value }}
+                        initialValues={{pointName: "", pointLanguage: languageList[0].value}}
                         validationSchema={validationSchema}
                         onSubmit={(values) => {
                             onSubmit(values);
                             onClose();
                         }}
                     >
-                        {({ setFieldValue, errors, touched }) => (
+                        {({setFieldValue, errors, touched}) => (
                             <Form>
                                 <ModalHeader className="flex flex-col gap-1">Создать точку</ModalHeader>
                                 <ModalBody>
                                     <Field name="pointName">
-                                        {({ field }) => (
+                                        {({field}) => (
                                             <Input
                                                 {...field}
                                                 autoFocus
@@ -59,7 +59,7 @@ const PointFormModal = ({ isOpen, onClose, onSubmit }) => {
                                         )}
                                     </Field>
                                     <Field name="pointLanguage">
-                                        {({ field }) => (
+                                        {({field}) => (
                                             <Autocomplete
                                                 {...field}
                                                 isRequired
@@ -72,7 +72,8 @@ const PointFormModal = ({ isOpen, onClose, onSubmit }) => {
                                                 errorMessage={touched.pointLanguage && errors.pointLanguage}
                                                 isInvalid={touched.pointLanguage && !!errors.pointLanguage}
                                             >
-                                                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                                                {(item) => <AutocompleteItem
+                                                    key={item.value}>{item.label}</AutocompleteItem>}
                                             </Autocomplete>
                                         )}
                                     </Field>
@@ -98,7 +99,7 @@ const InteractiveMap = () => {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
     const initialPositionSet = useRef(false);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const [newPoint, setNewPoint] = useState(null);
     const [points, setPoints] = useState([]);
     const [selectedPoint, setSelectedPoint] = useState(null);
@@ -120,6 +121,7 @@ const InteractiveMap = () => {
                     point: true,
                     line_string: true,
                     trash: true,
+
                 },
             });
 
@@ -147,6 +149,7 @@ const InteractiveMap = () => {
                 trackUserLocation: true,
                 showUserHeading: true,
                 showAccuracyCircle: false,
+
             });
 
             mapRef.current.addControl(geolocate);
@@ -173,90 +176,21 @@ const InteractiveMap = () => {
         const newPointData = {
             coordinates: newPoint,
             name: values.pointName,
-            image: values.image || "https://via.placeholder.com/300x200" // Add path to placeholder image
         };
         setPoints([...points, newPointData]);
-        addMarkerToMap(newPointData);
+
     };
 
-    const addMarkerToMap = (point) => {
-        const el = document.createElement('div');
-        el.className = 'marker';
-        el.style.backgroundImage = `url(${point.image})`;
-        el.style.borderRadius = "15px";
-        el.style.width = '75px';
-        el.style.height = '75px';
-        el.style.backgroundSize = 'cover';
-        el.style.transition = 'width 0.3s, height 0.3s, opacity 0.3s';
-        el.style.position = 'relative';
 
-        const textDiv = document.createElement('div');
-        textDiv.className = 'marker-text';
-        textDiv.innerText = point.name;
-        textDiv.style.textAlign = 'center';
-        textDiv.style.marginTop = '5px';
-        textDiv.style.transition = 'opacity 0.3s';
-
-        const wrapper = document.createElement('div');
-        wrapper.style.display = 'flex';
-        wrapper.style.flexDirection = 'column';
-        wrapper.style.alignItems = 'center';
-        wrapper.appendChild(el);
-        wrapper.appendChild(textDiv);
-
-        wrapper.addEventListener('click', () => {
-            if (selectedPoint && selectedPoint !== wrapper) {
-                selectedPoint.children[0].style.width = '75px';
-                selectedPoint.children[0].style.height = '75px';
-            }
-            el.style.width = '100px';
-            el.style.height = '100px';
-            setSelectedPoint(wrapper);
-        });
-
-        new mapboxgl.Marker(wrapper)
-            .setLngLat(point.coordinates)
-            .addTo(mapRef.current);
-    };
 
     const adjustMarkersBasedOnZoom = (zoomLevel) => {
-        const markers = document.getElementsByClassName('marker');
-        const texts = document.getElementsByClassName('marker-text');
-
-        for (let i = 0; i < markers.length; i++) {
-            const marker = markers[i];
-            const text = texts[i];
-            if (zoomLevel < 14) {
-                marker.style.width = '50px';
-                marker.style.height = '50px';
-                text.style.opacity = '0';
-            } else {
-                marker.style.width = '75px';
-                marker.style.height = '75px';
-                text.style.opacity = '1';
-            }
-
-            if (zoomLevel < 13) {
-                marker.style.opacity = '0';
-            } else {
-                marker.style.opacity = '1';
-            }
-        }
-
-        if (selectedPoint) {
-            selectedPoint.children[0].style.width = '100px';
-            selectedPoint.children[0].style.height = '100px';
-            selectedPoint.style.opacity = '1';
-            if (zoomLevel < 10) {
-                selectedPoint.style.opacity = '1';
-            }
-        }
+        // Adjust marker styles based on zoom level if necessary
     };
 
     return (
         <div className="w-full h-[calc(100dvh_-_200px)]">
             <div id="map" ref={mapContainerRef}></div>
-            <PointFormModal isOpen={isOpen} onClose={onOpenChange} onSubmit={handleFormSubmit} />
+            <PointFormModal isOpen={isOpen} onClose={onOpenChange} onSubmit={handleFormSubmit}/>
         </div>
     );
 };
