@@ -13,6 +13,7 @@ import {RouteMedia} from "../../forms/RouteMedia.jsx";
 import {getLastPathPart} from "../../methods/methods.js";
 import {useRoute} from "../../providers/RouteProvider.jsx";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
+import AdminYandexMap from "../InteractiveMap/AdminYandexMap.jsx";
 
 
 const RouteAdmin = () => {
@@ -54,7 +55,7 @@ const RouteAdmin = () => {
                                element={<RouteInfo {...routeInfoProps} />}/>
                         <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
                             fallback={<div>Загрузка...</div>}>
-                            <InteractiveMap/>
+                            <AdminYandexMap/>
                         </Suspense>} />
                     </Routes>
                 </CardBody>
