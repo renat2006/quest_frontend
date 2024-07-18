@@ -12,9 +12,9 @@ import Admin from "./pages/Admin/Admin.jsx";
 import RouteAdmin from "./pages/RouteAdmin/RouteAdmin.jsx";
 import routes from "./routes/routes.js";
 import {RouteProvider} from "./providers/RouteProvider.jsx";
-import Custom404 from "./pages/NotFound/NotFound.jsx";
+
 import NotFound from "./pages/NotFound/NotFound.jsx";
-import AdminYandexMap from "./pages/InteractiveMap/AdminYandexMap.jsx";
+
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -37,7 +37,7 @@ function App() {
 
                         <Route path={routes.map.url} element={
                             <Suspense fallback={<div>Загрузка...</div>}>
-                                <AdminYandexMap/>
+                                <UserMap/>
                             </Suspense>
                         }/>
                         <Route path={routes.admin.root.url} element={
