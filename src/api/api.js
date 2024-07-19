@@ -11,7 +11,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     }
 
     const config = {
-        mode: 'no-cors',
+
         method,
         headers,
 
