@@ -2,7 +2,7 @@ import {useContext, createContext, useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 import routes from "../routes/routes.js";
-import {authenticate, get, refreshToken} from '../api/api.js';
+import {authenticate, refreshToken} from '../api/api.js';
 
 const AuthContext = createContext();
 
@@ -39,15 +39,14 @@ const AuthProvider = ({children}) => {
 
     const loginAction = async (telegramData) => {
         try {
-            const data = await get();
-            console.log(data)
-            // setUser(data.user);
-            // setAccessToken(data.access_token);
-            // setRefreshToken(data.refresh_token);
-            // localStorage.setItem("accessToken", data.access_token);
-            // localStorage.setItem("refreshToken", data.refresh_token);
-            // localStorage.setItem("user", JSON.stringify(data.user));
-            // toast.success(`${data.user.first_name}, Вы успешно вошли!`);
+            const data = await authenticate(telegramData);
+            setUser(data.user);
+            setAccessToken(data.access_token);
+            setRefreshToken(data.refresh_token);
+            localStorage.setItem("accessToken", data.access_token);
+            localStorage.setItem("refreshToken", data.refresh_token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            toast.success(`${data.user.first_name}, Вы успешно вошли!`);
             navigate(routes.profile.url);
         } catch (error) {
             console.error("Ошибка авторизации:", error);
