@@ -1,8 +1,9 @@
-const API_URL = import.meta.env.VITE_API_HOST
+const API_URL = import.meta.env.VITE_API_HOST;
 
 export const apiRequest = async (endpoint, method = 'GET', body = null, token = null) => {
     const headers = {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
     };
 
     if (token) {
