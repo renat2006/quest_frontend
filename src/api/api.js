@@ -10,6 +10,8 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     }
 
     const config = {
+        "withCredentials": true,
+        "cors": true,
         method,
         headers,
     };
@@ -22,7 +24,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || 'Что-то пошло не так');
+        throw new Error(data.message);
     }
 
     return data;
