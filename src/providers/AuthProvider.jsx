@@ -40,6 +40,7 @@ const AuthProvider = ({children}) => {
     const loginAction = async (telegramData) => {
         try {
             const data = await get();
+            console.log(data)
             setUser(data.user);
             setAccessToken(data.access_token);
             setRefreshToken(data.refresh_token);
