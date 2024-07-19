@@ -1,15 +1,15 @@
+// src/pages/Profile.jsx
 
 import React from 'react';
-import { useAuthContext } from "../../providers/AuthProvider.jsx";
+import { useAuth } from "../../providers/AuthProvider.jsx";
 import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip, Link, User, Image } from "@nextui-org/react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faGear, faQuestionCircle, faChartPie, faScaleBalanced, faShield } from "@fortawesome/free-solid-svg-icons";
 import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthButton.jsx";
 
-
 const Profile = () => {
-    const { user, logOut } = useAuthContext(); // Обратите внимание на правильное название функции logOut
+    const { user, logout } = useAuth();
     const settingsButtons = [
         { name: "Настройки", link: "/settings", icon: <FontAwesomeIcon icon={faGear}/> },
         { name: "Справка и обратная связь", link: "/contact", icon: <FontAwesomeIcon icon={faQuestionCircle}/> },
@@ -49,7 +49,7 @@ const Profile = () => {
                                     {button.name}
                                 </Button>
                             ))}
-                            <Button color="danger" onPress={logOut} variant="flat">Выйти из аккаунта</Button>
+                            <Button color="danger" onPress={logout} variant="flat">Выйти из аккаунта</Button>
                         </div>
                     </CardBody>
                     <CardFooter className="gap-3"/>

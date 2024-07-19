@@ -12,16 +12,18 @@ import {
 } from "@nextui-org/react";
 
 import {Logo} from "../Logo/Logo.jsx";
-import {useAuthContext} from "../../providers/AuthProvider.jsx";
+import {useAuth} from "../../providers/AuthProvider.jsx";
+
 
 export default function Header() {
-    const { accessToken, logOut } = useAuthContext(); // Используем правильные переменные и функции из контекста
+    const {token, logOut} = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
         "Профиль",
         "О нас",
         "Обратная связь",
+
     ];
 
     return (
@@ -44,10 +46,12 @@ export default function Header() {
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarBrand>
                     <Logo/>
+
                 </NavbarBrand>
                 <p className="font-bold text-inherit">Нулевой километр</p>
                 <NavbarItem>
                     <Link color="foreground" href="#">
+
                         Главная
                     </Link>
                 </NavbarItem>
@@ -64,22 +68,14 @@ export default function Header() {
             </NavbarContent>
 
             <NavbarContent justify="end">
-                {!accessToken ? (
-                    <>
-                        <NavbarItem className="hidden md:flex">
-                            <Link href="#">Войти</Link>
-                        </NavbarItem>
-                        <NavbarItem>
-                            <Button as={Link} className="hidden md:flex" color="warning" href="#" variant="flat">
-                                Регистрация
-                            </Button>
-                        </NavbarItem>
-                    </>
-                ) : (
-                    <NavbarItem>
-                        <Button color="danger" onPress={logOut} variant="flat">Выйти</Button>
-                    </NavbarItem>
-                )}
+                <NavbarItem className="hidden md:flex">
+                    <Link href="#">Войти</Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Button as={Link} className="hidden md:flex" color="warning" href="#" variant="flat">
+                        Регистрация
+                    </Button>
+                </NavbarItem>
             </NavbarContent>
 
             <NavbarMenu>
@@ -88,29 +84,31 @@ export default function Header() {
                         <Link
                             className="w-full"
                             color="foreground"
+
                             href="#"
                             size="lg"
                         >
                             {item}
                         </Link>
                     </NavbarMenuItem>
+
                 ))}
-                {accessToken && (
-                    <NavbarMenuItem>
-                        <Link
-                            className="w-full"
-                            color="danger"
-                            onPress={() => {
-                                logOut();
-                                setIsMenuOpen(false);
-                            }}
-                            href="#"
-                            size="lg"
-                        >
-                            Выйти
-                        </Link>
-                    </NavbarMenuItem>
-                )}
+                {token ? (<NavbarMenuItem>
+                    <Link
+                        className="w-full"
+                        color="danger"
+                        onPress={() => {
+                            logOut();
+                            setIsMenuOpen(false);
+                        }}
+                        href="#"
+                        size="lg"
+
+                    >
+                        Выйти
+                    </Link>
+                </NavbarMenuItem>) : (<></>)}
+
             </NavbarMenu>
         </Navbar>
     );

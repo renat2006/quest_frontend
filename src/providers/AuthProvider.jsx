@@ -1,14 +1,12 @@
-import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {useContext, createContext, useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 import routes from "../routes/routes.js";
-import { authenticate } from '../api/api.js';
-import {login, logout} from "../api/auth.js";
-
+import {authenticate, refreshToken} from '../api/api.js';
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({children}) => {
     const [user, setUser] = useState(import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? {
         "id": 857932226,
         "first_name": "Renat",
@@ -18,8 +16,9 @@ const AuthProvider = ({ children }) => {
         "hash": "a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714",
         "is_admin": true
     } : null);
+    const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || "");
+    const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
-    const { accessToken, refreshToken } = useAuth();
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -42,8 +41,11 @@ const AuthProvider = ({ children }) => {
         try {
             const data = await authenticate(telegramData);
             setUser(data.user);
+            setAccessToken(data.access_token);
+            setRefreshToken(data.refresh_token);
+            localStorage.setItem("accessToken", data.access_token);
+            localStorage.setItem("refreshToken", data.refresh_token);
             localStorage.setItem("user", JSON.stringify(data.user));
-            await login(data.access_token, data.refresh_token);
             toast.success(`${data.user.first_name}, Вы успешно вошли!`);
             navigate(routes.profile.url);
         } catch (error) {
@@ -55,23 +57,27 @@ const AuthProvider = ({ children }) => {
     const refreshAccessToken = async (token) => {
         try {
             const data = await refreshToken(token);
-            await login(data.access_token, token); // Обновляем access token, используя refresh token
+            setAccessToken(data.access_token);
+            localStorage.setItem("accessToken", data.access_token);
         } catch (error) {
             console.error("Ошибка обновления токена:", error);
             logOut();
         }
     };
 
-    const logOut = async () => {
+    const logOut = () => {
         toast.error(`${user.first_name}, Вы успешно вышли!`);
         setUser(null);
+        setAccessToken("");
+        setRefreshToken("");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
-        await logout();
         navigate(routes.profile.url);
     };
 
     return (
-        <AuthContext.Provider value={{ accessToken, user, loginAction, logOut }}>
+        <AuthContext.Provider value={{accessToken, user, loginAction, logOut}}>
             {children}
         </AuthContext.Provider>
     );
@@ -79,6 +85,6 @@ const AuthProvider = ({ children }) => {
 
 export default AuthProvider;
 
-export const useAuthContext = () => {
+export const useAuth = () => {
     return useContext(AuthContext);
 };
