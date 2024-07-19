@@ -2,7 +2,8 @@ const API_URL = import.meta.env.VITE_API_HOST
 
 export const apiRequest = async (endpoint, method = 'GET', body = null, token = null) => {
     const headers = {
-        'Content-Type': 'application/json',
+
+        'Content-Type': 'text/plain',
     };
 
     if (token) {
@@ -12,6 +13,8 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     const config = {
         method,
         headers,
+        mode: 'cors',
+
     };
 
     if (body) {
