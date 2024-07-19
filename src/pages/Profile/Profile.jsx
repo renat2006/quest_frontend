@@ -7,6 +7,7 @@ import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip, Link, Use
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faGear, faQuestionCircle, faChartPie, faScaleBalanced, faShield } from "@fortawesome/free-solid-svg-icons";
 import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthButton.jsx";
+import {get} from "../../api/api.js";
 
 const Profile = () => {
     const { user, logout } = useAuth();
@@ -63,6 +64,7 @@ const Profile = () => {
                     <Image removeWrapper alt="Card background" className="z-0 w-full h-full scale-125 -translate-y-6 object-cover" src="https://yurmino.ru/wp-content/uploads/2021/09/scale_1200-4.jpg"/>
                     <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-end">
                         <TelegramAuthButton/>
+                        <Button onPress={()=>get()}>get</Button>
                     </CardFooter>
                 </Card>
             )}
