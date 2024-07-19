@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_HOST
+const API_URL = import.meta.env.VITE_API_HOST;
 
 export const apiRequest = async (endpoint, method = 'GET', body = null, token = null) => {
     const headers = {
@@ -10,10 +10,9 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     }
 
     const config = {
-        "withCredentials": true,
-        "cors": true,
         method,
         headers,
+        credentials: 'include',
     };
 
     if (body) {
@@ -30,6 +29,6 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     return data;
 };
 
-export const authenticate = (telegramData) => apiRequest('/auth/', 'POST', telegramData);
-export const refreshToken = (refreshToken) => apiRequest('/refresh/', 'POST', null, refreshToken);
-export const saveProgress = (progressData, token) => apiRequest('/save_progress/', 'PUT', progressData, token);
+export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
+export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', null, refreshToken);
+export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
