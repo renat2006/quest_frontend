@@ -12,16 +12,16 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     const config = {
         method,
         headers,
-        credentials: 'include',
+        credentials: 'include',  // для отправки и получения cookies
     };
 
     if (body) {
-        config.body = JSON.stringify("lala");
+        config.body = JSON.stringify(body);
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
     const data = await response.json();
-    console.log(data)
+
     if (!response.ok) {
         throw new Error(data.message);
     }
@@ -32,4 +32,3 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', null, refreshToken);
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
-export const getUUID = (progressData, token) => apiRequest('/uuid', 'GET', token);

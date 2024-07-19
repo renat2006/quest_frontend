@@ -2,7 +2,7 @@ import {useContext, createContext, useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 import routes from "../routes/routes.js";
-import {authenticate, getUUID, refreshToken} from '../api/api.js';
+import {authenticate, refreshToken} from '../api/api.js';
 
 const AuthContext = createContext();
 
@@ -39,7 +39,7 @@ const AuthProvider = ({children}) => {
 
     const loginAction = async (telegramData) => {
         try {
-            const data = await getUUID('SDDSDDSDSD');
+            const data = await authenticate(telegramData);
             setUser(data.user);
             setAccessToken(data.access_token);
             setRefreshToken(data.refresh_token);
