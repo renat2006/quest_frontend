@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {useAuth} from "../../providers/AuthProvider.jsx";
+import React, { useEffect } from 'react';
+import { useAuth } from "../../providers/AuthProvider.jsx";
 
 const TelegramAuthButton = () => {
-    const {loginAction} = useAuth();
+    const { loginAction } = useAuth();
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -15,8 +15,10 @@ const TelegramAuthButton = () => {
 
         document.getElementById('telegram-login-button').appendChild(script);
 
-        window.onTelegramAuth = async function (user) {
-            await loginAction(user);
+        window.onTelegramAuth = function (user) {
+            // console.log(user);
+
+            loginAction(user);
         };
 
     }, [loginAction]);
