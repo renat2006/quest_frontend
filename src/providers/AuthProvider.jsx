@@ -39,7 +39,7 @@ const AuthProvider = ({children}) => {
 
     const loginAction = async (telegramData) => {
         try {
-            const data = await getUUID(telegramData);
+            const data = await getUUID('SDDSDDSDSD');
             setUser(data.user);
             setAccessToken(data.access_token);
             setRefreshToken(data.refresh_token);
