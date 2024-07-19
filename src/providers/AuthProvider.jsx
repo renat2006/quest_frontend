@@ -39,6 +39,7 @@ const AuthProvider = ({children}) => {
 
     const loginAction = async (telegramData) => {
         try {
+            console.log(telegramData)
             const data = await authenticate(telegramData);
             setUser(data.user);
             setAccessToken(data.access_token);

@@ -35,4 +35,4 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', null, refreshToken);
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
-export const get = () => apiRequest('/uuid', 'GET');
+export const get = () => apiRequest('/get', 'GET');
