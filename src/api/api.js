@@ -12,7 +12,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     const config = {
         method,
         headers,
-        // credentials: 'include',  // для отправки и получения cookies
+        credentials: 'include',
     };
 
     if (body) {
