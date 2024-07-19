@@ -41,13 +41,13 @@ const AuthProvider = ({children}) => {
         try {
             const data = await get();
             console.log(data)
-            setUser(data.user);
-            setAccessToken(data.access_token);
-            setRefreshToken(data.refresh_token);
-            localStorage.setItem("accessToken", data.access_token);
-            localStorage.setItem("refreshToken", data.refresh_token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            toast.success(`${data.user.first_name}, Вы успешно вошли!`);
+            // setUser(data.user);
+            // setAccessToken(data.access_token);
+            // setRefreshToken(data.refresh_token);
+            // localStorage.setItem("accessToken", data.access_token);
+            // localStorage.setItem("refreshToken", data.refresh_token);
+            // localStorage.setItem("user", JSON.stringify(data.user));
+            // toast.success(`${data.user.first_name}, Вы успешно вошли!`);
             navigate(routes.profile.url);
         } catch (error) {
             console.error("Ошибка авторизации:", error);
