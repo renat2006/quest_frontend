@@ -36,4 +36,4 @@ export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegr
 export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', null, refreshToken);
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
-export const getUUID = (token) => apiRequest('/uuid', 'GET', null, "sdd");
+export const getUUID = (token) => apiRequest('/uuid', 'GET', null);
