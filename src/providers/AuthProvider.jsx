@@ -22,7 +22,8 @@ const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
-        if (storedUser) {
+
+        if (storedUser !== undefined && storedUser) {
             setUser(JSON.parse(storedUser));
         }
     }, []);
@@ -41,7 +42,7 @@ const AuthProvider = ({children}) => {
         try {
 
             const data = await authenticate(telegramData);
-            console.log(data.user)
+
             if (data.status === "success") {
                 setUser(telegramData);
                 setAccessToken(data.access_token);
@@ -51,8 +52,7 @@ const AuthProvider = ({children}) => {
                 localStorage.setItem("user", JSON.stringify(data.user));
                 toast.success(`${data.user.first_name}, Вы успешно вошли!`);
                 navigate(routes.profile.url);
-            }
-           else {
+            } else {
                 toast.error("Не удалось водтвердить валидность данных")
             }
 
