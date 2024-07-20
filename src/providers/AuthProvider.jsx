@@ -41,14 +41,21 @@ const AuthProvider = ({children}) => {
         try {
 
             const data = await authenticate(telegramData);
-            setUser(data.user);
-            setAccessToken(data.access_token);
-            setRefreshToken(data.refresh_token);
-            localStorage.setItem("accessToken", data.access_token);
-            localStorage.setItem("refreshToken", data.refresh_token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            toast.success(`${data.user.first_name}, Вы успешно вошли!`);
-            navigate(routes.profile.url);
+            console.log(data.user)
+            if (data.status === "success") {
+                setUser(telegramData);
+                setAccessToken(data.access_token);
+                setRefreshToken(data.refresh_token);
+                localStorage.setItem("accessToken", data.access_token);
+                localStorage.setItem("refreshToken", data.refresh_token);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                toast.success(`${data.user.first_name}, Вы успешно вошли!`);
+                navigate(routes.profile.url);
+            }
+           else {
+                toast.error("Не удалось водтвердить валидность данных")
+            }
+
         } catch (error) {
             console.error("Ошибка авторизации:", error);
             throw new Error("Ошибка аутентификации через Telegram");
