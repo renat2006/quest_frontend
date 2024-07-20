@@ -232,7 +232,7 @@ const Admin = () => {
             };
 
             formData.append('json', JSON.stringify(questData));
-
+            console.log(formData)
             await createQuest(formData, accessToken);
 
             toast.success("Квест успешно создан");
