@@ -24,7 +24,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
     const data = await response.json();
-    console.log(data)
+
     if (!response.ok) {
         throw new Error(data.message);
     }
@@ -35,4 +35,5 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', null, refreshToken);
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
-export const get = () => apiRequest('/get', 'GET');
+
+export const getUUID = (token) => apiRequest('/uuid', 'GET', null, token);
