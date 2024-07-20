@@ -25,7 +25,7 @@ import {
     AutocompleteItem,
     Autocomplete
 } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faLandmark,
     faMapLocationDot,
@@ -34,15 +34,16 @@ import {
     faFolderOpen,
     faPlus
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import classNames from "classnames";
-import { languageList, pathTypes } from "../../data/types.js";
-import { useNavigate } from "react-router-dom";
+import {languageList, pathTypes} from "../../data/types.js";
+import {useNavigate} from "react-router-dom";
 import routes from "../../routes/routes.js";
-import { useFormik } from "formik";
+import {useFormik} from "formik";
 import * as yup from "yup";
-import { createQuest, getUUID } from "../../api/api.js";
-import { toast } from "react-hot-toast";
+import {createQuest, getUUID} from "../../api/api.js";
+import {toast} from "react-hot-toast";
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 const validationSchema = yup.object({
     routeName: yup
@@ -54,7 +55,7 @@ const validationSchema = yup.object({
     routeLanguage: yup.string().required("Язык маршрута должен быть выбран.")
 });
 
-const FormModal = ({ isOpen, onOpenChange, initialValues, onSubmit }) => {
+const FormModal = ({isOpen, onOpenChange, initialValues, onSubmit}) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
@@ -134,11 +135,13 @@ const FormModal = ({ isOpen, onOpenChange, initialValues, onSubmit }) => {
     );
 };
 
-const AdminCard = ({ item }) => {
+const AdminCard = ({item}) => {
     return (
-        <Card className="w-full border-2" isPressable onPress={() => console.log("item pressed")} shadow="none" key={item.title}>
+        <Card className="w-full border-2" isPressable onPress={() => console.log("item pressed")} shadow="none"
+              key={item.title}>
             <CardBody className="flex flex-row gap-5 justify-center items-center">
-                <Image alt={item.title} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1" src={item.cover} />
+                <Image alt={item.title} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1"
+                       src={item.cover}/>
                 <div className="flex-1">
                     <p className="font-bold line-clamp-1">{item.title}</p>
                     <p className="font-thin text-sm">{item.type}</p>
@@ -151,7 +154,7 @@ const AdminCard = ({ item }) => {
 const Admin = () => {
     const [openItem, setOpenItem] = useState(null);
     const [pointList, setPointList] = useState([]);
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     const [routeList, setRouteList] = useState([
         {
@@ -214,28 +217,32 @@ const Admin = () => {
     };
 
     const navigate = useNavigate();
-
+    const {accessToken} = useAuth();
     const handleNext = async (values) => {
         try {
-            // Generate UUID for the new quest
-            const { uuid } = await getUUID();
+
+            const {uuid} = await getUUID(accessToken);
 
             const formData = new FormData();
             const questData = {
                 quest_id: uuid,
                 title: values.routeName,
-                description: '', // Add description if needed
-                locations: [], // Add location ids if needed
+                description: '',
+
             };
 
             formData.append('json', JSON.stringify(questData));
 
-            await createQuest(formData);
+            await createQuest(formData, accessToken);
 
             toast.success("Квест успешно создан");
 
             // Refresh the route list
-            setRouteList([...routeList, { ...questData, cover: "https://via.placeholder.com/300x200", type: values.routeType }]);
+            setRouteList([...routeList, {
+                ...questData,
+                cover: "https://via.placeholder.com/300x200",
+                type: values.routeType
+            }]);
 
             // Close the modal
             onOpenChange(false);
@@ -262,31 +269,20 @@ const Admin = () => {
     };
 
     const [selectedKeys, setSelectedKeys] = useState(new Set(["1"]));
-    const accordionComponents = accordionInfo.map((item) => (
+    const accordionComponents = accordionInfo.map(item => (
         <AccordionItem
             key={item.key}
             aria-label={item.title}
-            className="bg-gray-100/50"
+            disableIndicatorAnimation
+            indicator={({isOpen}) => (isOpen ? <FontAwesomeIcon icon={faFolderOpen}/> :
+                <FontAwesomeIcon icon={faFolder}/>)}
+            className="transition-all"
             title={
                 <>
-                    <span className="font-bold text-foreground">{item.title}</span>
-                    <span className="flex items-center gap-2">
-                        <Badge color="primary" size="sm" variant="flat">
-                            {item.objCount}
-                        </Badge>
-                        <Chip
-                            className="w-[60px] justify-center"
-                            color="primary"
-                            radius="sm"
-                            size="sm"
-                            startContent={
-                                <FontAwesomeIcon
-                                    icon={openItem === item.key ? faFolderOpen : faFolder}
-                                    className="text-default-500"
-                                />
-                            }
-                            variant="flat"
-                        >
+                    <span>
+                        {item.title}{" "}
+                        <Chip className="transition-all" variant="flat"
+                              color={selectedKeys.has(item.key) ? "primary" : "default"}>
                             {item.content.length}
                         </Chip>
                     </span>
@@ -304,7 +300,8 @@ const Admin = () => {
             onClose={() => setOpenItem(null)}
         >
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {item.content.length > 0 ? item.content.map(item => <AdminCard item={item} />) : <p>Добавьте первый объект</p>}
+                {item.content.length > 0 ? item.content.map(item => <AdminCard item={item}/>) :
+                    <p>Добавьте первый объект</p>}
             </div>
         </AccordionItem>
     ));
@@ -317,15 +314,16 @@ const Admin = () => {
                     <h1 className="text-xl font-bold">Мои объекты</h1>
                     <Dropdown>
                         <DropdownTrigger>
-                            <Button color="primary" size="sm" startContent={<FontAwesomeIcon icon={faPlus} />}>
+                            <Button color="primary" size="sm" startContent={<FontAwesomeIcon icon={faPlus}/>}>
                                 Добавить
                             </Button>
                         </DropdownTrigger>
-                        <DropdownMenu variant="flat" aria-label="Dropdown menu with description" disabledKeys={["museum"]}>
+                        <DropdownMenu variant="flat" aria-label="Dropdown menu with description"
+                                      disabledKeys={["museum"]}>
                             <DropdownItem
                                 key="route"
                                 description="Добавить новый маршрут с новыми или ранее созданными точками"
-                                startContent={<FontAwesomeIcon icon={faMapLocationDot} />}
+                                startContent={<FontAwesomeIcon icon={faMapLocationDot}/>}
                                 onPress={onOpen}
                             >
                                 Маршрут
@@ -333,18 +331,19 @@ const Admin = () => {
                             <DropdownItem
                                 key="point"
                                 description="Добавить новую точку для маршрутов"
-                                startContent={<FontAwesomeIcon icon={faMapPin} />}
+                                startContent={<FontAwesomeIcon icon={faMapPin}/>}
                                 onPress={() => setPointList(oldPointList => [...oldPointList, blanckCrad])}
                             >
                                 Точку
                             </DropdownItem>
-                            <DropdownItem key="museum" description="В разработке..." startContent={<FontAwesomeIcon icon={faLandmark} />}>
+                            <DropdownItem key="museum" description="В разработке..."
+                                          startContent={<FontAwesomeIcon icon={faLandmark}/>}>
                                 Музей
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </CardHeader>
-                <Divider />
+                <Divider/>
                 <CardBody>
                     <Accordion disabledKeys={["3"]} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
                         {accordionComponents}
