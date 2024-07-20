@@ -230,7 +230,7 @@ const Admin = () => {
                 description: '',
 
             };
-
+            console.log(questData)
             formData.append('json', JSON.stringify(questData));
             console.log(formData)
             await createQuest(formData, accessToken);
