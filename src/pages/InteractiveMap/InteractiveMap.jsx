@@ -324,7 +324,7 @@ const InteractiveMap = () => {
 
     const saveData = () => {
         const data = drawRef.current.getAll();
-        console.log(data);
+        console.log(data)
         localStorage.setItem('mapData', JSON.stringify(data));
     };
 

@@ -7,12 +7,12 @@ import Header from "./componets/Header/Header.jsx";
 import AppBar from "./componets/AppBar/AppBar.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import AuthProvider from "./providers/AuthProvider.jsx";
-import {Toaster} from "react-hot-toast";
+
 import Admin from "./pages/Admin/Admin.jsx";
 import RouteAdmin from "./pages/RouteAdmin/RouteAdmin.jsx";
 import routes from "./routes/routes.js";
 import {RouteProvider} from "./providers/RouteProvider.jsx";
-
+import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 
 

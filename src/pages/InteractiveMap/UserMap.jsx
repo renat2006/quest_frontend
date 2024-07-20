@@ -116,8 +116,6 @@ const UserMap = () => {
                 const markerLabel = marker.querySelector('.marker-label');
                 const markerPoint = marker.querySelector('.marker-point');
 
-                console.log('Zoom Level:', zoomLevel);
-                console.log('Marker Image:', markerImage);
 
                 if (zoomLevel >= 15) {
                     marker.style.display = 'flex';

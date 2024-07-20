@@ -1285,6 +1285,10 @@ video {
   width: 100vw;
 }
 
+.w-\[60px\] {
+  width: 60px;
+}
+
 .min-w-10 {
   min-width: 2.5rem;
 }
@@ -2487,6 +2491,10 @@ video {
 
 .bg-white\/30 {
   background-color: rgb(255 255 255 / 0.3);
+}
+
+.bg-gray-100\/50 {
+  background-color: rgb(243 244 246 / 0.5);
 }
 
 .bg-stripe-gradient {
