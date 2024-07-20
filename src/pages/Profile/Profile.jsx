@@ -59,7 +59,7 @@ const Profile = () => {
                                     {button.name}
                                 </Button>
                             ))}
-                            <Button color="danger" onPress={() => logOut} variant="flat">Выйти из аккаунта</Button>
+                            <Button color="danger" onPress={() => logOut()} variant="flat">Выйти из аккаунта</Button>
                         </div>
                     </CardBody>
                     <CardFooter className="gap-3"/>
