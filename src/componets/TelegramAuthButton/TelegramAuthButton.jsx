@@ -21,7 +21,7 @@ const TelegramAuthButton = () => {
             loginAction(user);
         };
 
-    }, []);
+    }, [loginAction]);
 
     return (
         <div id="telegram-login-button"></div>
