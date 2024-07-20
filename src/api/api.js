@@ -15,6 +15,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     };
 
     if (body) {
+        console.log(body);
         config.body = body
     }
 
