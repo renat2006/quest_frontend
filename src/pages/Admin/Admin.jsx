@@ -223,7 +223,7 @@ const Admin = () => {
 
             const {uuid} = await getUUID(accessToken);
 
-            const formData = new FormData();
+
             const questData = {
                 quest_id: uuid,
                 title: values.routeName,
@@ -231,23 +231,22 @@ const Admin = () => {
 
             };
             console.log(questData)
-            formData.append('json', questData);
-            console.log(formData.get("json"))
-            await createQuest(formData, accessToken);
+
+            await createQuest(JSON.stringify(questData), accessToken);
 
             toast.success("Квест успешно создан");
 
-            // Refresh the route list
+
             setRouteList([...routeList, {
                 ...questData,
                 cover: "https://via.placeholder.com/300x200",
                 type: values.routeType
             }]);
 
-            // Close the modal
+
             onOpenChange(false);
 
-            // Navigate to the next page
+
             navigate(routes.admin.routeAdminInfo.url, {
                 state: questData,
             });
