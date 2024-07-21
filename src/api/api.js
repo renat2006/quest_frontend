@@ -15,8 +15,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     };
 
     if (body) {
-        console.log(body);
-        config.body = body
+        config.body = JSON.stringify(body);
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
