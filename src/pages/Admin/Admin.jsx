@@ -232,7 +232,8 @@ const Admin = () => {
             };
             console.log(questData)
 
-            await createQuest(JSON.stringify(questData), accessToken);
+
+            await createQuest(questData, accessToken);
 
             toast.success("Квест успешно создан");
 
