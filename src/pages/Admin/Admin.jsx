@@ -249,7 +249,7 @@ const Admin = () => {
 
 
             navigate(routes.admin.routeAdminInfo.url, {
-                state: questData,
+                state: uuid,
             });
         } catch (error) {
             console.error("Error creating quest:", error);

@@ -18,12 +18,17 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
     if (body) {
         config.body = isFormData ? body : JSON.stringify(body);
-        console.log(config.body)
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
+
+    if (response.headers.get('Content-Type')?.includes('application/zip')) {
+        const blob = await response.blob();
+        return blob;
+    }
+
     const data = await response.json();
-    console.log(data)
+
     if (!response.ok) {
         throw new Error(data.message);
     }
@@ -45,3 +50,5 @@ export const createQuest = (questData, token) => {
 };
 
 export const getUUID = (token) => apiRequest('/uuid', 'GET', null, token);
+
+export const fetchQuestForEditing = (questId, token) => apiRequest(`/edit_quest?quest_id=${questId}`, 'GET', null, token);

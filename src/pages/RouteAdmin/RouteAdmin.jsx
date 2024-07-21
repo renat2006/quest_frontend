@@ -13,8 +13,9 @@ import {RouteMedia} from "../../forms/RouteMedia.jsx";
 import {getLastPathPart} from "../../methods/methods.js";
 import {useRoute} from "../../providers/RouteProvider.jsx";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
-
-
+import { fetchQuestForEditing } from "../../api/api";
+import JSZip from 'jszip';
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 const RouteAdmin = () => {
     const location = useLocation();
@@ -22,11 +23,33 @@ const RouteAdmin = () => {
     const {routeState, setRouteState} = useRoute();
     const [isLoaded, setIsLoaded] = useState(false);
 
+    const {accessToken} = useAuth();
     useEffect(() => {
-        if (location.state) {
-            setRouteState(location.state);
+        const loadQuestData = async (questId) => {
+            try {
+                const zipBlob = await fetchQuestForEditing(questId, accessToken);
+                const zip = await JSZip.loadAsync(zipBlob);
+                const file = zip.file(`${questId}/data.json`);
+                if (file) {
+                    const content = await file.async('string');
+                    const questData = JSON.parse(content);
+                    setRouteState({
+                        routeName: questData.title_draft,
+                        routeLanguage: questData.language_draft,
+                        routeType: questData.type_draft,
+
+                    });
+                }
+            } catch (error) {
+                console.error("Error loading quest data:", error);
+            }
             setIsLoaded(true);
-        } else if (!location.state && !routeState.routeName) {
+        };
+
+        if (location.state) {
+            const questId = location.state;
+            loadQuestData(questId);
+        } else if (!routeState.routeName) {
             navigate(routes.admin.root.url);
         } else {
             setIsLoaded(true);
