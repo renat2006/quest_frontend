@@ -231,8 +231,8 @@ const Admin = () => {
 
             };
             console.log(questData)
-            formData.append('json_data', JSON.stringify(questData));
-            console.log(formData.get("json_data"))
+            formData.append('json', JSON.stringify(questData));
+            console.log(formData.get("json"))
             await createQuest(formData, accessToken);
 
             toast.success("Квест успешно создан");
