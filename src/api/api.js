@@ -23,7 +23,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
     const data = await response.json();
-
+    console.log(data)
     if (!response.ok) {
         throw new Error(data.message);
     }
