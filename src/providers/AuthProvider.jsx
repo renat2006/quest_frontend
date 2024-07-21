@@ -32,7 +32,7 @@ const AuthProvider = ({children}) => {
         if (refreshToken) {
             const interval = setInterval(() => {
                 refreshAccessToken(refreshToken);
-            }, 10 * 60 * 1000);
+            }, 8 * 60 * 1000);
 
             return () => clearInterval(interval);
         }
