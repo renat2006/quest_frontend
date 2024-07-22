@@ -30,9 +30,14 @@ const AuthProvider = ({children}) => {
 
     useEffect(() => {
         if (refreshToken) {
+
+            refreshAccessToken(refreshToken);
+
+
             const interval = setInterval(() => {
                 refreshAccessToken(refreshToken);
-            }, 8 * 60 * 1000);
+            }, 10 * 60 * 1000);
+
 
             return () => clearInterval(interval);
         }
@@ -53,8 +58,7 @@ const AuthProvider = ({children}) => {
                 localStorage.setItem("user", JSON.stringify(dataUser));
                 toast.success(`${dataUser.first_name}, Вы успешно вошли!`);
                 navigate(routes.profile.url);
-            }
-           else {
+            } else {
                 toast.error("Не удалось водтвердить валидность данных")
             }
 
