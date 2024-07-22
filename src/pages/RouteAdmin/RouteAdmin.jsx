@@ -13,7 +13,7 @@ import {RouteMedia} from "../../forms/RouteMedia.jsx";
 import {getLastPathPart} from "../../methods/methods.js";
 import {useRoute} from "../../providers/RouteProvider.jsx";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
-import { fetchQuestForEditing } from "../../api/api";
+import {fetchQuestForEditing} from "../../api/api";
 import JSZip from 'jszip';
 import {useAuth} from "../../providers/AuthProvider.jsx";
 
@@ -37,6 +37,7 @@ const RouteAdmin = () => {
                         routeName: questData.title_draft,
                         routeLanguage: questData.language_draft,
                         routeType: questData.type_draft,
+                        routeDescription: questData.description_draft,
 
                     });
                 }
@@ -56,9 +57,9 @@ const RouteAdmin = () => {
         }
     }, [location]);
 
-    const {routeName, routeType, routeLanguage} = routeState;
+    const {routeName, routeType, routeLanguage, routeDescription} = routeState;
 
-    const routeInfoProps = {routeName, routeLanguage, routeType};
+    const routeInfoProps = {routeName, routeLanguage, routeType, routeDescription};
 
     if (!isLoaded) {
         return null;
@@ -79,7 +80,7 @@ const RouteAdmin = () => {
                         <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
                             fallback={<div>Загрузка...</div>}>
                             <InteractiveMap/>
-                        </Suspense>} />
+                        </Suspense>}/>
                     </Routes>
                 </CardBody>
             </Card>

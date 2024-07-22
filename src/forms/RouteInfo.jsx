@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
-export default function RouteInfo({routeName, routeType, routeLanguage}) {
+export default function RouteInfo({routeName, routeType, routeLanguage, routeDescription}) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(null);
@@ -17,7 +17,7 @@ export default function RouteInfo({routeName, routeType, routeLanguage}) {
             routeName: routeName || '',
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
-            routeDescription: '',
+            routeDescription: routeDescription,
             routeAudioTeaser: null,
         },
         validationSchema: Yup.object({
