@@ -11,7 +11,8 @@ import {
     faQuestionCircle,
     faChartPie,
     faScaleBalanced,
-    faShield
+    faShield,
+    faBeerMugEmpty
 } from "@fortawesome/free-solid-svg-icons";
 import TelegramAuthButton from "../../componets/TelegramAuthButton/TelegramAuthButton.jsx";
 
@@ -43,6 +44,18 @@ const Profile = () => {
                                 isBordered: false
                             }}
                         />
+                        {user?.username === "belorusstaner" && (
+                            <Chip startContent={<FontAwesomeIcon style={{width: "18px", height: "18px"}}
+                                                                 icon={faBeerMugEmpty}/>} variant="faded"
+                                  color="danger">
+                                Одмен
+                            </Chip>)}
+                        {user?.username === "gdrgaleev" && (
+                            <Chip startContent={<FontAwesomeIcon style={{width: "18px", height: "18px"}}
+                                                                 icon={faBeerMugEmpty}/>} variant="faded"
+                                  color="danger">
+                                Скуф
+                            </Chip>)}
                         {user.is_admin ? (
                             <Chip startContent={<FontAwesomeIcon style={{width: "18px", height: "18px"}}
                                                                  icon={faCircleCheck}/>} variant="faded"
