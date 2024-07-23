@@ -14,7 +14,7 @@ import routes from "./routes/routes.js";
 import {RouteProvider} from "./providers/RouteProvider.jsx";
 import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
-import Joke from "./pages/joke/Joke.jsx";
+
 
 
 
@@ -46,7 +46,7 @@ function App() {
                                 <Admin/>
                             </Suspense>
                         }/>
-                        <Route path="/set_mail_notify" element={<Joke/>} />
+
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>
                     {appBarPathList.includes(pathname) && <AppBar/>}
