@@ -45,6 +45,7 @@ export const saveProgress = (progressData, token) => apiRequest('/save_progress'
 
 export const createQuest = (questData, token) => {
     const formData = new FormData();
+    console.log(questData)
     formData.append('json', JSON.stringify(questData));
 
     return apiRequest('/save_quest', 'PUT', formData, token, true);
