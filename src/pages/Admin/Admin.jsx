@@ -225,9 +225,11 @@ const Admin = () => {
 
 
             const questData = {
-                quest_id: uuid,
+                quest_id: uuid[0],
                 title: values.routeName,
                 description: '',
+                lang: values.routeLanguage,
+                type: values.routeType,
 
             };
             console.log(questData)

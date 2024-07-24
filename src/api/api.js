@@ -39,7 +39,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 
-export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', { refresh_token: refreshToken });
+export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {refresh_token: refreshToken});
 
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
@@ -51,6 +51,6 @@ export const createQuest = (questData, token) => {
     return apiRequest('/save_quest', 'PUT', formData, token, true);
 };
 
-export const getUUID = (token) => apiRequest('/uuid', 'GET', null, token);
+export const getUUID = (token, idCount = 1) => apiRequest(`/uuid?cnt=${idCount}`, 'GET', null, token);
 
 export const fetchQuestForEditing = (questId, token) => apiRequest(`/edit_quest?quest_id=${questId}`, 'GET', null, token);
