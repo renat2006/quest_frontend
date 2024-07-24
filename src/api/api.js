@@ -18,6 +18,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
     if (body) {
         config.body = isFormData ? body : JSON.stringify(body);
+        console.log(config.body)
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, config);

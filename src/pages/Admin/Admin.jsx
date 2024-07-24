@@ -229,7 +229,6 @@ const Admin = () => {
                 title: values.routeName,
                 description: '',
 
-
             };
             console.log(questData)
 
