@@ -33,9 +33,10 @@ const RouteAdmin = () => {
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
+                    console.log(questData)
                     setRouteState({
                         routeName: questData.title_draft,
-                        routeLanguage: questData.language_draft,
+                        routeLanguage: questData.lang_draft,
                         routeType: questData.type_draft,
                         routeDescription: questData.description_draft,
 
