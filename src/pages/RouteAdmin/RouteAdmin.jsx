@@ -50,6 +50,7 @@ const RouteAdmin = () => {
 
         if (location.state) {
             const questId = location.state;
+            console.log(questId)
             loadQuestData(questId);
         } else if (!routeState.routeName) {
             navigate(routes.admin.root.url);
