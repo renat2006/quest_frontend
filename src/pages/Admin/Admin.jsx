@@ -228,8 +228,7 @@ const Admin = () => {
                 quest_id: uuid,
                 title: values.routeName,
                 description: '',
-                lang: values.routeLanguage,
-                type: values.routeType,
+
 
             };
             console.log(questData)
