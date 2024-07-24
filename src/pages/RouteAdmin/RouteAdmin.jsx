@@ -30,6 +30,7 @@ const RouteAdmin = () => {
                 const zipBlob = await fetchQuestForEditing(questId, accessToken);
                 const zip = await JSZip.loadAsync(zipBlob);
                 const file = zip.file(`${questId}/data.json`);
+                console.log(file)
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
