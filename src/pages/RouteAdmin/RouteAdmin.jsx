@@ -27,7 +27,7 @@ const RouteAdmin = () => {
     useEffect(() => {
         const loadQuestData = async (questId) => {
             try {
-                console.log(questId)
+                console.log("sxsx", questId)
                 const zipBlob = await fetchQuestForEditing(questId, accessToken);
                 const zip = await JSZip.loadAsync(zipBlob);
                 const file = zip.file(`${questId}/data.json`);
