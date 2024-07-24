@@ -1,13 +1,13 @@
 export const pathTypes = [{
         label: "Пеший",
-        value: "wal"
+        value: "walking"
     }, {
         label: "Конный",
         value: "equestrian"
     },
         {
             label: "Автобусный",
-            value: "auto"
+            value: "bus"
         }],
     languageList = [{
         label: "Русский",
