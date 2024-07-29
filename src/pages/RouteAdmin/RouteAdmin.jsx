@@ -36,7 +36,7 @@ const RouteAdmin = () => {
                 console.log(file)
                 const downloadLink = document.createElement('a');
                 downloadLink.href = URL.createObjectURL(zipBlob);
-                downloadLink.download = `balabol.zip`;
+                downloadLink.download = `${questId}.zip`;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
