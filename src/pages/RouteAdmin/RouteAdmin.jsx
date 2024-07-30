@@ -28,6 +28,12 @@ const RouteAdmin = () => {
                 const zip = await JSZip.loadAsync(zipBlob);
                 const file = zip.file(`${questId}/data.json`);
                 if (file) {
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = URL.createObjectURL(zipBlob);
+                    downloadLink.download = `${questId}.zip`;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
                     console.log(questData);
