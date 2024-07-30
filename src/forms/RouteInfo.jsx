@@ -51,10 +51,10 @@ export default function RouteInfo({
                 const questData = {
                     quest_id: questId,
                     title: values.routeName,
-                    description: values.routeDescription || '',
+                    description: values.routeDescription,
                     lang: values.routeLanguage,
                     type: values.routeType,
-                    audioFile: values.routeAudioTeaser || undefined
+                    audioFile: values.routeAudioTeaser
                 };
 
                 await createQuest(questData, accessToken);
@@ -74,16 +74,16 @@ export default function RouteInfo({
 
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
-        formik.setFieldValue('routeAudioTeaser', file || null);
+        formik.setFieldValue('routeAudioTeaser', file);
         formik.setTouched({...formik.touched, routeAudioTeaser: true});
-        setAudioFile(file || null);
-        setAudioURL(file ? URL.createObjectURL(file) : '');
+        setAudioFile(file);
+        setAudioURL(URL.createObjectURL(file));
     };
 
     const handleRemoveFile = () => {
-        formik.setFieldValue('routeAudioTeaser', null);
+        formik.setFieldValue('routeAudioTeaser', '');
         formik.setTouched({...formik.touched, routeAudioTeaser: true});
-        setAudioFile('');
+        setAudioFile(null);
         setAudioURL('');
     };
 
