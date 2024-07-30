@@ -9,6 +9,7 @@ import {createQuest, getUUID} from "../api/api.js";
 import {toast} from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 
+
 export default function RouteInfo({
                                       routeName,
                                       routeType,
@@ -17,6 +18,7 @@ export default function RouteInfo({
                                       routeAudioTeaser,
                                       accessToken,
                                       questId
+
                                   }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
@@ -43,11 +45,14 @@ export default function RouteInfo({
                 .required("Описание обязательно")
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
+                .required("Аудиофайл обязателен")
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
         onSubmit: async (values) => {
             try {
+
+
                 const questData = {
                     quest_id: questId,
                     title: values.routeName,
@@ -60,8 +65,10 @@ export default function RouteInfo({
                 await createQuest(questData, accessToken);
 
                 toast.success("Квест успешно обновлён");
+
+
             } catch (error) {
-                console.error("Error updating quest:", error);
+                console.error("Error creating quest:", error);
                 toast.error("Ошибка при обновлении квеста");
             }
         },
