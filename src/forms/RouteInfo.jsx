@@ -31,7 +31,7 @@ export default function RouteInfo({
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
             routeDescription: routeDescription || '',
-            routeAudioTeaser: routeAudioTeaser || '',
+            routeAudioTeaser: routeAudioTeaser || null,
         },
         validationSchema: Yup.object({
             routeName: Yup.string()
@@ -40,10 +40,12 @@ export default function RouteInfo({
             routeType: Yup.string().required("Тип маршрута обязателен"),
             routeLanguage: Yup.string().required("Язык маршрута обязателен"),
             routeDescription: Yup.string()
+                .required("Описание обязательно")
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
+                .required("Аудиофайл обязателен")
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
-                .test('fileType', 'Файл должен быть аудиофайлом в формате (mp3, wav, ogg)', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
+                .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
         onSubmit: async (values) => {
             const toastId = toast.loading("Сохранение...");
@@ -81,7 +83,7 @@ export default function RouteInfo({
     };
 
     const handleRemoveFile = () => {
-        formik.setFieldValue('routeAudioTeaser', '');
+        formik.setFieldValue('routeAudioTeaser', null);
         formik.setTouched({...formik.touched, routeAudioTeaser: true});
         setAudioFile(null);
         setAudioURL('');
