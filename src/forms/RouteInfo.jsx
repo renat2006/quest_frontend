@@ -17,9 +17,8 @@ export default function RouteInfo({
                                       routeDescription,
                                       routeAudioTeaser,
                                       accessToken,
-                                      routeList,
-                                      setRouteList,
-                                      onOpenChange
+                                      questId
+
                                   }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
@@ -52,10 +51,10 @@ export default function RouteInfo({
         }),
         onSubmit: async (values) => {
             try {
-                const {uuid} = await getUUID(accessToken);
+
 
                 const questData = {
-                    quest_id: uuid[0],
+                    quest_id: questId,
                     title: values.routeName,
                     description: values.routeDescription,
                     lang: values.routeLanguage,
@@ -65,22 +64,12 @@ export default function RouteInfo({
 
                 await createQuest(questData, accessToken);
 
-                toast.success("Квест успешно создан");
+                toast.success("Квест успешно обновлён");
 
-                setRouteList([...routeList, {
-                    ...questData,
-                    cover: "https://via.placeholder.com/300x200",
-                    type: values.routeType
-                }]);
 
-                onOpenChange(false);
-
-                navigate(`/admin/routeAdminInfo`, {
-                    state: uuid[0],
-                });
             } catch (error) {
                 console.error("Error creating quest:", error);
-                toast.error("Ошибка при создании квеста");
+                toast.error("Ошибка при обновлении квеста");
             }
         },
     });

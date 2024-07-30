@@ -17,8 +17,8 @@ const RouteAdmin = () => {
     const navigate = useNavigate();
     const {routeState, setRouteState} = useRoute();
     const [isLoaded, setIsLoaded] = useState(false);
-    const [routeAudioTeaser, setRouteAudioTeaser] = useState(null); // Добавлено состояние для аудиофайла
-
+    const [routeAudioTeaser, setRouteAudioTeaser] = useState(null);
+    const [questId, setQuestId] = useState(null);
     const {accessToken} = useAuth();
     useEffect(() => {
         const loadQuestData = async (questId) => {
@@ -36,7 +36,7 @@ const RouteAdmin = () => {
                     if (audioFile) {
                         const audioBlob = await audioFile.async('blob');
                         const audioUrl = URL.createObjectURL(audioBlob);
-                        setRouteAudioTeaser(new File([audioBlob], "audio_draft.mp3", { type: "audio/mpeg" }));
+                        setRouteAudioTeaser(new File([audioBlob], "audio_draft.mp3", {type: "audio/mpeg"}));
                     }
 
                     setRouteState({
@@ -54,6 +54,7 @@ const RouteAdmin = () => {
 
         if (location.state) {
             const questId = location.state;
+            setQuestId(questId)
             console.log(questId);
             loadQuestData(questId);
         } else if (!routeState.routeName) {
@@ -65,7 +66,15 @@ const RouteAdmin = () => {
 
     const {routeName, routeType, routeLanguage, routeDescription} = routeState;
 
-    const routeInfoProps = {routeName, routeLanguage, routeType, routeDescription, routeAudioTeaser}; // Передаем аудиофайл
+    const routeInfoProps = {
+        questId,
+        routeName,
+        routeLanguage,
+        routeType,
+        routeDescription,
+        routeAudioTeaser,
+        accessToken
+    };
 
     if (!isLoaded) {
         return null;
