@@ -43,7 +43,7 @@ export default function RouteInfo({
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
-                .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
+                .test('fileType', 'Файл должен быть аудиофайлом в формате (mp3, wav, ogg)', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
         onSubmit: async (values) => {
             const toastId = toast.loading("Сохранение...");
