@@ -81,7 +81,7 @@ const RouteAdmin = () => {
         <div className="flex flex-col items-center p-5 w-full">
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
-                    <Skeleton isLoaded={isLoaded} className="h-4 w-3/5">
+                    <Skeleton isLoaded={isLoaded} className="w-3/5">
                         <AdminBreadCrumbs/>
                     </Skeleton>
                 </CardHeader>
