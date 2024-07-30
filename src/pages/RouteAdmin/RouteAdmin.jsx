@@ -17,7 +17,7 @@ const RouteAdmin = () => {
     const navigate = useNavigate();
     const {routeState, setRouteState} = useRoute();
     const [isLoaded, setIsLoaded] = useState(false);
-    const [routeAudioDraftTeaser, setRouteAudioDraftTeaser] = useState(null);
+    const [routeAudioTeaser, setRouteAudioTeaser] = useState(null);
     const [questId, setQuestId] = useState(null);
     const {accessToken} = useAuth();
 
@@ -28,23 +28,26 @@ const RouteAdmin = () => {
                 const zip = await JSZip.loadAsync(zipBlob);
                 const file = zip.file(`${questId}/data.json`);
                 if (file) {
+
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
-                    const audioFile = zip.file(`${questId}/audio_draft.mp3`);
-                    let audioFileObject = null;
+                    console.log(questData);
 
+
+                    const audioFile = zip.file(`${questId}/audio_draft.mp3`);
+                    console.log(audioFile)
                     if (audioFile) {
                         const audioBlob = await audioFile.async('blob');
-                        audioFileObject = new File([audioBlob], "audio_draft.mp3", {type: "audio/mpeg"});
-                        setRouteAudioDraftTeaser(audioFileObject);
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        setRouteAudioTeaser(new File([audioBlob], "audio_draft.mp3", {type: "audio/mpeg"}));
                     }
+                    console.log(routeAudioTeaser)
 
                     setRouteState({
                         routeName: questData.title_draft,
                         routeLanguage: questData.lang_draft,
                         routeType: questData.type_draft,
                         routeDescription: questData.description_draft,
-                        routeAudioTeaser: audioFileObject
                     });
                 }
             } catch (error) {
@@ -55,7 +58,8 @@ const RouteAdmin = () => {
 
         if (location.state) {
             const questId = location.state;
-            setQuestId(questId);
+            setQuestId(questId)
+            console.log(questId);
             loadQuestData(questId);
         } else if (!routeState.routeName) {
             navigate(routes.admin.root.url);
@@ -64,7 +68,7 @@ const RouteAdmin = () => {
         }
     }, [location]);
 
-    const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser} = routeState;
+    const {routeName, routeType, routeLanguage, routeDescription} = routeState;
 
     const routeInfoProps = {
         questId,
@@ -91,10 +95,10 @@ const RouteAdmin = () => {
                             <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
                             <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
                                    element={<RouteInfo {...routeInfoProps} />}/>
-                            <Route path={getLastPathPart(routes.admin.routeAdminMap.url)}
-                                   element={<Suspense fallback={<div>Загрузка...</div>}>
-                                       <InteractiveMap/>
-                                   </Suspense>}/>
+                            <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
+                                fallback={<div>Загрузка...</div>}>
+                                <InteractiveMap/>
+                            </Suspense>}/>
                         </Routes>
                     </Skeleton>
                 </CardBody>
