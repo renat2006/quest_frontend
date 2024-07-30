@@ -31,7 +31,7 @@ export default function RouteInfo({
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
             routeDescription: routeDescription || '',
-            routeAudioTeaser: routeAudioTeaser || null,
+            routeAudioTeaser: routeAudioTeaser || '',
         },
         validationSchema: Yup.object({
             routeName: Yup.string()
