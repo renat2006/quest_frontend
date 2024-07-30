@@ -1,7 +1,7 @@
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {Suspense, useEffect, useState} from "react";
 import routes from "../../routes/routes.js";
-import {Card, CardBody, CardHeader, Divider} from "@nextui-org/react";
+import {Card, CardBody, CardHeader, Divider, Skeleton} from "@nextui-org/react";
 import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
 import RouteInfo from "../../forms/RouteInfo.jsx";
 import {RouteMedia} from "../../forms/RouteMedia.jsx";
@@ -88,15 +88,17 @@ const RouteAdmin = () => {
                 </CardHeader>
                 <Divider/>
                 <CardBody>
-                    <Routes>
-                        <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
-                        <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
-                               element={<RouteInfo {...routeInfoProps} />}/>
-                        <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
-                            fallback={<div>Загрузка...</div>}>
-                            <InteractiveMap/>
-                        </Suspense>}/>
-                    </Routes>
+                    <Skeleton isLoaded={isLoaded} className="w-full">
+                        <Routes>
+                            <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
+                            <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
+                                   element={<RouteInfo {...routeInfoProps} />}/>
+                            <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={<Suspense
+                                fallback={<div>Загрузка...</div>}>
+                                <InteractiveMap/>
+                            </Suspense>}/>
+                        </Routes>
+                    </Skeleton>
                 </CardBody>
             </Card>
         </div>
