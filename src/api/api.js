@@ -47,10 +47,11 @@ export const saveProgress = (progressData, token) => apiRequest('/save_progress'
 export const createQuest = (questData, token) => {
     const formData = new FormData();
     formData.append('json', JSON.stringify(questData));
+    console.log(questData)
     if (questData.audioFile) {
         formData.append('audio', questData.audioFile);
     }
-
+    console.log(formData)
     return apiRequest('/save_quest', 'PUT', formData, token, true);
 };
 
