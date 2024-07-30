@@ -5,20 +5,36 @@ import {faDownload, faFileAudio, faTrashAlt} from "@fortawesome/free-solid-svg-i
 import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import {createQuest, getUUID} from "../api/api.js";
+import {toast} from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
 
-export default function RouteInfo({routeName, routeType, routeLanguage, routeDescription}) {
+
+export default function RouteInfo({
+                                      routeName,
+                                      routeType,
+                                      routeLanguage,
+                                      routeDescription,
+                                      routeAudioTeaser,
+                                      accessToken,
+                                      routeList,
+                                      setRouteList,
+                                      onOpenChange
+                                  }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
-    const [audioFile, setAudioFile] = useState(null);
-    const [audioURL, setAudioURL] = useState('');
+    const [audioFile, setAudioFile] = useState(routeAudioTeaser || null);
+    const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
+
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
             routeName: routeName || '',
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
-            routeDescription: routeDescription,
-            routeAudioTeaser: null,
+            routeDescription: routeDescription || '',
+            routeAudioTeaser: routeAudioTeaser || null,
         },
         validationSchema: Yup.object({
             routeName: Yup.string()
@@ -34,8 +50,38 @@ export default function RouteInfo({routeName, routeType, routeLanguage, routeDes
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
-        onSubmit: values => {
-            console.log(values);
+        onSubmit: async (values) => {
+            try {
+                const {uuid} = await getUUID(accessToken);
+
+                const questData = {
+                    quest_id: uuid[0],
+                    title: values.routeName,
+                    description: values.routeDescription,
+                    lang: values.routeLanguage,
+                    type: values.routeType,
+                    audioFile: values.routeAudioTeaser
+                };
+
+                await createQuest(questData, accessToken);
+
+                toast.success("Квест успешно создан");
+
+                setRouteList([...routeList, {
+                    ...questData,
+                    cover: "https://via.placeholder.com/300x200",
+                    type: values.routeType
+                }]);
+
+                onOpenChange(false);
+
+                navigate(`/admin/routeAdminInfo`, {
+                    state: uuid[0],
+                });
+            } catch (error) {
+                console.error("Error creating quest:", error);
+                toast.error("Ошибка при создании квеста");
+            }
         },
     });
 
@@ -58,100 +104,102 @@ export default function RouteInfo({routeName, routeType, routeLanguage, routeDes
         setAudioFile(null);
         setAudioURL('');
     };
-    return (<form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-        <div>
-            <Input
-                label="Название"
-                placeholder="Введите название маршрута"
-                variant="bordered"
-                name="routeName"
-                value={formik.values.routeName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                isInvalid={formik.touched.routeName && Boolean(formik.errors.routeName)}
-                errorMessage={formik.touched.routeName && formik.errors.routeName ? formik.errors.routeName : null}
-            />
-        </div>
-        <div>
-            <Autocomplete
-                isRequired
-                label="Тип маршрута"
-                variant="bordered"
-                defaultItems={pathTypes}
-                placeholder="Выберите тип для маршрута"
-                selectedKey={selectedRouteType}
-                onSelectionChange={setSelectedRouteType}
-                errorMessage={formik.touched.routeType && formik.errors.routeType ? formik.errors.routeType : null}
-                isInvalid={formik.touched.routeType && Boolean(formik.errors.routeType)}
-            >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-        </div>
-        <div>
-            <Autocomplete
-                isRequired
-                label="Язык"
-                variant="bordered"
-                defaultItems={languageList}
-                placeholder="Выберите основной язык маршрута"
-                selectedKey={selectedRouteLanguage}
-                onSelectionChange={setSelectedRouteLanguage}
-                errorMessage={formik.touched.routeLanguage && formik.errors.routeLanguage ? formik.errors.routeLanguage : null}
-                isInvalid={formik.touched.routeLanguage && Boolean(formik.errors.routeLanguage)}
-            >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-        </div>
-        <div>
-            <Textarea
-                label="Описание"
-                placeholder="Введите описание маршрута"
-                variant="bordered"
-                name="routeDescription"
-                value={formik.values.routeDescription}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                isInvalid={formik.touched.routeDescription && Boolean(formik.errors.routeDescription)}
-                errorMessage={formik.touched.routeDescription && formik.errors.routeDescription ? formik.errors.routeDescription : null}
-            />
-        </div>
-        <div className="flex flex-col gap-2">
-            {!audioFile ? (
-                <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio}/>}>
-                    Выберите аудиофайл
-                    <input
-                        type="file"
-                        accept="audio/*"
-                        style={{display: 'none'}}
-                        onChange={handleFileChange}
-                    />
-                </Button>
-            ) : (
-                <div className="flex flex-col gap-2">
 
-                    <audio controls src={audioURL} className="w-full"></audio>
-                    <div className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{audioFile.name}</div>
-                    <div className="flex gap-2">
-                        <Button color="primary" onClick={() => {
-                            const link = document.createElement('a');
-                            link.href = audioURL;
-                            link.download = audioFile.name;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                        }}>
-                            <FontAwesomeIcon icon={faDownload}/> Скачать
-                        </Button>
-                        <Button color="danger" onClick={handleRemoveFile}>
-                            <FontAwesomeIcon icon={faTrashAlt}/> Удалить
-                        </Button>
+    return (
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+            <div>
+                <Input
+                    label="Название"
+                    placeholder="Введите название маршрута"
+                    variant="bordered"
+                    name="routeName"
+                    value={formik.values.routeName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.routeName && Boolean(formik.errors.routeName)}
+                    errorMessage={formik.touched.routeName && formik.errors.routeName ? formik.errors.routeName : null}
+                />
+            </div>
+            <div>
+                <Autocomplete
+                    isRequired
+                    label="Тип маршрута"
+                    variant="bordered"
+                    defaultItems={pathTypes}
+                    placeholder="Выберите тип для маршрута"
+                    selectedKey={selectedRouteType}
+                    onSelectionChange={setSelectedRouteType}
+                    errorMessage={formik.touched.routeType && formik.errors.routeType ? formik.errors.routeType : null}
+                    isInvalid={formik.touched.routeType && Boolean(formik.errors.routeType)}
+                >
+                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+            </div>
+            <div>
+                <Autocomplete
+                    isRequired
+                    label="Язык"
+                    variant="bordered"
+                    defaultItems={languageList}
+                    placeholder="Выберите основной язык маршрута"
+                    selectedKey={selectedRouteLanguage}
+                    onSelectionChange={setSelectedRouteLanguage}
+                    errorMessage={formik.touched.routeLanguage && formik.errors.routeLanguage ? formik.errors.routeLanguage : null}
+                    isInvalid={formik.touched.routeLanguage && Boolean(formik.errors.routeLanguage)}
+                >
+                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+            </div>
+            <div>
+                <Textarea
+                    label="Описание"
+                    placeholder="Введите описание маршрута"
+                    variant="bordered"
+                    name="routeDescription"
+                    value={formik.values.routeDescription}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.routeDescription && Boolean(formik.errors.routeDescription)}
+                    errorMessage={formik.touched.routeDescription && formik.errors.routeDescription ? formik.errors.routeDescription : null}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                {!audioFile ? (
+                    <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio}/>}>
+                        Выберите аудиофайл
+                        <input
+                            type="file"
+                            accept="audio/*"
+                            style={{display: 'none'}}
+                            onChange={handleFileChange}
+                        />
+                    </Button>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        <audio controls src={audioURL} className="w-full"></audio>
+                        <div className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{audioFile.name}</div>
+                        <div className="flex gap-2">
+                            <Button color="primary" onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = audioURL;
+                                link.download = audioFile.name;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }}>
+                                <FontAwesomeIcon icon={faDownload}/> Скачать
+                            </Button>
+                            <Button color="danger" onClick={handleRemoveFile}>
+                                <FontAwesomeIcon icon={faTrashAlt}/> Удалить
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-            {formik.touched.routeAudioTeaser && formik.errors.routeAudioTeaser && !audioFile && (
-                <span className="text-danger text-tiny">{formik.errors.routeAudioTeaser}</span>
-            )}
-        </div>
-        <Button type="submit" color="primary">Сохранить</Button>
-    </form>)
+                )}
+                {formik.touched.routeAudioTeaser && formik.errors.routeAudioTeaser && !audioFile && (
+                    <span className="text-danger text-tiny">{formik.errors.routeAudioTeaser}</span>
+                )}
+            </div>
+            <Button type="submit" color="primary">Сохранить</Button>
+        </form>
+    );
 }
