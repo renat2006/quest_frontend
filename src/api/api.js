@@ -47,17 +47,21 @@ export const saveProgress = (progressData, token) => apiRequest('/save_progress'
 export const createQuest = (questData, token) => {
     const formData = new FormData();
 
-    console.log(questData)
+    console.log(questData);
     if (questData.audioFile) {
         formData.append('audio', questData.audioFile);
     }
-    delete questData.audioFile;
-    console.log(questData)
-    formData.append('json', JSON.stringify(questData));
 
-    console.log(formData)
+
+    const {audioFile, ...updatedQuestData} = questData;
+
+    console.log(updatedQuestData);
+    formData.append('json', JSON.stringify(updatedQuestData));
+
+
     return apiRequest('/save_quest', 'PUT', formData, token, true);
 };
+
 
 export const getUUID = (token, idCount = 1) => apiRequest(`/uuid?cnt=${idCount}`, 'GET', null, token);
 
