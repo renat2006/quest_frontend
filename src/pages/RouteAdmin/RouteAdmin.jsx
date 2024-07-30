@@ -34,11 +34,13 @@ const RouteAdmin = () => {
 
                     // Загрузка аудиофайла
                     const audioFile = zip.file(`${questId}/audio_draft.mp3`);
+                    console.log(audioFile)
                     if (audioFile) {
                         const audioBlob = await audioFile.async('blob');
                         const audioUrl = URL.createObjectURL(audioBlob);
                         setRouteAudioTeaser(new File([audioBlob], "audio_draft.mp3", {type: "audio/mpeg"}));
                     }
+                    console.log(routeAudioTeaser)
 
                     setRouteState({
                         routeName: questData.title_draft,
