@@ -20,6 +20,7 @@ const RouteAdmin = () => {
     const [routeAudioTeaser, setRouteAudioTeaser] = useState(null);
     const [questId, setQuestId] = useState(null);
     const {accessToken} = useAuth();
+
     useEffect(() => {
         const loadQuestData = async (questId) => {
             try {
@@ -75,10 +76,6 @@ const RouteAdmin = () => {
         routeAudioTeaser,
         accessToken
     };
-
-    if (!isLoaded) {
-        return null;
-    }
 
     return (
         <div className="flex flex-col items-center p-5 w-full">
