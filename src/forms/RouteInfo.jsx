@@ -50,6 +50,7 @@ export default function RouteInfo({
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
         onSubmit: async (values) => {
+            const toastId = toast.loading("Сохранение...");
             try {
 
 
@@ -64,12 +65,12 @@ export default function RouteInfo({
 
                 await createQuest(questData, accessToken);
 
-                toast.success("Квест успешно обновлён");
+                toast.success("Квест успешно обновлён", { id: toastId })
 
 
             } catch (error) {
                 console.error("Error creating quest:", error);
-                toast.error("Ошибка при обновлении квеста");
+                toast.error("Ошибка при обновлении квеста", { id: toastId });
             }
         },
     });
