@@ -227,7 +227,7 @@ const Admin = () => {
             const questData = {
                 quest_id: uuid[0],
                 title: values.routeName,
-                description: 'go',
+                description: '',
                 lang: values.routeLanguage,
                 type: values.routeType,
 
