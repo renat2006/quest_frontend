@@ -34,12 +34,6 @@ const RouteAdmin = () => {
                 console.log(zip)
                 const file = zip.file(`${questId}/data.json`);
                 console.log(file)
-                const downloadLink = document.createElement('a');
-                downloadLink.href = URL.createObjectURL(zipBlob);
-                downloadLink.download = `${questId}.zip`;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
