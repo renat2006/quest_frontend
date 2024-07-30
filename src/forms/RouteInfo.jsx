@@ -9,7 +9,6 @@ import {createQuest, getUUID} from "../api/api.js";
 import {toast} from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 
-
 export default function RouteInfo({
                                       routeName,
                                       routeType,
@@ -18,7 +17,6 @@ export default function RouteInfo({
                                       routeAudioTeaser,
                                       accessToken,
                                       questId
-
                                   }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
@@ -52,8 +50,6 @@ export default function RouteInfo({
         onSubmit: async (values) => {
             const toastId = toast.loading("Сохранение...");
             try {
-
-
                 const questData = {
                     quest_id: questId,
                     title: values.routeName,
@@ -65,12 +61,10 @@ export default function RouteInfo({
 
                 await createQuest(questData, accessToken);
 
-                toast.success("Квест успешно обновлён", { id: toastId })
-
-
+                toast.success("Квест успешно обновлён", {id: toastId});
             } catch (error) {
                 console.error("Error creating quest:", error);
-                toast.error("Ошибка при обновлении квеста", { id: toastId });
+                toast.error("Ошибка при обновлении квеста", {id: toastId});
             }
         },
     });
@@ -78,7 +72,8 @@ export default function RouteInfo({
     useEffect(() => {
         formik.setFieldValue('routeType', selectedRouteType);
         formik.setFieldValue('routeLanguage', selectedRouteLanguage);
-    }, [selectedRouteType, selectedRouteLanguage]);
+        formik.setFieldValue('routeAudioTeaser', audioFile);
+    }, [selectedRouteType, selectedRouteLanguage, audioFile]);
 
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
