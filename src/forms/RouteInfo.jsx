@@ -76,17 +76,6 @@ export default function RouteInfo({
     });
 
     useEffect(() => {
-        console.log(formik.values)
-        console.log({
-            routeName,
-            routeType,
-            routeLanguage,
-            routeDescription,
-            routeAudioTeaser,
-            accessToken,
-            questId
-
-        })
         formik.setFieldValue('routeType', selectedRouteType);
         formik.setFieldValue('routeLanguage', selectedRouteLanguage);
     }, [selectedRouteType, selectedRouteLanguage]);

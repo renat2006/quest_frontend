@@ -1,118 +1,198 @@
-import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import {Suspense, useEffect, useState} from "react";
-import routes from "../../routes/routes.js";
-import {Card, CardBody, CardHeader, Divider, Skeleton} from "@nextui-org/react";
-import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
-import RouteInfo from "../../forms/RouteInfo.jsx";
-import {RouteMedia} from "../../forms/RouteMedia.jsx";
-import {getLastPathPart} from "../../methods/methods.js";
-import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
-import {fetchQuestForEditing} from "../../api/api";
-import JSZip from 'jszip';
-import {useAuth} from "../../providers/AuthProvider.jsx";
+import {Autocomplete, AutocompleteItem, Button, Input, Textarea} from "@nextui-org/react";
+import {languageList, pathTypes} from "../data/types.js";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faDownload, faFileAudio, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import React, {useEffect, useState} from "react";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {createQuest} from "../api/api.js";
+import {toast} from "react-hot-toast";
+import {useNavigate} from "react-router-dom";
 
-const RouteAdmin = () => {
-    const location = useLocation();
+export default function RouteInfo({
+                                      routeName,
+                                      routeType,
+                                      routeLanguage,
+                                      routeDescription,
+                                      routeAudioTeaser,
+                                      accessToken,
+                                      questId
+                                  }) {
+    const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
+    const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
+    const [audioFile, setAudioFile] = useState(routeAudioTeaser || null);
+    const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
+
     const navigate = useNavigate();
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [routeAudioTeaser, setRouteAudioTeaser] = useState(null);
-    const [questId, setQuestId] = useState(null);
-    const [routeData, setRouteData] = useState({
-        routeName: '',
-        routeLanguage: '',
-        routeType: '',
-        routeDescription: '',
-    });
-    const {accessToken} = useAuth();
 
     useEffect(() => {
-        const loadQuestData = async (questId) => {
-            console.log(questId)
-            try {
-                const zipBlob = await fetchQuestForEditing(questId, accessToken);
-                const zip = await JSZip.loadAsync(zipBlob);
-                const file = zip.file(`${questId}/data.json`);
-                if (file) {
-                    const content = await file.async('string');
-                    const questData = JSON.parse(content);
-                    console.log(questData)
-                    let audioFile = null;
-                    zip.forEach((relativePath, zipEntry) => {
-                        if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a)$/i.test(relativePath)) {
-                            audioFile = zipEntry;
-                        }
-                    });
-
-                    if (audioFile) {
-                        const audioBlob = await audioFile.async('blob');
-                        const audioFileName = audioFile.name.split('/').pop();
-                        setRouteAudioTeaser(new File([audioBlob], audioFileName, {type: audioBlob.type}));
-                    }
-
-                    setRouteData({
-                        routeName: questData.title_draft,
-                        routeLanguage: questData.lang_draft,
-                        routeType: questData.type_draft,
-                        routeDescription: questData.description_draft,
-                    });
-                }
-            } catch (error) {
-                console.error("Error loading quest data:", error);
-            } finally {
-                setIsLoaded(true);
+        if (audioFile) {
+            setAudioURL(URL.createObjectURL(audioFile));
+        }
+        return () => {
+            if (audioURL) {
+                URL.revokeObjectURL(audioURL);
             }
         };
+    }, [audioFile]);
 
-        if (location.state) {
-            const questId = location.state;
-            setQuestId(questId);
-            loadQuestData(questId);
-        } else {
-            navigate(routes.admin.root.url);
-        }
-    }, [location.state, accessToken, navigate]);
+    const formik = useFormik({
+        initialValues: {
+            routeName: routeName || '',
+            routeType: selectedRouteType,
+            routeLanguage: selectedRouteLanguage,
+            routeDescription: routeDescription || '',
+            routeAudioTeaser: routeAudioTeaser || null,
+        },
+        validationSchema: Yup.object({
+            routeName: Yup.string()
+                .required("Название маршрута обязательно")
+                .max(30, "Название маршрута не может превышать 30 символов"),
+            routeType: Yup.string().required("Тип маршрута обязателен"),
+            routeLanguage: Yup.string().required("Язык маршрута обязателен"),
+            routeDescription: Yup.string()
+                .required("Описание обязательно")
+                .max(200, "Описание не может превышать 200 символов"),
+            routeAudioTeaser: Yup.mixed()
+                .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
+                .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
+        }),
+        onSubmit: async (values) => {
+            const toastId = toast.loading("Сохранение...");
+            try {
+                const questData = {
+                    quest_id: questId,
+                    title: values.routeName,
+                    description: values.routeDescription,
+                    lang: values.routeLanguage,
+                    type: values.routeType,
+                    audioFile: values.routeAudioTeaser
+                };
 
-    const {routeName, routeType, routeLanguage, routeDescription} = routeData;
+                await createQuest(questData, accessToken);
 
-    const routeInfoProps = {
-        questId,
-        routeName,
-        routeLanguage,
-        routeType,
-        routeDescription,
-        routeAudioTeaser,
-        accessToken
+                toast.success("Квест успешно обновлён", {id: toastId});
+                navigate('/some-next-route'); // Редирект после успешного сохранения
+            } catch (error) {
+                console.error("Error creating quest:", error);
+                toast.error("Ошибка при обновлении квеста", {id: toastId});
+            }
+        },
+    });
+
+    useEffect(() => {
+        formik.setFieldValue('routeType', selectedRouteType);
+        formik.setFieldValue('routeLanguage', selectedRouteLanguage);
+    }, [selectedRouteType, selectedRouteLanguage]);
+
+    const handleFileChange = (event) => {
+        const file = event.currentTarget.files[0];
+        formik.setFieldValue('routeAudioTeaser', file);
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: true });
+        setAudioFile(file);
+    };
+
+    const handleRemoveFile = () => {
+        formik.setFieldValue('routeAudioTeaser', null);
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: false });
+        setAudioFile(null);
     };
 
     return (
-        <div className="flex flex-col items-center p-5 w-full">
-            <Card className="w-full max-w-[1000px]">
-                <CardHeader className="flex gap-3">
-                    <Skeleton isLoaded={isLoaded} className="w-3/5">
-                        {isLoaded ? <AdminBreadCrumbs/> : <div className="w-full h-10"></div>}
-                    </Skeleton>
-                </CardHeader>
-                <Divider/>
-                <CardBody>
-                    <Skeleton isLoaded={isLoaded} className="w-full">
-                        {isLoaded ? (
-                            <Routes>
-                                <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
-                                       element={<RouteMedia/>}/>
-                                <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
-                                       element={<RouteInfo {...routeInfoProps} />}/>
-                                <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
-                                    <Suspense fallback={<div>Загрузка...</div>}>
-                                        <InteractiveMap/>
-                                    </Suspense>
-                                }/>
-                            </Routes>
-                        ) : <div className="w-full h-[300px]"></div>}
-                    </Skeleton>
-                </CardBody>
-            </Card>
-        </div>
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+            <div>
+                <Input
+                    label="Название"
+                    placeholder="Введите название маршрута"
+                    variant="bordered"
+                    name="routeName"
+                    value={formik.values.routeName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.routeName && Boolean(formik.errors.routeName)}
+                    errorMessage={formik.touched.routeName && formik.errors.routeName ? formik.errors.routeName : null}
+                />
+            </div>
+            <div>
+                <Autocomplete
+                    isRequired
+                    label="Тип маршрута"
+                    variant="bordered"
+                    defaultItems={pathTypes}
+                    placeholder="Выберите тип для маршрута"
+                    selectedKey={selectedRouteType}
+                    onSelectionChange={setSelectedRouteType}
+                    errorMessage={formik.touched.routeType && formik.errors.routeType ? formik.errors.routeType : null}
+                    isInvalid={formik.touched.routeType && Boolean(formik.errors.routeType)}
+                >
+                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+            </div>
+            <div>
+                <Autocomplete
+                    isRequired
+                    label="Язык"
+                    variant="bordered"
+                    defaultItems={languageList}
+                    placeholder="Выберите основной язык маршрута"
+                    selectedKey={selectedRouteLanguage}
+                    onSelectionChange={setSelectedRouteLanguage}
+                    errorMessage={formik.touched.routeLanguage && formik.errors.routeLanguage ? formik.errors.routeLanguage : null}
+                    isInvalid={formik.touched.routeLanguage && Boolean(formik.errors.routeLanguage)}
+                >
+                    {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+            </div>
+            <div>
+                <Textarea
+                    label="Описание"
+                    placeholder="Введите описание маршрута"
+                    variant="bordered"
+                    name="routeDescription"
+                    value={formik.values.routeDescription}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.routeDescription && Boolean(formik.errors.routeDescription)}
+                    errorMessage={formik.touched.routeDescription && formik.errors.routeDescription ? formik.errors.routeDescription : null}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                {!audioFile ? (
+                    <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio} />}>
+                        Выберите аудиофайл
+                        <input
+                            type="file"
+                            accept="audio/*"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                        />
+                    </Button>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        <audio controls src={audioURL} className="w-full"></audio>
+                        <div className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{audioFile.name}</div>
+                        <div className="flex gap-2">
+                            <Button color="primary" onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = audioURL;
+                                link.download = audioFile.name;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }}>
+                                <FontAwesomeIcon icon={faDownload} /> Скачать
+                            </Button>
+                            <Button color="danger" onClick={handleRemoveFile}>
+                                <FontAwesomeIcon icon={faTrashAlt} /> Удалить
+                            </Button>
+                        </div>
+                    </div>
+                )}
+                {formik.touched.routeAudioTeaser && formik.errors.routeAudioTeaser && !audioFile && (
+                    <span className="text-danger text-tiny">{formik.errors.routeAudioTeaser}</span>
+                )}
+            </div>
+            <Button type="submit" color="primary">Сохранить</Button>
+        </form>
     );
 }
-
-export default RouteAdmin;
