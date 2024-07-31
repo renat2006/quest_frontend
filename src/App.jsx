@@ -16,8 +16,6 @@ import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 
 
-
-
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
 const InteractiveMap = lazy(() => import("./pages/InteractiveMap/InteractiveMap.jsx"));
 
@@ -29,27 +27,31 @@ function App() {
         <NextUIProvider navigate={navigate}>
             <AuthProvider>
 
-                    <div><Toaster/></div>
-                    <Header/>
-                    <Routes>
-                        <Route path={routes.home.url} element={<QuestInfo/>}/>
-                        <Route path={routes.admin.routeAdmin.url + "/*"} element={<RouteAdmin/>}/>
-                        <Route path={routes.profile.url} element={<Profile/>}/>
+                <div><Toaster/></div>
+                <Header/>
+                <Routes>
+                    <Route path={routes.home.url} element={<QuestInfo/>}/>
+                    <Route path={routes.admin.routeAdmin.url + "/*"} element={
+                        <Suspense fallback={<div>Загрузка...</div>}>
+                            <RouteAdmin/>
+                        </Suspense>
+                    }/>
+                    <Route path={routes.profile.url} element={<Profile/>}/>
 
-                        <Route path={routes.map.url} element={
-                            <Suspense fallback={<div>Загрузка...</div>}>
-                                <UserMap/>
-                            </Suspense>
-                        }/>
-                        <Route path={routes.admin.root.url} element={
-                            <Suspense fallback={<div>Загрузка...</div>}>
-                                <Admin/>
-                            </Suspense>
-                        }/>
+                    <Route path={routes.map.url} element={
+                        <Suspense fallback={<div>Загрузка...</div>}>
+                            <UserMap/>
+                        </Suspense>
+                    }/>
+                    <Route path={routes.admin.root.url} element={
+                        <Suspense fallback={<div>Загрузка...</div>}>
+                            <Admin/>
+                        </Suspense>
+                    }/>
 
-                        <Route path="*" element={<NotFound/>}/>
-                    </Routes>
-                    {appBarPathList.includes(pathname) && <AppBar/>}
+                    <Route path="*" element={<NotFound/>}/>
+                </Routes>
+                {appBarPathList.includes(pathname) && <AppBar/>}
 
             </AuthProvider>
         </NextUIProvider>
