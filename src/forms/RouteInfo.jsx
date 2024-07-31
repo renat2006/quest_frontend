@@ -21,19 +21,18 @@ export default function RouteInfo({
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || null);
-    const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
+    const [audioURL, setAudioURL] = useState('');
 
     const navigate = useNavigate();
 
     useEffect(() => {
         if (audioFile) {
-            setAudioURL(URL.createObjectURL(audioFile));
+            const url = URL.createObjectURL(audioFile);
+            setAudioURL(url);
+            return () => {
+                URL.revokeObjectURL(url);
+            };
         }
-        return () => {
-            if (audioURL) {
-                URL.revokeObjectURL(audioURL);
-            }
-        };
     }, [audioFile]);
 
     const formik = useFormik({
@@ -96,6 +95,7 @@ export default function RouteInfo({
         formik.setFieldValue('routeAudioTeaser', null);
         formik.setTouched({ ...formik.touched, routeAudioTeaser: false });
         setAudioFile(null);
+        setAudioURL('');
     };
 
     return (
