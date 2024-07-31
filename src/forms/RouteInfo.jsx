@@ -5,7 +5,7 @@ import { faDownload, faFileAudio, faTrashAlt } from "@fortawesome/free-solid-svg
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createQuest, getUUID } from "../api/api.js";
+import { createQuest } from "../api/api.js";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
