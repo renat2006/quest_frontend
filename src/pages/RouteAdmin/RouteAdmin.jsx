@@ -89,22 +89,25 @@ const RouteAdmin = () => {
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
                     <Skeleton isLoaded={isLoaded} className="w-3/5">
-                        <AdminBreadCrumbs/>
+                        {isLoaded && <AdminBreadCrumbs/>}
                     </Skeleton>
                 </CardHeader>
                 <Divider/>
                 <CardBody>
                     <Skeleton isLoaded={isLoaded} className="w-full">
-                        <Routes>
-                            <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
-                            <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
-                                   element={<RouteInfo {...routeInfoProps} />}/>
-                            <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
-                                <Suspense fallback={<div>Загрузка...</div>}>
-                                    <InteractiveMap/>
-                                </Suspense>
-                            }/>
-                        </Routes>
+                        {isLoaded && (
+                            <Routes>
+                                <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
+                                       element={<RouteMedia/>}/>
+                                <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
+                                       element={<RouteInfo {...routeInfoProps} />}/>
+                                <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
+                                    <Suspense fallback={<div>Загрузка...</div>}>
+                                        <InteractiveMap/>
+                                    </Suspense>
+                                }/>
+                            </Routes>
+                        )}
                     </Skeleton>
                 </CardBody>
             </Card>
