@@ -1,15 +1,15 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { Suspense, useEffect, useState } from "react";
+import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import {Suspense, useEffect, useState} from "react";
 import routes from "../../routes/routes.js";
-import { Card, CardBody, CardHeader, Divider, Skeleton } from "@nextui-org/react";
+import {Card, CardBody, CardHeader, Divider, Skeleton} from "@nextui-org/react";
 import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
 import RouteInfo from "../../forms/RouteInfo.jsx";
-import { RouteMedia } from "../../forms/RouteMedia.jsx";
-import { getLastPathPart } from "../../methods/methods.js";
+import {RouteMedia} from "../../forms/RouteMedia.jsx";
+import {getLastPathPart} from "../../methods/methods.js";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
-import { fetchQuestForEditing } from "../../api/api";
+import {fetchQuestForEditing} from "../../api/api";
 import JSZip from 'jszip';
-import { useAuth } from "../../providers/AuthProvider.jsx";
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 const RouteAdmin = () => {
     const location = useLocation();
@@ -23,7 +23,7 @@ const RouteAdmin = () => {
         routeType: '',
         routeDescription: '',
     });
-    const { accessToken } = useAuth();
+    const {accessToken} = useAuth();
 
     useEffect(() => {
         const loadQuestData = async (questId) => {
@@ -35,7 +35,7 @@ const RouteAdmin = () => {
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
-
+                    console.log(questData)
                     let audioFile = null;
                     zip.forEach((relativePath, zipEntry) => {
                         if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a)$/i.test(relativePath)) {
@@ -46,7 +46,7 @@ const RouteAdmin = () => {
                     if (audioFile) {
                         const audioBlob = await audioFile.async('blob');
                         const audioFileName = audioFile.name.split('/').pop();
-                        setRouteAudioTeaser(new File([audioBlob], audioFileName, { type: audioBlob.type }));
+                        setRouteAudioTeaser(new File([audioBlob], audioFileName, {type: audioBlob.type}));
                     }
 
                     setRouteData({
@@ -72,7 +72,7 @@ const RouteAdmin = () => {
         }
     }, [location.state, accessToken, navigate]);
 
-    const { routeName, routeType, routeLanguage, routeDescription } = routeData;
+    const {routeName, routeType, routeLanguage, routeDescription} = routeData;
 
     const routeInfoProps = {
         questId,
@@ -89,20 +89,21 @@ const RouteAdmin = () => {
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
                     <Skeleton isLoaded={isLoaded} className="w-3/5">
-                        <AdminBreadCrumbs />
+                        <AdminBreadCrumbs/>
                     </Skeleton>
                 </CardHeader>
-                <Divider />
+                <Divider/>
                 <CardBody>
                     <Skeleton isLoaded={isLoaded} className="w-full">
                         <Routes>
-                            <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia />} />
-                            <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)} element={<RouteInfo {...routeInfoProps} />} />
+                            <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)} element={<RouteMedia/>}/>
+                            <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
+                                   element={<RouteInfo {...routeInfoProps} />}/>
                             <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
                                 <Suspense fallback={<div>Загрузка...</div>}>
-                                    <InteractiveMap />
+                                    <InteractiveMap/>
                                 </Suspense>
-                            } />
+                            }/>
                         </Routes>
                     </Skeleton>
                 </CardBody>
