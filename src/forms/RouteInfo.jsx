@@ -89,18 +89,14 @@ export default function RouteInfo({
     };
 
     const handleRemoveFile = () => {
-        formik.setFieldValue('routeAudioTeaser', null);
+        formik.setFieldValue('routeAudioTeaser', '');
         formik.setTouched({...formik.touched, routeAudioTeaser: false});
-        setAudioFile(null);
+        setAudioFile('');
         setAudioURL('');
     };
-    const handleSubmit = () => {
-        formik.setTouched({...formik.touched});
-        formik.handleSubmit
 
-    }
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
             <div>
                 <Input
                     label="Название"
