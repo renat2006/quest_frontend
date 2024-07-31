@@ -6,7 +6,6 @@ import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.
 import RouteInfo from "../../forms/RouteInfo.jsx";
 import { RouteMedia } from "../../forms/RouteMedia.jsx";
 import { getLastPathPart } from "../../methods/methods.js";
-import { useRoute } from "../../providers/RouteProvider.jsx";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
 import { fetchQuestForEditing } from "../../api/api";
 import JSZip from 'jszip';
@@ -15,10 +14,15 @@ import { useAuth } from "../../providers/AuthProvider.jsx";
 const RouteAdmin = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { routeState, setRouteState } = useRoute();
     const [isLoaded, setIsLoaded] = useState(false);
     const [routeAudioTeaser, setRouteAudioTeaser] = useState(null);
     const [questId, setQuestId] = useState(null);
+    const [routeData, setRouteData] = useState({
+        routeName: '',
+        routeLanguage: '',
+        routeType: '',
+        routeDescription: '',
+    });
     const { accessToken } = useAuth();
 
     useEffect(() => {
@@ -31,14 +35,20 @@ const RouteAdmin = () => {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
 
-                    const audioFile = zip.file(`${questId}/audio_draft.mp3`);
+                    let audioFile = null;
+                    zip.forEach((relativePath, zipEntry) => {
+                        if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a)$/i.test(relativePath)) {
+                            audioFile = zipEntry;
+                        }
+                    });
+
                     if (audioFile) {
                         const audioBlob = await audioFile.async('blob');
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        setRouteAudioTeaser(new File([audioBlob], "audio_draft.mp3", { type: "audio/mpeg" }));
+                        const audioFileName = audioFile.name.split('/').pop();
+                        setRouteAudioTeaser(new File([audioBlob], audioFileName, { type: audioBlob.type }));
                     }
 
-                    setRouteState({
+                    setRouteData({
                         routeName: questData.title_draft,
                         routeLanguage: questData.lang_draft,
                         routeType: questData.type_draft,
@@ -56,14 +66,12 @@ const RouteAdmin = () => {
             const questId = location.state;
             setQuestId(questId);
             loadQuestData(questId);
-        } else if (!routeState.routeName) {
-            navigate(routes.admin.root.url);
         } else {
-            setIsLoaded(true);
+            navigate(routes.admin.root.url);
         }
-    }, [location.state, accessToken, routeState.routeName, navigate, setRouteState]);
+    }, [location.state, accessToken, navigate]);
 
-    const { routeName, routeType, routeLanguage, routeDescription } = routeState;
+    const { routeName, routeType, routeLanguage, routeDescription } = routeData;
 
     const routeInfoProps = {
         questId,

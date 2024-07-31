@@ -11,7 +11,7 @@ import AuthProvider from "./providers/AuthProvider.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 import RouteAdmin from "./pages/RouteAdmin/RouteAdmin.jsx";
 import routes from "./routes/routes.js";
-import {RouteProvider} from "./providers/RouteProvider.jsx";
+
 import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 
@@ -28,7 +28,7 @@ function App() {
     return (
         <NextUIProvider navigate={navigate}>
             <AuthProvider>
-                <RouteProvider>
+
                     <div><Toaster/></div>
                     <Header/>
                     <Routes>
@@ -50,7 +50,7 @@ function App() {
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>
                     {appBarPathList.includes(pathname) && <AppBar/>}
-                </RouteProvider>
+
             </AuthProvider>
         </NextUIProvider>
     );
