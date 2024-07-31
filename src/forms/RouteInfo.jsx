@@ -94,9 +94,13 @@ export default function RouteInfo({
         setAudioFile(null);
         setAudioURL('');
     };
+    const handleSubmit = () => {
+        formik.setTouched({...formik.touched});
+        formik.handleSubmit
 
+    }
     return (
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
                 <Input
                     label="Название"
