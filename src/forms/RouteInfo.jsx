@@ -22,7 +22,7 @@ export default function RouteInfo({
                                   }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
-    const [audioFile, setAudioFile] = useState(routeAudioTeaser || null);
+    const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
     const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
 
     const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function RouteInfo({
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
             routeDescription: routeDescription || '',
-            routeAudioTeaser: routeAudioTeaser || null,
+            routeAudioTeaser: routeAudioTeaser || '',
         },
         validationSchema: Yup.object({
             routeName: Yup.string()
@@ -45,7 +45,7 @@ export default function RouteInfo({
                 .required("Описание обязательно")
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
-                .required("Аудиофайл обязателен")
+
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
@@ -65,12 +65,12 @@ export default function RouteInfo({
 
                 await createQuest(questData, accessToken);
 
-                toast.success("Квест успешно обновлён", { id: toastId })
+                toast.success("Квест успешно обновлён", {id: toastId})
 
 
             } catch (error) {
                 console.error("Error creating quest:", error);
-                toast.error("Ошибка при обновлении квеста", { id: toastId });
+                toast.error("Ошибка при обновлении квеста", {id: toastId});
             }
         },
     });
