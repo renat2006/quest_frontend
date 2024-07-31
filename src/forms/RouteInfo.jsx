@@ -24,8 +24,17 @@ export default function RouteInfo({
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
     const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
+    console.log({
+        routeName,
+        routeType,
+        routeLanguage,
+        routeDescription,
+        routeAudioTeaser,
+        accessToken,
+        questId
 
-    const navigate = useNavigate();
+    })
+
 
     const formik = useFormik({
         initialValues: {
@@ -76,6 +85,8 @@ export default function RouteInfo({
     });
 
     useEffect(() => {
+        const navigate = useNavigate();
+        console.log(formik.values)
         formik.setFieldValue('routeType', selectedRouteType);
         formik.setFieldValue('routeLanguage', selectedRouteLanguage);
     }, [selectedRouteType, selectedRouteLanguage]);
