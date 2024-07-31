@@ -72,7 +72,7 @@ export default function RouteInfo({
                 await createQuest(questData, accessToken);
 
                 toast.success("Квест успешно обновлён", {id: toastId});
-                navigate('/some-next-route'); // Редирект после успешного сохранения
+
             } catch (error) {
                 console.error("Error creating quest:", error);
                 toast.error("Ошибка при обновлении квеста", {id: toastId});
