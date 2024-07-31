@@ -5,10 +5,9 @@ import {faDownload, faFileAudio, faTrashAlt} from "@fortawesome/free-solid-svg-i
 import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {createQuest, getUUID} from "../api/api.js";
+import {createQuest} from "../api/api.js";
 import {toast} from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
-
 
 export default function RouteInfo({
                                       routeName,
@@ -18,14 +17,24 @@ export default function RouteInfo({
                                       routeAudioTeaser,
                                       accessToken,
                                       questId
-
                                   }) {
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
-    const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
+    const [audioFile, setAudioFile] = useState(routeAudioTeaser || null);
     const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (audioFile) {
+            setAudioURL(URL.createObjectURL(audioFile));
+        }
+        return () => {
+            if (audioURL) {
+                URL.revokeObjectURL(audioURL);
+            }
+        };
+    }, [audioFile]);
 
     const formik = useFormik({
         initialValues: {
@@ -33,7 +42,7 @@ export default function RouteInfo({
             routeType: selectedRouteType,
             routeLanguage: selectedRouteLanguage,
             routeDescription: routeDescription || '',
-            routeAudioTeaser: routeAudioTeaser || '',
+            routeAudioTeaser: routeAudioTeaser || null,
         },
         validationSchema: Yup.object({
             routeName: Yup.string()
@@ -45,15 +54,12 @@ export default function RouteInfo({
                 .required("Описание обязательно")
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
-
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type))),
         }),
         onSubmit: async (values) => {
             const toastId = toast.loading("Сохранение...");
             try {
-
-
                 const questData = {
                     quest_id: questId,
                     title: values.routeName,
@@ -65,9 +71,8 @@ export default function RouteInfo({
 
                 await createQuest(questData, accessToken);
 
-                toast.success("Квест успешно обновлён", {id: toastId})
-
-
+                toast.success("Квест успешно обновлён", {id: toastId});
+                navigate('/some-next-route'); // Редирект после успешного сохранения
             } catch (error) {
                 console.error("Error creating quest:", error);
                 toast.error("Ошибка при обновлении квеста", {id: toastId});
@@ -83,16 +88,14 @@ export default function RouteInfo({
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
         formik.setFieldValue('routeAudioTeaser', file);
-        formik.setTouched({...formik.touched, routeAudioTeaser: true});
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: true });
         setAudioFile(file);
-        setAudioURL(URL.createObjectURL(file));
     };
 
     const handleRemoveFile = () => {
-        formik.setFieldValue('routeAudioTeaser', '');
-        formik.setTouched({...formik.touched, routeAudioTeaser: false});
-        setAudioFile('');
-        setAudioURL('');
+        formik.setFieldValue('routeAudioTeaser', null);
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: false });
+        setAudioFile(null);
     };
 
     return (
@@ -155,12 +158,12 @@ export default function RouteInfo({
             </div>
             <div className="flex flex-col gap-2">
                 {!audioFile ? (
-                    <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio}/>}>
+                    <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio} />}>
                         Выберите аудиофайл
                         <input
                             type="file"
                             accept="audio/*"
-                            style={{display: 'none'}}
+                            style={{ display: 'none' }}
                             onChange={handleFileChange}
                         />
                     </Button>
@@ -177,10 +180,10 @@ export default function RouteInfo({
                                 link.click();
                                 document.body.removeChild(link);
                             }}>
-                                <FontAwesomeIcon icon={faDownload}/> Скачать
+                                <FontAwesomeIcon icon={faDownload} /> Скачать
                             </Button>
                             <Button color="danger" onClick={handleRemoveFile}>
-                                <FontAwesomeIcon icon={faTrashAlt}/> Удалить
+                                <FontAwesomeIcon icon={faTrashAlt} /> Удалить
                             </Button>
                         </div>
                     </div>
