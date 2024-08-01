@@ -1,24 +1,23 @@
-import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import {Suspense, useEffect, useState} from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Suspense, useEffect, useState } from "react";
 import routes from "../../routes/routes.js";
-import {Card, CardBody, CardHeader, Divider, Image, Skeleton} from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider, Image, Skeleton } from "@nextui-org/react";
 
 import RouteInfo from "../../forms/RouteInfo.jsx";
-import {RouteMedia} from "../../forms/RouteMedia.jsx";
-import {getLastPathPart} from "../../methods/methods.js";
+import { RouteMedia } from "../../forms/RouteMedia.jsx";
+import { getLastPathPart } from "../../methods/methods.js";
 import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
-import {fetchQuestForEditing} from "../../api/api";
+import { fetchQuestForEditing } from "../../api/api";
 import JSZip from 'jszip';
-import {useAuth} from "../../providers/AuthProvider.jsx";
-import {QuestProvider, useQuest} from "../../providers/RouteProvider.jsx";
+import { useAuth } from "../../providers/AuthProvider.jsx";
+import { QuestProvider, useQuest } from "../../providers/RouteProvider.jsx";
 import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
-
 
 const RouteAdmin = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {accessToken} = useAuth();
-    const {questData, setQuestData} = useQuest();
+    const { accessToken } = useAuth();
+    const { questData, setQuestData } = useQuest();
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
@@ -39,7 +38,6 @@ const RouteAdmin = () => {
                         }
                     });
 
-
                     setQuestData({
                         questId,
                         routeName: questData.title_draft,
@@ -52,7 +50,7 @@ const RouteAdmin = () => {
                         const audioFileName = audioFile.name.split('/').pop();
                         setQuestData(prevState => ({
                             ...prevState,
-                            routeAudioTeaser: new File([audioBlob], audioFileName, {type: audioBlob.type})
+                            routeAudioTeaser: new File([audioBlob], audioFileName, { type: audioBlob.type })
                         }));
                     }
                 }
@@ -63,37 +61,36 @@ const RouteAdmin = () => {
             }
         };
 
-        if (location.state) {
-            const questId = location.state;
+        if (location.state || questData.questId) {
+            const questId = location.state || questData.questId;
             loadQuestData(questId);
         } else {
             navigate(routes.admin.root.url);
         }
     }, [location.state, accessToken, navigate, setQuestData]);
 
-
     return (
         <div className="flex flex-col items-center p-5 w-full">
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
                     <Skeleton isLoaded={isLoaded} className="w-3/5 h-10">
-                        <AdminBreadCrumbs/>
+                        <AdminBreadCrumbs />
                     </Skeleton>
                 </CardHeader>
-                <Divider/>
+                <Divider />
                 <CardBody>
                     <Skeleton isLoaded={isLoaded} className="w-full h-[400px]">
                         {isLoaded ? (
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
-                                       element={<RouteMedia/>}/>
+                                       element={<RouteMedia />} />
                                 <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
-                                       element={<RouteInfo/>}/>
+                                       element={<RouteInfo />} />
                                 <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
                                     <Suspense fallback={<div>Загрузка...</div>}>
-                                        <InteractiveMap/>
+                                        <InteractiveMap />
                                     </Suspense>
-                                }/>
+                                } />
                             </Routes>
                         ) : <Image
                             width={300}
@@ -110,7 +107,7 @@ const RouteAdmin = () => {
 
 const WrappedRouteAdmin = () => (
     <QuestProvider>
-        <RouteAdmin/>
+        <RouteAdmin />
     </QuestProvider>
 );
 
