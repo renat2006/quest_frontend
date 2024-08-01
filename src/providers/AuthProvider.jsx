@@ -1,12 +1,12 @@
-import {useContext, createContext, useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import { useContext, createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import routes from "../routes/routes.js";
-import {authenticate, refreshToken} from '../api/api.js';
+import { authenticate, refreshToken } from '../api/api.js';
 
 const AuthContext = createContext();
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? {
         "id": 857932226,
         "first_name": "Renat",
@@ -17,7 +17,7 @@ const AuthProvider = ({children}) => {
         "is_admin": true
     } : null);
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || "");
-    const [refreshToken, setRefreshToken] = useState(localStorage.getItem("refreshToken") || "");
+    const [refreshTokenValue, setRefreshTokenValue] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,35 +29,33 @@ const AuthProvider = ({children}) => {
     }, []);
 
     useEffect(() => {
-        if (refreshToken) {
+        if (refreshTokenValue) {
             const interval = setInterval(() => {
-                refreshAccessToken(refreshToken);
+                refreshAccessToken(refreshTokenValue);
+                console.log("updated")
             }, 10 * 60 * 1000);
 
             return () => clearInterval(interval);
         }
-    }, [refreshToken]);
+    }, [refreshTokenValue]);
 
     const loginAction = async (telegramData) => {
         try {
-
             const data = await authenticate(telegramData);
 
             if (data.status === "success") {
-                const dataUser = telegramData
+                const dataUser = telegramData;
                 setUser(dataUser);
                 setAccessToken(data.access_token);
-                setRefreshToken(data.refresh_token);
+                setRefreshTokenValue(data.refresh_token);
                 localStorage.setItem("accessToken", data.access_token);
                 localStorage.setItem("refreshToken", data.refresh_token);
                 localStorage.setItem("user", JSON.stringify(dataUser));
                 toast.success(`${dataUser.first_name}, Вы успешно вошли!`);
                 navigate(routes.profile.url);
+            } else {
+                toast.error("Не удалось водтвердить валидность данных");
             }
-           else {
-                toast.error("Не удалось водтвердить валидность данных")
-            }
-
         } catch (error) {
             console.error("Ошибка авторизации:", error);
             throw new Error("Ошибка аутентификации через Telegram");
@@ -67,8 +65,12 @@ const AuthProvider = ({children}) => {
     const refreshAccessToken = async (token) => {
         try {
             const data = await refreshToken(token);
-            setAccessToken(data.access_token);
-            localStorage.setItem("accessToken", data.access_token);
+            if (data && data.access_token) {
+                setAccessToken(data.access_token);
+                localStorage.setItem("accessToken", data.access_token);
+            } else {
+                throw new Error("Invalid response from refresh token endpoint");
+            }
         } catch (error) {
             console.error("Ошибка обновления токена:", error);
             logOut();
@@ -76,10 +78,10 @@ const AuthProvider = ({children}) => {
     };
 
     const logOut = () => {
-        toast.error(`${user.first_name}, Вы успешно вышли!`);
+        toast.error(`${user?.first_name || "Пользователь"}, Вы успешно вышли!`);
         setUser(null);
         setAccessToken("");
-        setRefreshToken("");
+        setRefreshTokenValue("");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
@@ -87,7 +89,7 @@ const AuthProvider = ({children}) => {
     };
 
     return (
-        <AuthContext.Provider value={{accessToken, user, loginAction, logOut}}>
+        <AuthContext.Provider value={{ accessToken, user, loginAction, logOut }}>
             {children}
         </AuthContext.Provider>
     );

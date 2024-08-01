@@ -18,7 +18,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
     if (body) {
         config.body = isFormData ? body : JSON.stringify(body);
-        console.log(config.body)
+        console.log(config.body);
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, config);
@@ -29,10 +29,10 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
     }
 
     const data = await response.json();
-    console.log(data)
+    console.log(data);
 
     if (!response.ok) {
-        throw new Error(data.message);
+        throw new Error(data.message || 'Unknown error occurred');
     }
 
     return data;
@@ -40,7 +40,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 
-export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {refresh_token: refreshToken});
+export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', { refresh_token: refreshToken });
 
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
@@ -52,16 +52,13 @@ export const createQuest = (questData, token) => {
         formData.append('audio', questData.audioFile);
     }
 
-
-    const {audioFile, ...updatedQuestData} = questData;
+    const { audioFile, ...updatedQuestData } = questData;
 
     console.log(updatedQuestData);
     formData.append('json', JSON.stringify(updatedQuestData));
 
-
     return apiRequest('/save_quest', 'PUT', formData, token, true);
 };
-
 
 export const getUUID = (token, idCount = 1) => apiRequest(`/uuid?cnt=${idCount}`, 'GET', null, token);
 
