@@ -33,7 +33,7 @@ const RouteAdmin = () => {
                     console.log(questData);
                     let audioFile = null;
                     zip.forEach((relativePath, zipEntry) => {
-                        if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a)$/i.test(relativePath)) {
+                        if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a|aac)$/i.test(relativePath)) {
                             audioFile = zipEntry;
                         }
                     });

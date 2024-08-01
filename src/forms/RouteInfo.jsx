@@ -8,13 +8,13 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { createQuest } from "../api/api.js";
 import { languageList, pathTypes } from "../data/types.js";
-import { useQuest } from "../providers/RouteProvider.jsx";
-import { useAuth } from "../providers/AuthProvider.jsx";
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import {useQuest} from "../providers/RouteProvider.jsx";
+import {useAuth} from "../providers/AuthProvider.jsx";
+
 
 const RouteInfo = () => {
     const { questData, setQuestData } = useQuest();
-    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId } = questData;
+    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser,  questId } = questData;
 
     const { accessToken } = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
@@ -48,32 +48,13 @@ const RouteInfo = () => {
         onSubmit: async (values) => {
             const toastId = toast.loading("Сохранение...");
             try {
-                let audioFileToSave = audioFile;
-
-
-                if (audioFile && audioFile.type !== 'audio/aac') {
-                    const ffmpeg = createFFmpeg({ log: true });
-                    await ffmpeg.load();
-
-                    ffmpeg.FS('writeFile', 'input', await fetchFile(audioFile));
-
-                    await ffmpeg.run('-i', 'input', 'output.aac');
-
-                    const data = ffmpeg.FS('readFile', 'output.aac');
-                    audioFileToSave = new File([data.buffer], 'output.aac', { type: 'audio/aac' });
-
-
-                    setAudioFile(audioFileToSave);
-                    setAudioURL(URL.createObjectURL(audioFileToSave));
-                }
-
                 const questData = {
                     quest_id: questId,
                     title: values.routeName,
                     description: values.routeDescription,
                     lang: values.routeLanguage,
                     type: values.routeType,
-                    audioFile: audioFileToSave
+                    audioFile: values.routeAudioTeaser
                 };
 
                 await createQuest(questData, accessToken);
@@ -82,7 +63,7 @@ const RouteInfo = () => {
 
                 setQuestData({
                     ...questData,
-                    routeAudioTeaser: audioFileToSave,
+                    routeAudioTeaser: audioFile,
                 });
 
             } catch (error) {
