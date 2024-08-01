@@ -40,7 +40,7 @@ const RouteInfo = () => {
             routeType: Yup.string().required("Тип маршрута обязателен"),
             routeLanguage: Yup.string().required("Язык маршрута обязателен"),
             routeDescription: Yup.string()
-                .required("Описание обязательно")
+
                 .max(200, "Описание не может превышать 200 символов"),
             routeAudioTeaser: Yup.mixed()
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
