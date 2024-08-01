@@ -36,7 +36,7 @@ export function RouteMedia() {
         }),
         onSubmit: (values) => handleSubmit({
             ...questData,
-            promoImageFile
+            promoImage: promoImageFile
         }, questData.questId, accessToken, setQuestData, questData.routeAudioTeaser),
     });
 
