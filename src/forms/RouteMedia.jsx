@@ -14,11 +14,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import {handleSubmit} from "../methods/methods.js";
+import {useQuest} from "../providers/RouteProvider.jsx";
+import {useAuth} from "../providers/AuthProvider.jsx";
 
 export function RouteMedia() {
     const [promoImage, setPromoImage] = useState(null);
     const [fileError, setFileError] = useState("");
-
+    const {questData, setQuestData} = useQuest();
+    const {accessToken} = useAuth();
     const formik = useFormik({
         initialValues: {
             promoImage: null,
@@ -28,9 +32,7 @@ export function RouteMedia() {
                 .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
         }),
-        onSubmit: values => {
-            console.log(values);
-        },
+        onSubmit: (values) => handleSubmit(questData, questData.questId, accessToken, setQuestData,questData.routeAudioTeaser),
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
