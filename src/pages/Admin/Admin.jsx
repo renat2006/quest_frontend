@@ -250,7 +250,9 @@ const Admin = () => {
             onOpenChange(false);
 
 
-            navigate(`${routes.admin.routeAdminInfo.url.replace(":questId", uuid[0])}`);
+            navigate(routes.admin.routeAdminInfo.url, {
+                state: uuid[0],
+            });
         } catch (error) {
             console.error("Error creating quest:", error);
             toast.error("Ошибка при создании квеста");

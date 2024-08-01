@@ -23,7 +23,7 @@ const RouteInfo = () => {
     const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
 
     const navigate = useNavigate();
-console.log(questData)
+
     const formik = useFormik({
         initialValues: {
             routeName: routeName || '',
