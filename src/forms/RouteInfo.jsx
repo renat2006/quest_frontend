@@ -1,23 +1,22 @@
-import React, {useEffect, useState} from "react";
-import {useFormik} from "formik";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {Autocomplete, AutocompleteItem, Button, Input, Textarea} from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload, faFileAudio, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {toast} from "react-hot-toast";
-import {useNavigate} from "react-router-dom";
-import {createQuest} from "../api/api.js";
-import {languageList, pathTypes} from "../data/types.js";
+import { Autocomplete, AutocompleteItem, Button, Input, Textarea } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faFileAudio, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { createQuest } from "../api/api.js";
+import { languageList, pathTypes } from "../data/types.js";
 import {useQuest} from "../providers/RouteProvider.jsx";
 import {useAuth} from "../providers/AuthProvider.jsx";
-import {handleSubmit} from "../methods/methods.js";
 
 
 const RouteInfo = () => {
-    const {questData, setQuestData} = useQuest();
-    const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId} = questData;
+    const { questData, setQuestData } = useQuest();
+    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser,  questId } = questData;
 
-    const {accessToken} = useAuth();
+    const { accessToken } = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
@@ -46,7 +45,32 @@ const RouteInfo = () => {
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && (value.type ? ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type) : true))),
         }),
-        onSubmit: (values) => handleSubmit(values, questId, accessToken, setQuestData, audioFile),
+        onSubmit: async (values) => {
+            const toastId = toast.loading("Сохранение...");
+            try {
+                const questData = {
+                    quest_id: questId,
+                    title: values.routeName,
+                    description: values.routeDescription,
+                    lang: values.routeLanguage,
+                    type: values.routeType,
+                    audioFile: values.routeAudioTeaser
+                };
+
+                await createQuest(questData, accessToken);
+
+                toast.success("Квест успешно обновлён", { id: toastId });
+
+                setQuestData({
+                    ...questData,
+                    routeAudioTeaser: audioFile,
+                });
+
+            } catch (error) {
+                console.error("Error creating quest:", error);
+                toast.error("Ошибка при обновлении квеста", { id: toastId });
+            }
+        },
     });
 
     useEffect(() => {
@@ -57,14 +81,14 @@ const RouteInfo = () => {
     const handleFileChange = (event) => {
         const file = event.currentTarget.files[0];
         formik.setFieldValue('routeAudioTeaser', file);
-        formik.setTouched({...formik.touched, routeAudioTeaser: true});
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: true });
         setAudioFile(file);
         setAudioURL(URL.createObjectURL(file));
     };
 
     const handleRemoveFile = () => {
         formik.setFieldValue('routeAudioTeaser', '');
-        formik.setTouched({...formik.touched, routeAudioTeaser: false});
+        formik.setTouched({ ...formik.touched, routeAudioTeaser: false });
         setAudioFile('');
         setAudioURL('');
     };
@@ -130,12 +154,12 @@ const RouteInfo = () => {
             <div className="flex flex-col gap-2">
                 {!audioFile ? (
                     <div>
-                        <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio}/>}>
+                        <Button as="label" variant="flat" startContent={<FontAwesomeIcon icon={faFileAudio} />}>
                             Выберите аудиофайл
                             <input
                                 type="file"
                                 accept="audio/*"
-                                style={{display: 'none'}}
+                                style={{ display: 'none' }}
                                 onChange={handleFileChange}
                             />
                         </Button>
@@ -156,10 +180,10 @@ const RouteInfo = () => {
                                 link.click();
                                 document.body.removeChild(link);
                             }}>
-                                <FontAwesomeIcon icon={faDownload}/> Скачать
+                                <FontAwesomeIcon icon={faDownload} /> Скачать
                             </Button>
                             <Button color="danger" onClick={handleRemoveFile}>
-                                <FontAwesomeIcon icon={faTrashAlt}/> Удалить
+                                <FontAwesomeIcon icon={faTrashAlt} /> Удалить
                             </Button>
                         </div>
                     </div>
