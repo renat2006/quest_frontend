@@ -19,20 +19,20 @@ import {useQuest} from "../providers/RouteProvider.jsx";
 import {useAuth} from "../providers/AuthProvider.jsx";
 
 export function RouteMedia() {
-    const [promoImage, setPromoImage] = useState(null);
+    const [promoImage, setPromoImage] = useState("");
     const [fileError, setFileError] = useState("");
     const {questData, setQuestData} = useQuest();
     const {accessToken} = useAuth();
     const formik = useFormik({
         initialValues: {
-            promoImage: null,
+            promoImage: "",
         },
         validationSchema: Yup.object({
             promoImage: Yup.mixed()
                 .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
         }),
-        onSubmit: (values) => handleSubmit(questData, questData.questId, accessToken, setQuestData,questData.routeAudioTeaser),
+        onSubmit: (values) => handleSubmit({...questData, promoImage}, questData.questId, accessToken, setQuestData,questData.routeAudioTeaser),
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
@@ -59,8 +59,8 @@ export function RouteMedia() {
     }, [formik]);
 
     const handleRemoveFile = () => {
-        setPromoImage(null);
-        formik.setFieldValue('promoImage', null);
+        setPromoImage("");
+        formik.setFieldValue('promoImage', "");
         setFileError("");
     };
 

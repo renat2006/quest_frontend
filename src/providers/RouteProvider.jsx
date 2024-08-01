@@ -9,23 +9,18 @@ export const QuestProvider = ({ children }) => {
         routeType: '',
         routeDescription: '',
         routeAudioTeaser: '',
-        questId: '',
+        questId: localStorage.getItem('questId') || '',
         promoImage: '',
     });
 
-    const [userId, setUserId] = useState(() => {
-        const savedUserId = localStorage.getItem('userId');
-        return savedUserId || '';
-    });
-
     useEffect(() => {
-        if (userId) {
-            localStorage.setItem('userId', userId);
+        if (questData.questId) {
+            localStorage.setItem('questId', questData.questId);
         }
-    }, [userId]);
+    }, [questData.questId]);
 
     return (
-        <QuestContext.Provider value={{ questData, setQuestData, userId, setUserId }}>
+        <QuestContext.Provider value={{ questData, setQuestData }}>
             {children}
         </QuestContext.Provider>
     );

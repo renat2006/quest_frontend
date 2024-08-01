@@ -18,7 +18,8 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             description: values.routeDescription,
             lang: values.routeLanguage,
             type: values.routeType,
-            audioFile: values.routeAudioTeaser
+            audioFile: values.routeAudioTeaser,
+            promoImage: values.promoImage
         };
 
         await createQuest(questData, accessToken);

@@ -51,6 +51,9 @@ export const createQuest = (questData, token) => {
     if (questData.audioFile) {
         formData.append('audio', questData.audioFile);
     }
+    if (questData.promoImage) {
+        formData.append('promo', questData.promoImage);
+    }
 
     const { audioFile, ...updatedQuestData } = questData;
 
