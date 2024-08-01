@@ -1,4 +1,4 @@
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     BreadcrumbItem,
     Breadcrumbs,
@@ -9,8 +9,8 @@ import {
     DropdownTrigger
 } from "@nextui-org/react";
 import routes from "../../routes/routes.js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronDown, faShippingFast} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faShippingFast } from "@fortawesome/free-solid-svg-icons";
 
 const ChevronDownIcon = (props) => (
     <svg
@@ -27,7 +27,7 @@ const ChevronDownIcon = (props) => (
         width="1em"
         {...props}
     >
-        <path d="m6 9 6 6 6-6"/>
+        <path d="m6 9 6 6 6-6" />
     </svg>
 );
 
@@ -42,18 +42,18 @@ export default function AdminBreadCrumbs() {
             let routeName = "Не найдено";
 
             Object.keys(routes).forEach((key) => {
-                if (routes[key].url === url) {
+                if (routes[key].url.replace(":questId", pathnames[2]) === url) {
                     routeName = routes[key].name;
                 } else if (typeof routes[key] === "object") {
                     Object.keys(routes[key]).forEach((subKey) => {
-                        if (routes[key][subKey].url === url) {
+                        if (routes[key][subKey].url.replace(":questId", pathnames[2]) === url) {
                             routeName = routes[key][subKey].name;
                         }
                     });
                 }
             });
 
-            return {name: routeName, url};
+            return { name: routeName, url };
         });
 
         return breadcrumbs;
@@ -66,35 +66,35 @@ export default function AdminBreadCrumbs() {
     };
 
     return (
-        <Breadcrumbs underline="hover" classNames={{list: "bg-[#006FEE] shadow-small "}}
-                     itemClasses={{item: "text-white/60 data-[current=true]:text-white", separator: "text-white/40"}}
+        <Breadcrumbs underline="hover" classNames={{ list: "bg-[#006FEE] shadow-small " }}
+                     itemClasses={{ item: "text-white/60 data-[current=true]:text-white", separator: "text-white/40" }}
                      variant="solid">
             {breadcrumbs.map((breadcrumb, index) => {
                 if (index === breadcrumbs.length - 1) {
                     return (
-                        <BreadcrumbItem classNames={{item: "px-0"}} key={index}>
+                        <BreadcrumbItem classNames={{ item: "px-0" }} key={index}>
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button className="h-6 pr-2 text-small text-white/80" radius="full" size="sm"
-                                            endContent={<ChevronDownIcon className="text-white"/>}
+                                            endContent={<ChevronDownIcon className="text-white" />}
                                             variant="light">
                                         {breadcrumb.name}
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Routes">
                                     <DropdownItem key="info"
-                                                  onClick={() => handleNavigate(routes.admin.routeAdminInfo.url)}
-                                                  isDisabled={location.pathname === routes.admin.routeAdminInfo.url}>
+                                                  onClick={() => handleNavigate(routes.admin.routeAdminInfo.url.replace(":questId", pathnames[2]))}
+                                                  isDisabled={location.pathname === routes.admin.routeAdminInfo.url.replace(":questId", pathnames[2])}>
                                         {routes.admin.routeAdminInfo.name}
                                     </DropdownItem>
                                     <DropdownItem key="media"
-                                                  onClick={() => handleNavigate(routes.admin.routeAdminMedia.url)}
-                                                  isDisabled={location.pathname === routes.admin.routeAdminMedia.url}>
+                                                  onClick={() => handleNavigate(routes.admin.routeAdminMedia.url.replace(":questId", pathnames[2]))}
+                                                  isDisabled={location.pathname === routes.admin.routeAdminMedia.url.replace(":questId", pathnames[2])}>
                                         {routes.admin.routeAdminMedia.name}
                                     </DropdownItem>
                                     <DropdownItem key="map"
-                                                  onClick={() => handleNavigate(routes.admin.routeAdminMap.url)}
-                                                  isDisabled={location.pathname === routes.admin.routeAdminMap.url}>
+                                                  onClick={() => handleNavigate(routes.admin.routeAdminMap.url.replace(":questId", pathnames[2]))}
+                                                  isDisabled={location.pathname === routes.admin.routeAdminMap.url.replace(":questId", pathnames[2])}>
                                         {routes.admin.routeAdminMap.name}
                                     </DropdownItem>
                                 </DropdownMenu>

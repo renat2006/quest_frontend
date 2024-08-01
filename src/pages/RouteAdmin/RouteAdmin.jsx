@@ -1,7 +1,8 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react";
 import routes from "../../routes/routes.js";
 import { Card, CardBody, CardHeader, Divider, Image, Skeleton } from "@nextui-org/react";
+
 import RouteInfo from "../../forms/RouteInfo.jsx";
 import { RouteMedia } from "../../forms/RouteMedia.jsx";
 import { getLastPathPart } from "../../methods/methods.js";
@@ -9,13 +10,14 @@ import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
 import { fetchQuestForEditing } from "../../api/api";
 import JSZip from 'jszip';
 import { useAuth } from "../../providers/AuthProvider.jsx";
-import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
 import {QuestProvider, useQuest} from "../../providers/RouteProvider.jsx";
+import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
 
 
 const RouteAdmin = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { questId: questIdParam } = useParams();
     const { accessToken } = useAuth();
     const { questData, setQuestData } = useQuest();
     const [isLoaded, setIsLoaded] = useState(false);
@@ -61,13 +63,13 @@ const RouteAdmin = () => {
             }
         };
 
-        const questId = location.pathname.split('/').pop();
+        const questId = questIdParam || location.state.questId;
         if (questId && (!questData.questId || questData.questId !== questId)) {
             loadQuestData(questId);
         } else {
             setIsLoaded(true);
         }
-    }, [location.pathname, accessToken, setQuestData, questData.questId]);
+    }, [questIdParam, location.state, accessToken, setQuestData, questData.questId]);
 
     return (
         <div className="flex flex-col items-center p-5 w-full">
