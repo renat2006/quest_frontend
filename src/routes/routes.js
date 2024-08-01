@@ -5,9 +5,9 @@ const routes = {
     admin: {
         root: {url: '/admin', name: "Админ"},
         routeAdmin: {url: '/admin/route/:questId', name: "Маршрут"},
-        routeAdminInfo: {url: '/admin/route/:questId/media', name: "Инфо"},
+        routeAdminInfo: {url: '/admin/route/:questId/info', name: "Инфо"},
         routeAdminMedia: {url: '/admin/route/:questId/media', name: "Медиа"},
-        routeAdminMap: {url: '/admin/route/:questId/media', name: "Карта"}
+        routeAdminMap: {url: '/admin/route/:questId/map', name: "Карта"}
     },
     map: {url: '/map', name: "Карта"},
 
