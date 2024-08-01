@@ -8,8 +8,8 @@ export const QuestProvider = ({ children }) => {
         routeLanguage: '',
         routeType: '',
         routeDescription: '',
-        routeAudioTeaser: null,
-        questId: null,
+        routeAudioTeaser: '',
+        questId: '',
     });
 
     return (
