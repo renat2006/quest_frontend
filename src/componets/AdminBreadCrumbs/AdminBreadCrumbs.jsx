@@ -1,5 +1,4 @@
-import {useLocation, useNavigate} from "react-router-dom";
-import {useRoute} from "../../providers/RouteProvider.jsx";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     BreadcrumbItem,
     Breadcrumbs,
@@ -10,8 +9,8 @@ import {
     DropdownTrigger
 } from "@nextui-org/react";
 import routes from "../../routes/routes.js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronDown, faShippingFast} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faShippingFast } from "@fortawesome/free-solid-svg-icons";
 
 const ChevronDownIcon = (props) => (
     <svg
@@ -31,10 +30,10 @@ const ChevronDownIcon = (props) => (
         <path d="m6 9 6 6 6-6"/>
     </svg>
 );
+
 export default function AdminBreadCrumbs() {
     const location = useLocation();
     const navigate = useNavigate();
-    const {routeState} = useRoute();
 
     const getBreadcrumbs = () => {
         const pathnames = location.pathname.split("/").filter(x => x);
@@ -54,7 +53,7 @@ export default function AdminBreadCrumbs() {
                 }
             });
 
-            return {name: routeName, url};
+            return { name: routeName, url };
         });
 
         return breadcrumbs;
@@ -63,17 +62,17 @@ export default function AdminBreadCrumbs() {
     const breadcrumbs = getBreadcrumbs();
 
     const handleNavigate = (url) => {
-        navigate(url, {state: routeState});
+        navigate(url);
     };
 
     return (
-        <Breadcrumbs underline="hover" classNames={{list: "bg-[#006FEE] shadow-small "}}
-                     itemClasses={{item: "text-white/60 data-[current=true]:text-white", separator: "text-white/40"}}
+        <Breadcrumbs underline="hover" classNames={{ list: "bg-[#006FEE] shadow-small " }}
+                     itemClasses={{ item: "text-white/60 data-[current=true]:text-white", separator: "text-white/40" }}
                      variant="solid">
             {breadcrumbs.map((breadcrumb, index) => {
                 if (index === breadcrumbs.length - 1) {
                     return (
-                        <BreadcrumbItem classNames={{item: "px-0"}} key={index}>
+                        <BreadcrumbItem classNames={{ item: "px-0" }} key={index}>
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button className="h-6 pr-2 text-small text-white/80" radius="full" size="sm"
