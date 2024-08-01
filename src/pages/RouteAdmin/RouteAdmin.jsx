@@ -27,13 +27,6 @@ const RouteAdmin = () => {
                 const zipBlob = await fetchQuestForEditing(questId, accessToken);
                 const zip = await JSZip.loadAsync(zipBlob);
                 const file = zip.file(`${questId}/data.json`);
-                const url = URL.createObjectURL(zipBlob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${questData.questId}.zip`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
