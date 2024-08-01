@@ -32,9 +32,13 @@ const RouteAdmin = () => {
                     const questData = JSON.parse(content);
                     console.log(questData);
                     let audioFile = null;
+                    let imageFile = null
                     zip.forEach((relativePath, zipEntry) => {
                         if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a|aac)$/i.test(relativePath)) {
                             audioFile = zipEntry;
+                        }
+                        if (relativePath === `${questId}/image_draft.webp`) {
+                            imageFile = zipEntry;
                         }
                     });
 
@@ -51,6 +55,14 @@ const RouteAdmin = () => {
                         setQuestData(prevState => ({
                             ...prevState,
                             routeAudioTeaser: new File([audioBlob], audioFileName, { type: audioBlob.type })
+                        }));
+                    }
+                    if (imageFile) {
+                        const imageBlob = await imageFile.async('blob');
+                        const imageFileName = imageFile.name.split('/').pop();
+                        setQuestData(prevState => ({
+                            ...prevState,
+                            promoImage: new File([imageBlob], imageFileName, { type: imageBlob.type })
                         }));
                     }
                 }
