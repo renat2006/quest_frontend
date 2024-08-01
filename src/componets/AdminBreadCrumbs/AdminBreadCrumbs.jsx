@@ -1,4 +1,5 @@
 import {useLocation, useNavigate} from "react-router-dom";
+import {useRoute} from "../../providers/RouteProvider.jsx";
 import {
     BreadcrumbItem,
     Breadcrumbs,
@@ -30,10 +31,10 @@ const ChevronDownIcon = (props) => (
         <path d="m6 9 6 6 6-6"/>
     </svg>
 );
-
 export default function AdminBreadCrumbs() {
     const location = useLocation();
     const navigate = useNavigate();
+    const {routeState} = useRoute();
 
     const getBreadcrumbs = () => {
         const pathnames = location.pathname.split("/").filter(x => x);
@@ -62,7 +63,7 @@ export default function AdminBreadCrumbs() {
     const breadcrumbs = getBreadcrumbs();
 
     const handleNavigate = (url) => {
-        navigate(url);
+        navigate(url, {state: routeState});
     };
 
     return (
@@ -76,7 +77,7 @@ export default function AdminBreadCrumbs() {
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Button className="h-6 pr-2 text-small text-white/80" radius="full" size="sm"
-                                            endContent={<ChevronDownIcon className="text-white"/>}
+                                            endContent={<ChevronDownIcon className="text-white" />}
                                             variant="light">
                                         {breadcrumb.name}
                                     </Button>
