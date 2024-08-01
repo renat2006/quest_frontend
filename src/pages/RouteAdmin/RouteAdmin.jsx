@@ -71,17 +71,9 @@ const RouteAdmin = () => {
         }
     }, [location.state, accessToken, navigate, setQuestData]);
 
-    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId } = questData;
 
-    const routeInfoProps = {
-        questId,
-        routeName,
-        routeLanguage,
-        routeType,
-        routeDescription,
-        routeAudioTeaser,
-        accessToken,
-    };
+
+
 
     return (
         <div className="flex flex-col items-center p-5 w-full">

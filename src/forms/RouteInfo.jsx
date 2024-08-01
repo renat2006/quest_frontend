@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { createQuest } from "../api/api.js";
 import { languageList, pathTypes } from "../data/types.js";
 import {useQuest} from "../providers/RouteProvider.jsx";
+import {useAuth} from "../providers/AuthProvider.jsx";
 
 
 const RouteInfo = () => {
     const { questData, setQuestData } = useQuest();
-    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, accessToken, questId } = questData;
-
+    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser,  questId } = questData;
+    const { accessToken } = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
