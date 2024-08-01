@@ -9,8 +9,9 @@ import InteractiveMap from "../InteractiveMap/InteractiveMap.jsx";
 import { fetchQuestForEditing } from "../../api/api";
 import JSZip from 'jszip';
 import { useAuth } from "../../providers/AuthProvider.jsx";
-import { QuestProvider, useQuest } from "../../providers/QuestProvider.jsx";
-import AdminBreadCrumbs from "../../components/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
+import AdminBreadCrumbs from "../../componets/AdminBreadCrumbs/AdminBreadCrumbs.jsx";
+import {QuestProvider, useQuest} from "../../providers/RouteProvider.jsx";
+
 
 const RouteAdmin = () => {
     const location = useLocation();
