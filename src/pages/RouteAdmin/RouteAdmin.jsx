@@ -57,6 +57,7 @@ const RouteAdmin = () => {
                             routeAudioTeaser: new File([audioBlob], audioFileName, {type: audioBlob.type})
                         }));
                     }
+                    console.log(imageFile, "edwed")
                     if (imageFile) {
                         const imageBlob = await imageFile.async('blob');
                         const imageFileName = imageFile.name.split('/').pop();
