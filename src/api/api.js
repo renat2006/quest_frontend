@@ -45,6 +45,7 @@ export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {re
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
 export const createQuest = (questData, token) => {
+    console.log(questData)
     const formData = new FormData();
 
     console.log(questData);
