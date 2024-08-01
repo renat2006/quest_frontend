@@ -72,7 +72,7 @@ export function RouteMedia() {
 
     return (
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-            <Card shadow="none">
+            <Card shadow="none" className="w-full">
                 <CardBody>
                     <div {...getRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
                         <input {...getInputProps()} />

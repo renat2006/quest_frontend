@@ -37,7 +37,7 @@ const RouteAdmin = () => {
                         if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a|aac)$/i.test(relativePath)) {
                             audioFile = zipEntry;
                         }
-                        if (relativePath === `${questId}/image_draft.webp`) {
+                        if  (relativePath.startsWith(`${questId}/promo_draft`) && /\.(webp|jpg|png|gif|jpeg)$/i.test(relativePath)) {
                             imageFile = zipEntry;
                         }
                     });
