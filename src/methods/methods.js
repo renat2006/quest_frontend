@@ -8,31 +8,31 @@ export const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-// export async function saveFormikData(values, accessToken) {
-//     const toastId = toast.loading("Сохранение...");
-//     try {
-//         const questData = {
-//             quest_id: values.questId,
-//             title: values.routeName,
-//             description: values.routeDescription,
-//             lang: values.routeLanguage,
-//             type: values.routeType,
-//             audioFile: values.routeAudioTeaser
-//         };
-//
-//         await createQuest(questData, accessToken);
-//
-//         toast.success("Квест успешно обновлён", {id: toastId});
-//
-//         setQuestData({
-//             ...questData,
-//             routeAudioTeaser: audioFile,
-//         });
-//
-//     } catch (error) {
-//         console.error("Error creating quest:", error);
-//         toast.error("Ошибка при обновлении квеста", {id: toastId});
-//     }
-// }
-//
-// ,
+
+export const handleSubmit = async (values, questId, accessToken, setQuestData, audioFile) => {
+    const toastId = toast.loading("Сохранение...");
+    try {
+        const questData = {
+            quest_id: questId,
+            title: values.routeName,
+            description: values.routeDescription,
+            lang: values.routeLanguage,
+            type: values.routeType,
+            audioFile: values.routeAudioTeaser
+        };
+
+        await createQuest(questData, accessToken);
+
+        toast.success("Квест успешно обновлён", {id: toastId});
+
+        setQuestData({
+            ...questData,
+            routeAudioTeaser: audioFile,
+        });
+
+
+    } catch (error) {
+        console.error("Error creating quest:", error);
+        toast.error("Ошибка при обновлении квеста", {id: toastId});
+    }
+};
