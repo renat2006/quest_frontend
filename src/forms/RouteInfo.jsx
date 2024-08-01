@@ -15,7 +15,7 @@ import {useAuth} from "../providers/AuthProvider.jsx";
 const RouteInfo = () => {
     const { questData, setQuestData } = useQuest();
     const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser,  questId } = questData;
-    console.log(questData)
+
     const { accessToken } = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
