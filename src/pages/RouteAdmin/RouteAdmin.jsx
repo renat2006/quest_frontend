@@ -88,14 +88,14 @@ const RouteAdmin = () => {
         <div className="flex flex-col items-center p-5 w-full">
             <Card className="w-full max-w-[1000px]">
                 <CardHeader className="flex gap-3">
-                    <Skeleton isLoaded={isLoaded} className="w-3/5">
-                        {isLoaded ? <AdminBreadCrumbs/> : <div className="w-full h-10"></div>}
+                    <Skeleton isLoaded={isLoaded} className="w-3/5 h-10">
+                        {isLoaded && <AdminBreadCrumbs/>}
                     </Skeleton>
                 </CardHeader>
                 <Divider/>
                 <CardBody>
-                    <Skeleton isLoaded={isLoaded} className="w-full">
-                        {isLoaded ? (
+                    <Skeleton isLoaded={isLoaded} className="w-full h-[400px]">
+                        {isLoaded && (
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
                                        element={<RouteMedia/>}/>
@@ -107,7 +107,7 @@ const RouteAdmin = () => {
                                     </Suspense>
                                 }/>
                             </Routes>
-                        ) : <div className="w-full h-[300px]"></div>}
+                        )}
                     </Skeleton>
                 </CardBody>
             </Card>
