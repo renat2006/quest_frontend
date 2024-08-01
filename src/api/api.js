@@ -40,7 +40,7 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 
-export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', { refresh_token: refreshToken });
+export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {refresh_token: refreshToken});
 
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
@@ -55,7 +55,7 @@ export const createQuest = (questData, token) => {
         formData.append('promo', questData.promoImage);
     }
 
-    const { audioFile, ...updatedQuestData } = questData;
+    const {audioFile, promoImage, ...updatedQuestData} = questData;
 
     console.log(updatedQuestData);
     formData.append('json', JSON.stringify(updatedQuestData));
