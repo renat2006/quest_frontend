@@ -30,6 +30,7 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             ...questData,
             routeAudioTeaser: audioFile,
         });
+        console.log("123", questData)
 
 
     } catch (error) {
