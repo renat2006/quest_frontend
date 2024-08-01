@@ -27,7 +27,7 @@ const RouteAdmin = () => {
 
     useEffect(() => {
         const loadQuestData = async (questId) => {
-            console.log(questId);
+            console.log(questId)
             try {
                 const zipBlob = await fetchQuestForEditing(questId, accessToken);
                 const zip = await JSZip.loadAsync(zipBlob);
@@ -35,7 +35,7 @@ const RouteAdmin = () => {
                 if (file) {
                     const content = await file.async('string');
                     const questData = JSON.parse(content);
-                    console.log(questData);
+                    console.log(questData)
                     let audioFile = null;
                     zip.forEach((relativePath, zipEntry) => {
                         if (relativePath.startsWith(`${questId}/audio_draft`) && /\.(mp3|wav|ogg|m4a)$/i.test(relativePath)) {
@@ -87,12 +87,14 @@ const RouteAdmin = () => {
     return (
         <div className="flex flex-col items-center p-5 w-full">
             <Card className="w-full max-w-[1000px]">
-                <Skeleton isLoaded={isLoaded}>
-                    <CardHeader className="flex gap-3">
-                        {isLoaded ? <AdminBreadCrumbs /> : <Skeleton className="w-3/5 h-10" />}
-                    </CardHeader>
-                    <Divider />
-                    <CardBody>
+                <CardHeader className="flex gap-3">
+                    <Skeleton isLoaded={isLoaded} className="w-3/5 h-10">
+                        {isLoaded ? <AdminBreadCrumbs /> : null}
+                    </Skeleton>
+                </CardHeader>
+                <Divider />
+                <CardBody>
+                    <Skeleton isLoaded={isLoaded} className="w-full h-[400px]">
                         {isLoaded ? (
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
@@ -105,11 +107,9 @@ const RouteAdmin = () => {
                                     </Suspense>
                                 } />
                             </Routes>
-                        ) : (
-                            <Skeleton className="w-full h-[400px]" />
-                        )}
-                    </CardBody>
-                </Skeleton>
+                        ) : null}
+                    </Skeleton>
+                </CardBody>
             </Card>
         </div>
     );
