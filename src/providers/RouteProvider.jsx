@@ -17,7 +17,7 @@ export const QuestProvider = ({ children }) => {
         if (questData.questId) {
             localStorage.setItem('questId', questData.questId);
         }
-    }, []);
+    }, [questData.questId]);
 
     return (
         <QuestContext.Provider value={{ questData, setQuestData }}>

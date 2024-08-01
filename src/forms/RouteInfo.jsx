@@ -15,7 +15,7 @@ import {handleSubmit} from "../methods/methods.js";
 
 const RouteInfo = () => {
     const {questData, setQuestData} = useQuest();
-    const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId} = questData;
+    const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId, promoImage} = questData;
 
     const {accessToken} = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
@@ -46,7 +46,7 @@ const RouteInfo = () => {
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && (value.type ? ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type) : true))),
         }),
-        onSubmit: (values) => handleSubmit(values, questId, accessToken, setQuestData, audioFile),
+        onSubmit: (values) => handleSubmit({...values, promoImage}, questId, accessToken, setQuestData, audioFile),
     });
 
     useEffect(() => {
