@@ -10,6 +10,7 @@ export const QuestProvider = ({ children }) => {
         routeDescription: '',
         routeAudioTeaser: '',
         questId: '',
+        promoImage: '',
     });
 
     const [userId, setUserId] = useState(() => {

@@ -16,23 +16,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 export function RouteMedia() {
-    const [files, setFiles] = useState([]);
-    const [fileErrors, setFileErrors] = useState([]);
+    const [promoImage, setPromoImage] = useState(null);
+    const [fileError, setFileError] = useState("");
 
     const formik = useFormik({
         initialValues: {
-            mediaFiles: [],
+            promoImage: null,
         },
         validationSchema: Yup.object({
-            mediaFiles: Yup.array()
-                .min(1, 'Необходимо добавить хотя бы один медиа-файл')
-                .of(
-                    Yup.mixed()
-                        .test('fileSize', 'Размер файла не должен превышать 50 МБ',
-                            value => !value || (value && value.size <= 50 * 1024 * 1024))
-                        .test('fileType', 'Файл должен быть изображением или видео',
-                            value => !value || (value && ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'].includes(value.type))),
-                ),
+            promoImage: Yup.mixed()
+                .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
+                .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
         }),
         onSubmit: values => {
             console.log(values);
@@ -40,46 +34,37 @@ export function RouteMedia() {
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
-        const validFiles = acceptedFiles.filter(file =>
-            ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm'].includes(file.type) &&
-            file.size <= 50 * 1024 * 1024
-        );
-
-        const updatedFiles = [...files, ...validFiles];
-        setFiles(updatedFiles);
-        formik.setFieldValue('mediaFiles', updatedFiles);
+        if (acceptedFiles.length > 0) {
+            const file = acceptedFiles[0];
+            setPromoImage(file);
+            formik.setFieldValue('promoImage', file);
+            setFileError("");
+        }
 
         if (fileRejections.length > 0) {
-            const errors = fileRejections.map(rej => {
-                const errorMessage = rej.errors.map(e => {
-                    if (e.code === 'file-too-large') {
-                        return 'Файл превышает допустимый размер 50 МБ';
-                    } else if (e.code === 'file-invalid-type') {
-                        return 'Неверный тип файла. Поддерживаются только изображения и видео';
-                    }
-                    return e.message;
-                }).join(', ');
-                return { file: rej.file, error: errorMessage };
-            });
-            setFileErrors(errors);
+            const errorMessage = fileRejections[0].errors.map(e => {
+                if (e.code === 'file-too-large') {
+                    return 'Файл превышает допустимый размер 50 МБ';
+                } else if (e.code === 'file-invalid-type') {
+                    return 'Неверный тип файла. Поддерживаются только изображения';
+                }
+                return e.message;
+            }).join(', ');
+            setFileError(errorMessage);
         } else {
-            setFileErrors([]);
+            setFileError("");
         }
-    }, [files, formik]);
+    }, [formik]);
 
-    const handleRemoveFile = (file) => {
-        const updatedFiles = files.filter(f => f !== file);
-        setFiles(updatedFiles);
-        formik.setFieldValue('mediaFiles', updatedFiles);
-        setFileErrors(fileErrors.filter(err => err.file !== file));
+    const handleRemoveFile = () => {
+        setPromoImage(null);
+        formik.setFieldValue('promoImage', null);
+        setFileError("");
     };
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
-        accept: {
-            'image/*': [],
-            'video/*': []
-        },
+        accept: 'image/*',
         maxSize: 50 * 1024 * 1024
     });
 
@@ -89,48 +74,41 @@ export function RouteMedia() {
                 <CardBody>
                     <div {...getRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
                         <input {...getInputProps()} />
-                        <p>Перетащите сюда файлы или нажмите, чтобы выбрать файлы</p>
+                        <p>Перетащите сюда изображение или нажмите, чтобы выбрать файл</p>
                     </div>
-                    {fileErrors.length > 0 && (
+                    {fileError && (
                         <div className="text-danger text-tiny">
-                            {fileErrors.map((error, index) => (
-                                <div key={index}>{error.file.name}: {error.error}</div>
-                            ))}
+                            {fileError}
                         </div>
                     )}
                 </CardBody>
-                {formik.touched.mediaFiles && formik.errors.mediaFiles && (
-                    <div className="text-danger text-tiny mt-2">{formik.errors.mediaFiles}</div>
+                {formik.touched.promoImage && formik.errors.promoImage && (
+                    <div className="text-danger text-tiny mt-2">{formik.errors.promoImage}</div>
                 )}
             </Card>
 
-            <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                {files.map((file, index) => (
-                    <Popover placement="top" key={index} showArrow={true}>
+            {promoImage && (
+                <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                    <Popover placement="top" showArrow={true}>
                         <PopoverTrigger>
                             <Card shadow="sm" isPressable>
                                 <CardBody className="overflow-visible p-0">
-                                    {file.type.startsWith('image') && (
-                                        <Image src={URL.createObjectURL(file)} alt={file.name} shadow="sm" radius="lg" width="100%" className="w-full object-cover h-[140px]" />
-                                    )}
-                                    {file.type.startsWith('video') && (
-                                        <video controls src={URL.createObjectURL(file)} width="100%" className="w-full h-[140px]" />
-                                    )}
+                                    <Image src={URL.createObjectURL(promoImage)} alt={promoImage.name} shadow="sm" radius="lg" width="100%" className="w-full object-cover h-[140px]" />
                                 </CardBody>
                                 <CardFooter className="text-small justify-between">
-                                    <p className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{file.name}</p>
+                                    <p className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{promoImage.name}</p>
                                 </CardFooter>
                             </Card>
                         </PopoverTrigger>
                         <PopoverContent>
                             <div className="px-1 py-2 flex gap-2">
-                                <Button color="danger" size="sm" onClick={() => handleRemoveFile(file)}>
+                                <Button color="danger" size="sm" onClick={handleRemoveFile}>
                                     <FontAwesomeIcon icon={faTrashAlt} /> Удалить
                                 </Button>
                                 <Button color="primary" size="sm" onClick={() => {
                                     const link = document.createElement('a');
-                                    link.href = URL.createObjectURL(file);
-                                    link.download = file.name;
+                                    link.href = URL.createObjectURL(promoImage);
+                                    link.download = promoImage.name;
                                     document.body.appendChild(link);
                                     link.click();
                                     document.body.removeChild(link);
@@ -140,8 +118,8 @@ export function RouteMedia() {
                             </div>
                         </PopoverContent>
                     </Popover>
-                ))}
-            </div>
+                </div>
+            )}
 
             <Button type="submit" color="primary">Сохранить</Button>
         </form>
