@@ -48,11 +48,11 @@ export const createQuest = (questData, token) => {
     const formData = new FormData();
 
     console.log(questData);
-    if (questData.audioFile) {
-        formData.append('audio', questData.audioFile);
+    if (questData.routeAudioTeaser) {
+        formData.append('audio', questData.routeAudioTeaser);
     }
 
-    const { audioFile, ...updatedQuestData } = questData;
+    const { routeAudioTeaser, ...updatedQuestData } = questData;
 
     console.log(updatedQuestData);
     formData.append('json', JSON.stringify(updatedQuestData));

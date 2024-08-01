@@ -58,7 +58,7 @@ const RouteInfo = () => {
                 };
 
                 await createQuest(questData, accessToken);
-
+                setQuestData(questData);
                 toast.success("Квест успешно обновлён", {id: toastId});
 
 
