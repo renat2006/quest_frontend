@@ -99,7 +99,7 @@ const RouteAdmin = () => {
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
                                        element={<RouteMedia />} />
                                 <Route path={getLastPathPart(routes.admin.routeAdminInfo.url)}
-                                       element={<RouteInfo {...routeInfoProps} />} />
+                                       element={<RouteInfo />} />
                                 <Route path={getLastPathPart(routes.admin.routeAdminMap.url)} element={
                                     <Suspense fallback={<div>Загрузка...</div>}>
                                         <InteractiveMap />

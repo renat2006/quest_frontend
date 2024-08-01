@@ -1,23 +1,20 @@
-import { Autocomplete, AutocompleteItem, Button, Input, Textarea } from "@nextui-org/react";
-import { languageList, pathTypes } from "../data/types.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faFileAudio, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createQuest } from "../api/api.js";
+import { Autocomplete, AutocompleteItem, Button, Input, Textarea } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faFileAudio, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { createQuest } from "../api/api.js";
+import { languageList, pathTypes } from "../data/types.js";
+import {useQuest} from "../providers/RouteProvider.jsx";
 
-export default function RouteInfo({
-                                      routeName,
-                                      routeType,
-                                      routeLanguage,
-                                      routeDescription,
-                                      routeAudioTeaser,
-                                      accessToken,
-                                      questId
-                                  }) {
+
+const RouteInfo = () => {
+    const { questData, setQuestData } = useQuest();
+    const { routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, accessToken, questId } = questData;
+
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
@@ -61,6 +58,11 @@ export default function RouteInfo({
                 await createQuest(questData, accessToken);
 
                 toast.success("Квест успешно обновлён", { id: toastId });
+
+                setQuestData({
+                    ...questData,
+                    routeAudioTeaser: audioFile,
+                });
 
             } catch (error) {
                 console.error("Error creating quest:", error);
@@ -191,4 +193,6 @@ export default function RouteInfo({
             <Button type="submit" color="primary">Сохранить</Button>
         </form>
     );
-}
+};
+
+export default RouteInfo;
