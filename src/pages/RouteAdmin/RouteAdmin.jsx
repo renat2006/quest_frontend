@@ -110,7 +110,7 @@ const RouteAdmin = () => {
                         ) : <Image
                             width={300}
                             height={400}
-                            src="https://via.placeholder.com/300x200"
+                            src="https://via.placeholder.com/300x400"
 
                             alt="Img"
                         />}
