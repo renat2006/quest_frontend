@@ -94,7 +94,7 @@ const RouteAdmin = () => {
                 <Divider />
                 <CardBody>
                     <Skeleton isLoaded={isLoaded} className="w-full h-[400px]">
-                        {isLoaded && (
+
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
                                        element={<RouteMedia />} />
@@ -106,7 +106,7 @@ const RouteAdmin = () => {
                                     </Suspense>
                                 } />
                             </Routes>
-                        )}
+
                     </Skeleton>
                 </CardBody>
             </Card>
