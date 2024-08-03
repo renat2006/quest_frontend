@@ -48,7 +48,7 @@ const RouteInfo = () => {
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && (value.type ? ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type) : true))),
         }),
-        onSubmit: (values) => handleSubmit({...values, promoImage}, questId, accessToken, setQuestData, audioFile),
+        onSubmit: (values) => handleSubmit(values),
     });
 
     useEffect(() => {
