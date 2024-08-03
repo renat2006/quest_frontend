@@ -7,6 +7,7 @@ export const QuestProvider = ({ children }) => {
         routeName: '',
         routeLanguage: '',
         routeType: '',
+        audioFile:'',
         routeDescription: '',
         routeAudioTeaser: '',
         questId: localStorage.getItem('questId') || '',

@@ -1,5 +1,6 @@
 import {toast} from "react-hot-toast";
 import {createQuest} from "../api/api.js";
+import {useQuest} from "../providers/RouteProvider.jsx";
 
 export const getLastPathPart = (str) => {
     return str.substring(str.lastIndexOf("/") + 1)
@@ -9,11 +10,12 @@ export const capitalizeFirstLetter = (string) => {
 }
 
 
-export const handleSubmit = async (values, questId, accessToken, setQuestData, audioFile) => {
+export const handleSubmit = async (values, accessToken) => {
     const toastId = toast.loading("Сохранение...");
+    const {questData, setQuestData} = useQuest();
     try {
-        const questData = {
-            quest_id: questId,
+        const newQuestData = {
+            quest_id: questData.quest_id,
             title: values.routeName,
             description: values.routeDescription,
             lang: values.routeLanguage,
@@ -21,16 +23,13 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             audioFile: values.routeAudioTeaser,
             promoImage: values.promoImage
         };
-        console.log("123", questData)
+        console.log("123", newQuestData)
 
-        await createQuest(questData, accessToken);
+        await createQuest(newQuestData, accessToken);
 
         toast.success("Квест успешно обновлён", {id: toastId});
 
-        setQuestData({
-            ...questData,
-            routeAudioTeaser: audioFile,
-        });
+        setQuestData({...questData, ...values});
 
 
     } catch (error) {
