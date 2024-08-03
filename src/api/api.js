@@ -66,7 +66,7 @@ export const createQuest = (questData, token) => {
 
 export const getUUID = (token, idCount = 1) => apiRequest(`/uuid?cnt=${idCount}`, 'GET', null, token);
 
-export const fetchAllQuests = (token, offset = 0, limit = 10) => {
+export const fetchAllQuests = (token, offset = 10, limit = 100) => {
     return apiRequest(`/quest_list?offset=${offset}&limit=${limit}`, 'GET', null, token);
 };
 

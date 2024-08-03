@@ -323,7 +323,7 @@ const Admin = () => {
                 const url = window.URL.createObjectURL(zipBlob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'quests.zip';
+                a.download = 'file.zip';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
