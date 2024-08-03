@@ -13,7 +13,7 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
     const toastId = toast.loading("Сохранение...");
     try {
         const questData = {
-            quest_id: values.quest_id,
+            quest_id: questId,
             title: values.routeName,
             description: values.routeDescription,
             lang: values.routeLanguage,
@@ -31,7 +31,6 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             ...questData,
             routeAudioTeaser: audioFile,
         });
-
 
 
     } catch (error) {
