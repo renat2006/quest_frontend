@@ -13,7 +13,7 @@ export const QuestProvider = ({children}) => {
         promoImage: '',
     });
     useEffect(() => {
-        console.log("qid", localStorage.getItem('questId'))
+        console.log("qid", questData.questId)
     }, [])
     // useEffect(() => {
     //     if (questData.questId) {
