@@ -21,6 +21,7 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             audioFile: values.routeAudioTeaser,
             promoImage: values.promoImage
         };
+        console.log("123", questData)
 
         await createQuest(questData, accessToken);
 
@@ -30,7 +31,7 @@ export const handleSubmit = async (values, questId, accessToken, setQuestData, a
             ...questData,
             routeAudioTeaser: audioFile,
         });
-        console.log("123", questData)
+
 
 
     } catch (error) {

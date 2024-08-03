@@ -74,7 +74,8 @@ const RouteAdmin = () => {
                 setIsLoaded(true);
             }
         };
-
+        console.log("Location state:", location.state);
+        console.log("Quest data questId:", questData.questId);
         if (location.state || questData.questId) {
             const questId = location.state || questData.questId;
             loadQuestData(questId);

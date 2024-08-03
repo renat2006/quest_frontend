@@ -16,7 +16,9 @@ import {handleSubmit} from "../methods/methods.js";
 const RouteInfo = () => {
     const {questData, setQuestData} = useQuest();
     const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId, promoImage} = questData;
-
+    useEffect(() => {
+        console.log("RouteInfo questId:", questId);
+    }, [questId]);
     const {accessToken} = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
