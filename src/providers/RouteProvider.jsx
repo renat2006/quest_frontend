@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {createContext, useContext, useState, useEffect} from 'react';
 
 const QuestContext = createContext();
 
-export const QuestProvider = ({ children }) => {
+export const QuestProvider = ({children}) => {
     const [questData, setQuestData] = useState({
         routeName: '',
         routeLanguage: '',
@@ -12,7 +12,9 @@ export const QuestProvider = ({ children }) => {
         questId: '',
         promoImage: '',
     });
-
+    useEffect(() => {
+        console.log("qid", localStorage.getItem('questId'))
+    }, [])
     // useEffect(() => {
     //     if (questData.questId) {
     //         localStorage.setItem('questId', questData.questId);
@@ -21,7 +23,7 @@ export const QuestProvider = ({ children }) => {
     // }, [questData.questId]);
 
     return (
-        <QuestContext.Provider value={{ questData, setQuestData }}>
+        <QuestContext.Provider value={{questData, setQuestData}}>
             {children}
         </QuestContext.Provider>
     );
