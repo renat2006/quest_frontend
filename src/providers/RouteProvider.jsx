@@ -9,16 +9,16 @@ export const QuestProvider = ({ children }) => {
         routeType: '',
         routeDescription: '',
         routeAudioTeaser: '',
-        questId: localStorage.getItem('questId') || '',
+        questId: '',
         promoImage: '',
     });
 
-    useEffect(() => {
-        if (questData.questId) {
-            localStorage.setItem('questId', questData.questId);
-            console.log("qid", localStorage.getItem('questId'))
-        }
-    }, [questData.questId]);
+    // useEffect(() => {
+    //     if (questData.questId) {
+    //         localStorage.setItem('questId', questData.questId);
+    //         console.log("qid", localStorage.getItem('questId'))
+    //     }
+    // }, [questData.questId]);
 
     return (
         <QuestContext.Provider value={{ questData, setQuestData }}>
