@@ -16,6 +16,7 @@ export const QuestProvider = ({ children }) => {
     useEffect(() => {
         if (questData.questId) {
             localStorage.setItem('questId', questData.questId);
+            console.log("qid", localStorage.getItem('questId'))
         }
     }, [questData.questId]);
 
