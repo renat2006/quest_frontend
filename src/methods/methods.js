@@ -17,6 +17,9 @@ export const handleSubmit = async (values) => {
     const {accessToken} = useAuth();
     try {
         const newValues = {...questData, ...values}
+        console.log("new", newValues)
+        console.log("old", values)
+        console.log("qd", questData)
         const newQuestData = {
             quest_id: questData.quest_id,
             title: newValues.routeName,
@@ -32,7 +35,7 @@ export const handleSubmit = async (values) => {
 
         toast.success("Квест успешно обновлён", {id: toastId});
 
-        setQuestData({...questData, ...values});
+        setQuestData(newValues);
 
 
     } catch (error) {
