@@ -34,10 +34,7 @@ export function RouteMedia() {
                 .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
         }),
-        onSubmit: (values) => handleSubmit({
-            ...questData,
-            promoImage: promoImageFile
-        }, questData.questId, accessToken, setQuestData, questData.routeAudioTeaser),
+        onSubmit: (values) => handleSubmit(values, questData, setQuestData, accessToken),
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
