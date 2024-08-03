@@ -13,15 +13,22 @@ export const capitalizeFirstLetter = (string) => {
 
 export const handleSubmit = async (values) => {
     const toastId = toast.loading("Сохранение...");
-    const {questData, setQuestData} = useQuest();
-    const {accessToken} = useAuth();
     try {
-        const newValues = {...questData, ...values}
-        console.log("new", newValues)
-        console.log("old", values)
-        console.log("qd", questData)
+        const { questData, setQuestData } = useQuest();
+        const { accessToken } = useAuth();
+
+        if (!questData.questId) {
+            throw new Error("questId is missing");
+        }
+
+        const newValues = { ...questData, ...values };
+
+        console.log("New values:", newValues);
+        console.log("Old values:", values);
+        console.log("Quest Data:", questData);
+
         const newQuestData = {
-            quest_id: questData.quest_id,
+            quest_id: questData.questId,
             title: newValues.routeName,
             description: newValues.routeDescription,
             lang: newValues.routeLanguage,
@@ -29,17 +36,16 @@ export const handleSubmit = async (values) => {
             audioFile: newValues.routeAudioTeaser,
             promoImage: newValues.promoImage
         };
-        console.log("123", newQuestData)
+
+        console.log("New Quest Data:", newQuestData);
 
         await createQuest(newQuestData, accessToken);
 
-        toast.success("Квест успешно обновлён", {id: toastId});
+        toast.success("Квест успешно обновлён", { id: toastId });
 
         setQuestData(newValues);
-
-
     } catch (error) {
         console.error("Error creating quest:", error);
-        toast.error("Ошибка при обновлении квеста", {id: toastId});
+        toast.error("Ошибка при обновлении квеста", { id: toastId });
     }
 };
