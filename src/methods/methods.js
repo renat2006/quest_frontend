@@ -15,7 +15,7 @@ export const handleSubmit = async (values, questData, setQuestData, accessToken)
     const toastId = toast.loading("Сохранение...");
 
     try {
-        const newValues = { ...questData, ...values };
+        const newValues = {...questData, ...values};
 
         console.log("New values:", newValues);
         console.log("Old values:", values);
@@ -34,12 +34,13 @@ export const handleSubmit = async (values, questData, setQuestData, accessToken)
         console.log("New Quest Data:", newQuestData);
 
         await createQuest(newQuestData, accessToken);
-
-        toast.success("Квест успешно обновлён", { id: toastId });
-
         setQuestData(newValues);
+
+        toast.success("Квест успешно обновлён", {id: toastId});
+
+
     } catch (error) {
-        console.error("Error creating quest:", error);
-        toast.error("Ошибка при обновлении квеста", { id: toastId });
+        console.error("Error creat ing quest:", error);
+        toast.error("Ошибка при обновлении квеста", {id: toastId});
     }
 };
