@@ -79,6 +79,7 @@ export function RouteMedia() {
                     <div {...getRootProps()}
                          className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
                         <input {...getInputProps()} />
+                        <p className="text-large font-bold">Обложка квеста</p>
                         <p>Перетащите сюда изображение или нажмите, чтобы выбрать файл</p>
                     </div>
                     {fileError && (
@@ -93,10 +94,10 @@ export function RouteMedia() {
             </Card>
 
             {promoImageFile && (
-                <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+                <div className="gap-2">
                     <Popover placement="top" showArrow={true}>
                         <PopoverTrigger>
-                            <Card shadow="sm" isPressable>
+                            <Card shadow="sm" isPressable className="w-full">
                                 <CardBody className="overflow-visible p-0">
                                     <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
                                            shadow="sm" radius="lg" width="100%"
