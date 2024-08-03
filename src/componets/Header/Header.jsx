@@ -13,6 +13,7 @@ import {
 
 import {Logo} from "../Logo/Logo.jsx";
 import {useAuth} from "../../providers/AuthProvider.jsx";
+import routes from "../../routes/routes.js";
 
 
 export default function Header() {
@@ -43,37 +44,40 @@ export default function Header() {
                 </NavbarBrand>
             </NavbarContent>
 
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                <NavbarBrand>
-                    <Logo/>
+            <NavbarContent className="hidden sm:flex gap-4" justify="start">
 
-                </NavbarBrand>
-                <p className="font-bold text-inherit">Нулевой километр</p>
-                <NavbarItem>
-                    <Link color="foreground" href="#">
+
+
+                <NavbarItem isActive>
+                    <Link color="foreground" href="#"  aria-current="page">
 
                         Главная
                     </Link>
                 </NavbarItem>
-                <NavbarItem isActive>
-                    <Link href="#" aria-current="page">
+                <NavbarItem >
+                    <Link href="#" color="foreground" isDisabled>
                         О нас
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="#">
+                    <Link color="foreground" href="#" isDisabled>
                         Обратная связь
                     </Link>
                 </NavbarItem>
             </NavbarContent>
-
+            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+            <NavbarBrand className="flex gap-2">
+                <Logo/>
+                <p className="font-bold text-inherit">Нулевой километр</p>
+            </NavbarBrand>
+            </NavbarContent>
             <NavbarContent justify="end">
-                <NavbarItem className="hidden md:flex">
-                    <Link href="#">Войти</Link>
-                </NavbarItem>
+
                 <NavbarItem>
-                    <Button as={Link} className="hidden md:flex" color="warning" href="#" variant="flat">
-                        Регистрация
+
+                    <Button as={Link} className="hidden md:flex" color="warning" href={routes.profile.url}
+                            variant="flat">
+                        Войти
                     </Button>
                 </NavbarItem>
             </NavbarContent>

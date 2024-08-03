@@ -41,7 +41,7 @@ import {useNavigate} from "react-router-dom";
 import routes from "../../routes/routes.js";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {createQuest, getUUID} from "../../api/api.js";
+import {createQuest, fetchAllQuests, getUUID} from "../../api/api.js";
 import {toast} from "react-hot-toast";
 import {useAuth} from "../../providers/AuthProvider.jsx";
 
@@ -240,11 +240,11 @@ const Admin = () => {
             toast.success("Квест успешно создан");
 
 
-            setRouteList([...routeList, {
-                ...questData,
-                cover: "https://via.placeholder.com/300x200",
-                type: values.routeType
-            }]);
+            // setRouteList([...routeList, {
+            //     ...questData,
+            //     cover: "https://via.placeholder.com/300x200",
+            //     type: values.routeType
+            // }]);
 
 
             onOpenChange(false);
@@ -308,6 +308,9 @@ const Admin = () => {
         </AccordionItem>
     ));
 
+    useEffect(() => {
+        fetchAllQuests(accessToken)
+    }, [])
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
             <FormModal {...formModalProps} />
