@@ -309,7 +309,7 @@ const Admin = () => {
     ));
 
     useEffect(() => {
-        fetchAllQuests(accessToken)
+        console.log(fetchAllQuests(accessToken))
     }, [])
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
