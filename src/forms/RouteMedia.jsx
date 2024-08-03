@@ -97,7 +97,7 @@ export function RouteMedia() {
                 <div className="gap-2 flex items-center">
                     <Popover placement="top" showArrow={true}>
                         <PopoverTrigger>
-                            <Card shadow="sm" isPressable className="max-w-[200px] w-full">
+                            <Card shadow="sm" isPressable className="max-w-[200px]">
                                 <CardBody className="overflow-visible p-0">
                                     <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
                                            shadow="sm" radius="lg" width="100%"
