@@ -11,16 +11,10 @@ export const capitalizeFirstLetter = (string) => {
 }
 
 
-export const handleSubmit = async (values) => {
+export const handleSubmit = async (values, questData, setQuestData, accessToken) => {
     const toastId = toast.loading("Сохранение...");
+
     try {
-        const { questData, setQuestData } = useQuest();
-        const { accessToken } = useAuth();
-
-        if (!questData.questId) {
-            throw new Error("questId is missing");
-        }
-
         const newValues = { ...questData, ...values };
 
         console.log("New values:", newValues);
