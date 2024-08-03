@@ -308,8 +308,9 @@ const Admin = () => {
         </AccordionItem>
     ));
 
-    useEffect(() => {
-        console.log(fetchAllQuests(accessToken))
+    useEffect(async () => {
+        const data = await fetchAllQuests(accessToken)
+        console.log(data)
     }, [])
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
