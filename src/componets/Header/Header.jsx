@@ -17,7 +17,7 @@ import routes from "../../routes/routes.js";
 
 
 export default function Header() {
-    const {token, logOut} = useAuth();
+    const {logOut, user} = useAuth();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
@@ -47,14 +47,13 @@ export default function Header() {
             <NavbarContent className="hidden sm:flex gap-4" justify="start">
 
 
-
                 <NavbarItem isActive>
-                    <Link color="foreground" href="#"  aria-current="page">
+                    <Link color="foreground" href="/" aria-current="page">
 
                         Главная
                     </Link>
                 </NavbarItem>
-                <NavbarItem >
+                <NavbarItem>
                     <Link href="#" color="foreground" isDisabled>
                         О нас
                     </Link>
@@ -66,20 +65,36 @@ export default function Header() {
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
-            <NavbarBrand className="flex gap-2">
-                <Logo/>
-                <p className="font-bold text-inherit">Нулевой километр</p>
-            </NavbarBrand>
+                <NavbarBrand className="flex gap-2">
+                    <Logo/>
+                    <p className="font-bold text-inherit">Нулевой километр</p>
+                </NavbarBrand>
             </NavbarContent>
             <NavbarContent justify="end">
+                {user ? <NavbarMenuItem>
+                        <Button
 
-                <NavbarItem>
 
-                    <Button as={Link} className="hidden md:flex" color="warning" href={routes.profile.url}
-                            variant="flat">
-                        Войти
-                    </Button>
-                </NavbarItem>
+                            color="danger"
+                            onPress={() => {
+                                logOut();
+
+                            }}
+                            variant="flat"
+                            className="hidden md:flex"
+
+
+                        >
+                            Выйти
+                        </Button></NavbarMenuItem> :
+                    <NavbarItem>
+
+                        <Button as={Link} className="hidden md:flex" color="warning" href={routes.profile.url}
+                                variant="flat">
+                            Войти
+                        </Button>
+                    </NavbarItem>}
+
             </NavbarContent>
 
             <NavbarMenu>
@@ -97,7 +112,7 @@ export default function Header() {
                     </NavbarMenuItem>
 
                 ))}
-                {token ? (<NavbarMenuItem>
+                {user ? (<NavbarMenuItem>
                     <Link
                         className="w-full"
                         color="danger"

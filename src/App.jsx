@@ -6,7 +6,7 @@ import QuestInfo from "./pages/QuestInfo/QuestInfo.jsx";
 import Header from "./componets/Header/Header.jsx";
 import AppBar from "./componets/AppBar/AppBar.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
-import AuthProvider from "./providers/AuthProvider.jsx";
+import AuthProvider, {useAuth} from "./providers/AuthProvider.jsx";
 
 import Admin from "./pages/Admin/Admin.jsx";
 import RouteAdmin from "./pages/RouteAdmin/RouteAdmin.jsx";
@@ -14,6 +14,7 @@ import routes from "./routes/routes.js";
 
 import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
+import ProtectedRoute from "./componets/ProtectedRoute/ProtectedRoute.jsx";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -22,6 +23,7 @@ const InteractiveMap = lazy(() => import("./pages/InteractiveMap/InteractiveMap.
 function App() {
     const navigate = useNavigate();
     const {pathname} = useLocation();
+
     const appBarPathList = ["/", routes.profile.url, routes.map.url, routes.admin.root.url]
     return (
         <NextUIProvider navigate={navigate}>
@@ -44,9 +46,11 @@ function App() {
                         </Suspense>
                     }/>
                     <Route path={routes.admin.root.url} element={
-                        <Suspense fallback={<div>Загрузка...</div>}>
-                            <Admin/>
-                        </Suspense>
+                        <ProtectedRoute>
+                            <Suspense fallback={<div>Загрузка...</div>}>
+                                <Admin/>
+                            </Suspense>
+                        </ProtectedRoute>
                     }/>
 
                     <Route path="*" element={<NotFound/>}/>

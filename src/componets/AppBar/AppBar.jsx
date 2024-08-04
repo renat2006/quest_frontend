@@ -4,12 +4,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHouse, faMap, faUser, faTools, faRoad} from "@fortawesome/free-solid-svg-icons";
 import {useLocation, useNavigate} from "react-router-dom";
 import routes from "../../routes/routes.js";
+import {useAuth} from "../../providers/AuthProvider.jsx";
 
 export default function AppBar() {
     const {pathname} = useLocation();
     const [selectedKey, setSelectedKey] = useState(pathname);
     const navigate = useNavigate();
-
+    const {user} = useAuth();
     useEffect(() => {
         setSelectedKey(pathname);
     }, [pathname]);
@@ -24,8 +25,12 @@ export default function AppBar() {
         {t_id: routes.home.url, img_src: homeIcon, title: "Главная", key: routes.home.url},
         {t_id: routes.map.url, img_src: mapIcon, title: "Маршрут", key: routes.map.url},
         {t_id: routes.profile.url, img_src: userIcon, title: "Профиль", key: routes.profile.url},
-        {t_id: routes.admin.root.url, img_src: adminIcon, title: "Админ", key: routes.admin.root.url},
+
     ];
+    if (user) {
+        tabItems.push({t_id: routes.admin.root.url, img_src: adminIcon, title: "Админ", key: routes.admin.root.url},)
+    }
+
     // if (pathname === routes.admin.routeAdmin) {
     //     tabItems.push({t_id: routes.admin.routeAdmin, img_src: routeAdminIcon, title: "Редактор Маршрута", key: routes.admin.routeAdmin})
     // }
