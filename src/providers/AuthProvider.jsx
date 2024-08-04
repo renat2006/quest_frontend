@@ -20,7 +20,7 @@ const AuthProvider = ({children}) => {
     const [refreshTokenValue, setRefreshTokenValue] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
     useEffect(() => {
-        if (import.meta.env.VITE_IS_AUTHORIZED && !localStorage.getItem("user")) {
+        if (import.meta.env.VITE_IS_AUTHORIZED && !localStorage.getItem("user") && user) {
             loginAction(user)
         }
 

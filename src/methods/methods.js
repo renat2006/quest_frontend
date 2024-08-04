@@ -1,5 +1,5 @@
 import {toast} from "react-hot-toast";
-import {createQuest} from "../api/api.js";
+import {createQuest, publishQuest} from "../api/api.js";
 import {useQuest} from "../providers/RouteProvider.jsx";
 import {useAuth} from "../providers/AuthProvider.jsx";
 
@@ -42,5 +42,19 @@ export const handleSubmit = async (values, questData, setQuestData, accessToken)
     } catch (error) {
         console.error("Error creat ing quest:", error);
         toast.error("Ошибка при обновлении квеста", {id: toastId});
+    }
+};
+export const handlePublishQuest = async (formik, questData, selectedRouteType, selectedRouteLanguage, promoImage, accessToken) => {
+    if (!formik.values.routeName || !formik.values.routeDescription || !selectedRouteType || !selectedRouteLanguage || !promoImage) {
+        toast.error('Все обязательные поля должны быть заполнены.');
+        return;
+    }
+    const toastId = toast.loading("Сохранение...");
+
+    try {
+        const response = await publishQuest(questData.questId, accessToken);
+        toast.success(response.message, {id: toastId});
+    } catch (error) {
+        toast.error(error.message, {id: toastId});
     }
 };

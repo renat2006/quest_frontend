@@ -71,3 +71,6 @@ export const fetchAllQuests = (token, offset = 0, limit = 10) => {
 };
 
 export const fetchQuestForEditing = (questId, token) => apiRequest(`/edit_quest?quest_id=${questId}`, 'GET', null, token);
+export const publishQuest = (questId, token) => {
+    return apiRequest('/publish_quest', 'POST', { quest_id: questId }, token);
+};

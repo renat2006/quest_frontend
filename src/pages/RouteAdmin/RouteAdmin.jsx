@@ -1,7 +1,7 @@
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {Suspense, useEffect, useState} from "react";
 import routes from "../../routes/routes.js";
-import {Card, CardBody, CardHeader, Divider, Image, Skeleton, Spacer} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Divider, Image, Skeleton, Spacer} from "@nextui-org/react";
 
 import RouteInfo from "../../forms/RouteInfo.jsx";
 import {RouteMedia} from "../../forms/RouteMedia.jsx";
@@ -87,10 +87,12 @@ const RouteAdmin = () => {
     return (
         <div className="flex flex-col items-center p-5 w-full">
             <Card className="w-full max-w-[1000px] h-auto">
-                <CardHeader className="flex gap-3">
-                    <Skeleton isLoaded={isLoaded} className="">
+                <CardHeader className="flex gap-3 justify-between">
+                    <Skeleton isLoaded={isLoaded} className="flex">
                         <AdminBreadCrumbs/>
+
                     </Skeleton>
+
                 </CardHeader>
                 <Divider/>
                 <CardBody>

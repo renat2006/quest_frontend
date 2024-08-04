@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {Autocomplete, AutocompleteItem, Button, Input, Textarea} from "@nextui-org/react";
+import {Autocomplete, AutocompleteItem, Button, ButtonGroup, Input, Textarea} from "@nextui-org/react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faFileAudio, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
-import {createQuest} from "../api/api.js";
+import {createQuest, publishQuest} from "../api/api.js";
 import {languageList, pathTypes} from "../data/types.js";
 import {useQuest} from "../providers/RouteProvider.jsx";
 import {useAuth} from "../providers/AuthProvider.jsx";
-import {handleSubmit} from "../methods/methods.js";
+import {handlePublishQuest, handleSubmit} from "../methods/methods.js";
+import {faEye, faSave} from "@fortawesome/free-regular-svg-icons";
 
 
 const RouteInfo = () => {
@@ -71,6 +72,7 @@ const RouteInfo = () => {
         setAudioFile('');
         setAudioURL('');
     };
+
 
     return (
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
@@ -171,7 +173,10 @@ const RouteInfo = () => {
                     <span className="text-danger text-tiny">{formik.errors.routeAudioTeaser}</span>
                 )}
             </div>
-            <Button type="submit" color="primary">Сохранить</Button>
+            <ButtonGroup  color="primary">
+                <Button startContent={<FontAwesomeIcon  icon={faSave}/>} type="submit" >Сохранить</Button>
+                <Button variant="bordered" onPress={() => handlePublishQuest(formik, questData, selectedRouteType, selectedRouteLanguage, promoImage, accessToken)} startContent={<FontAwesomeIcon  icon={faEye}/>}>Опубликовать</Button>
+            </ButtonGroup>
         </form>
     );
 };
