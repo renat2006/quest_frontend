@@ -1,25 +1,30 @@
-import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {useContext, createContext, useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 import routes from "../routes/routes.js";
-import { authenticate, refreshToken } from '../api/api.js';
+import {authenticate, refreshToken} from '../api/api.js';
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({children}) => {
     const [user, setUser] = useState(import.meta.env.DEV && import.meta.env.VITE_IS_AUTHORIZED === "true" ? {
         "id": 857932226,
-        "first_name": "Renat",
-        "last_name": "Gubaydullin",
+        "first_name": "1",
+        "last_name": "1",
         "username": "belorusstaner",
-        "auth_date": 1719389934,
-        "hash": "a0d937c1feac78bcea2b9544f6752bffc8f71b105bca25847a8834e26b592714",
-        "is_admin": true
+        "auth_date": 1722783414,
+        "hash": "40bc6592d40b64088f4ecd5c73e2d5f2621e270b354cccd366bd96be3d738256"
+
     } : null);
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || "");
     const [refreshTokenValue, setRefreshTokenValue] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
+    useEffect(() => {
+        if (import.meta.env.VITE_IS_AUTHORIZED && !localStorage.getItem("user")) {
+            loginAction(user)
+        }
 
+    }, [import.meta.env.VITE_IS_AUTHORIZED]);
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
 
@@ -89,7 +94,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ accessToken, user, loginAction, logOut }}>
+        <AuthContext.Provider value={{accessToken, user, loginAction, logOut}}>
             {children}
         </AuthContext.Provider>
     );

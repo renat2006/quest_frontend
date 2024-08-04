@@ -1,7 +1,7 @@
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {Suspense, useEffect, useState} from "react";
 import routes from "../../routes/routes.js";
-import {Card, CardBody, CardHeader, Divider, Image, Skeleton} from "@nextui-org/react";
+import {Card, CardBody, CardHeader, Divider, Image, Skeleton, Spacer} from "@nextui-org/react";
 
 import RouteInfo from "../../forms/RouteInfo.jsx";
 import {RouteMedia} from "../../forms/RouteMedia.jsx";
@@ -86,16 +86,16 @@ const RouteAdmin = () => {
 
     return (
         <div className="flex flex-col items-center p-5 w-full">
-            <Card className="w-full max-w-[1000px]">
+            <Card className="w-full max-w-[1000px] h-auto">
                 <CardHeader className="flex gap-3">
-                    <Skeleton isLoaded={isLoaded} className="w-3/5 h-10">
+                    <Skeleton isLoaded={isLoaded} className="">
                         <AdminBreadCrumbs/>
                     </Skeleton>
                 </CardHeader>
                 <Divider/>
                 <CardBody>
-                    <Skeleton isLoaded={isLoaded} className="w-full h-[400px]">
-                        {isLoaded ? (
+                    <Skeleton isLoaded={isLoaded} className="w-full h-full">
+                        {isLoaded ? (<>
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.routeAdminMedia.url)}
                                        element={<RouteMedia/>}/>
@@ -107,6 +107,8 @@ const RouteAdmin = () => {
                                     </Suspense>
                                 }/>
                             </Routes>
+
+                            </>
                         ) : <Image
                             width={300}
                             height={400}

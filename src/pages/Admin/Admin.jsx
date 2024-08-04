@@ -309,33 +309,7 @@ const Admin = () => {
         </AccordionItem>
     ));
 
-    useEffect(async () => {
-        const downloadZip = async () => {
-            try {
-                // Fetch the ZIP file blob
-                const zipBlob = await fetchAllQuests(accessToken);
 
-                // Load the ZIP content using JSZip
-                const zip = await JSZip.loadAsync(zipBlob);
-                console.log('ZIP content:', zip);
-
-                // Create a link element and trigger the download
-                const url = window.URL.createObjectURL(zipBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'file.zip';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('Error downloading ZIP file:', error);
-            }
-        };
-
-        await downloadZip();
-
-    }, [])
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
             <FormModal {...formModalProps} />
