@@ -12,21 +12,21 @@ import {useQuest} from "../providers/RouteProvider.jsx";
 import {useAuth} from "../providers/AuthProvider.jsx";
 import {handlePublishQuest, handleSubmit} from "../methods/methods.js";
 import {faEye, faSave} from "@fortawesome/free-regular-svg-icons";
+import SaveAndPublishButtonGroup from "../componets/SaveAndPublishButtonGroup/SaveAndPublishButtonGroup.jsx";
 
 
 const RouteInfo = () => {
     const {questData, setQuestData} = useQuest();
+    const navigate = useNavigate();
     const {routeName, routeType, routeLanguage, routeDescription, routeAudioTeaser, questId, promoImage} = questData;
-    useEffect(() => {
-        console.log("RouteInfo questId:", questId);
-    }, [questId]);
+    useEffect(() => console.log("pi",promoImage), [navigate])
+
     const {accessToken} = useAuth();
     const [selectedRouteType, setSelectedRouteType] = useState(routeType || '');
     const [selectedRouteLanguage, setSelectedRouteLanguage] = useState(routeLanguage || '');
     const [audioFile, setAudioFile] = useState(routeAudioTeaser || '');
     const [audioURL, setAudioURL] = useState(routeAudioTeaser ? URL.createObjectURL(routeAudioTeaser) : '');
 
-    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -49,7 +49,7 @@ const RouteInfo = () => {
                 .test('fileSize', 'Размер файла не должен превышать 10 МБ', value => !value || (value && value.size <= 10 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть аудиофайлом', value => !value || (value && (value.type ? ['audio/mpeg', 'audio/wav', 'audio/ogg'].includes(value.type) : true))),
         }),
-        onSubmit: (values) => handleSubmit(values, questData, setQuestData, accessToken),
+        onSubmit: (values) => handleSubmit(values, questData, promoImage, setQuestData, accessToken),
 
     });
 
@@ -173,10 +173,7 @@ const RouteInfo = () => {
                     <span className="text-danger text-tiny">{formik.errors.routeAudioTeaser}</span>
                 )}
             </div>
-            <ButtonGroup  color="primary">
-                <Button startContent={<FontAwesomeIcon  icon={faSave}/>} type="submit" >Сохранить</Button>
-                <Button variant="bordered" onPress={() => handlePublishQuest(formik, questData, selectedRouteType, selectedRouteLanguage, promoImage, accessToken)} startContent={<FontAwesomeIcon  icon={faEye}/>}>Опубликовать</Button>
-            </ButtonGroup>
+            <SaveAndPublishButtonGroup/>
         </form>
     );
 };

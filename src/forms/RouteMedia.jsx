@@ -1,5 +1,5 @@
-import React, {useState, useCallback} from "react";
-import {useDropzone} from "react-dropzone";
+import React, { useState, useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
 import {
     Button,
     Card,
@@ -10,21 +10,44 @@ import {
     PopoverContent,
     PopoverTrigger
 } from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt, faDownload} from "@fortawesome/free-solid-svg-icons";
-import {useFormik} from "formik";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {handleSubmit} from "../methods/methods.js";
-import {useQuest} from "../providers/RouteProvider.jsx";
-import {useAuth} from "../providers/AuthProvider.jsx";
+import { handleSubmit } from "../methods/methods.js";
+import { useQuest } from "../providers/RouteProvider.jsx";
+import { useAuth } from "../providers/AuthProvider.jsx";
+import SaveAndPublishButtonGroup from "../componets/SaveAndPublishButtonGroup/SaveAndPublishButtonGroup.jsx";
 
 export function RouteMedia() {
-
     const [fileError, setFileError] = useState("");
-    const {questData, setQuestData} = useQuest();
-    const {promoImage} = questData;
-    const [promoImageFile, setPromoImageFile] = useState(promoImage || '');
-    const {accessToken} = useAuth();
+    const { questData, setQuestData } = useQuest();
+    const { promoImage } = questData;
+
+    const [promoImageFile, setPromoImageFile] = useState(promoImage instanceof File ? promoImage : null);
+    const { accessToken } = useAuth();
+
+    useEffect(() => {
+        if (promoImage && !(promoImage instanceof File)) {
+            // Create a File object from promoImage if it's not a File
+            const fetchImage = async () => {
+                try {
+                    const response = await fetch(promoImage);
+                    const blob = await response.blob();
+                    const file = new File([blob], "promoImage", { type: blob.type });
+                    setPromoImageFile(file);
+                    formik.setFieldValue('promoImage', file);
+                } catch (error) {
+                    console.error("Error fetching promo image:", error);
+                }
+            };
+            fetchImage();
+        } else if (promoImage instanceof File) {
+            setPromoImageFile(promoImage);
+            formik.setFieldValue('promoImage', promoImage);
+        }
+    }, [promoImage]);
+
     const formik = useFormik({
         initialValues: {
             promoImage: promoImageFile,
@@ -32,9 +55,9 @@ export function RouteMedia() {
         validationSchema: Yup.object({
             promoImage: Yup.mixed()
                 .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
-                .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif'].includes(value.type))),
+                .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(value.type))),
         }),
-        onSubmit: (values) => handleSubmit(values, questData, setQuestData, accessToken),
+        onSubmit: (values) => handleSubmit(values, questData, promoImage, setQuestData, accessToken),
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
@@ -42,6 +65,10 @@ export function RouteMedia() {
             const file = acceptedFiles[0];
             setPromoImageFile(file);
             formik.setFieldValue('promoImage', file);
+            setQuestData(prevData => ({
+                ...prevData,
+                promoImage: file
+            }));
             setFileError("");
         }
 
@@ -58,15 +85,19 @@ export function RouteMedia() {
         } else {
             setFileError("");
         }
-    }, [formik]);
+    }, [formik, setQuestData]);
 
     const handleRemoveFile = () => {
         setPromoImageFile("");
         formik.setFieldValue('promoImage', "");
+        setQuestData(prevData => ({
+            ...prevData,
+            promoImage: ""
+        }));
         setFileError("");
     };
 
-    const {getRootProps, getInputProps} = useDropzone({
+    const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         accept: 'image/*',
         maxSize: 50 * 1024 * 1024
@@ -129,7 +160,7 @@ export function RouteMedia() {
                 </div>
             )}
 
-            <Button type="submit" color="primary">Сохранить</Button>
+            <SaveAndPublishButtonGroup/>
         </form>
     );
 }

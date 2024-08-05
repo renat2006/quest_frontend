@@ -1,7 +1,5 @@
 import {toast} from "react-hot-toast";
 import {createQuest, publishQuest} from "../api/api.js";
-import {useQuest} from "../providers/RouteProvider.jsx";
-import {useAuth} from "../providers/AuthProvider.jsx";
 
 export const getLastPathPart = (str) => {
     return str.substring(str.lastIndexOf("/") + 1)
@@ -11,15 +9,16 @@ export const capitalizeFirstLetter = (string) => {
 }
 
 
-export const handleSubmit = async (values, questData, setQuestData, accessToken) => {
+export const handleSubmit = async (values, questData, promoImage, setQuestData, accessToken) => {
     const toastId = toast.loading("Сохранение...");
 
     try {
-        const newValues = {...questData, ...values};
+        const newValues = {...questData, ...values, promoImage};
 
         console.log("New values:", newValues);
         console.log("Old values:", values);
         console.log("Quest Data:", questData);
+        console.log("promoi", promoImage)
 
         const newQuestData = {
             quest_id: questData.questId,
@@ -44,8 +43,8 @@ export const handleSubmit = async (values, questData, setQuestData, accessToken)
         toast.error("Ошибка при обновлении квеста", {id: toastId});
     }
 };
-export const handlePublishQuest = async (formik, questData, selectedRouteType, selectedRouteLanguage, promoImage, accessToken) => {
-    if (!formik.values.routeName || !formik.values.routeDescription || !selectedRouteType || !selectedRouteLanguage || !promoImage) {
+export const handlePublishQuest = async (questData, accessToken) => {
+    if (!questData.routeName || !questData.routeDescription || !questData.routeType || !questData.routeLanguage || !questData.promoImage) {
         toast.error('Все обязательные поля должны быть заполнены.');
         return;
     }
@@ -53,8 +52,8 @@ export const handlePublishQuest = async (formik, questData, selectedRouteType, s
 
     try {
         const response = await publishQuest(questData.questId, accessToken);
-        toast.success(response.message, {id: toastId});
+        toast.success(`Квест "${questData.routeName}" успешно опубликован`, {id: toastId});
     } catch (error) {
-        toast.error(error.message, {id: toastId});
+        toast.error("Произошла ошибка при публикации квеста", {id: toastId});
     }
 };

@@ -15,11 +15,11 @@ export const QuestProvider = ({ children }) => {
     });
 
     useEffect(() => {
-        console.log("QuestProvider useEffect:", questData.questId);
+        console.log("QuestProvider useEffect:", questData);
         if (questData.questId) {
             localStorage.setItem('questId', questData.questId);
         }
-    }, [questData.questId]);
+    }, [questData]);
 
     return (
         <QuestContext.Provider value={{ questData, setQuestData }}>
