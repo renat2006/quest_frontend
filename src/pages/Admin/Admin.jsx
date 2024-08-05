@@ -41,7 +41,7 @@ import {useNavigate} from "react-router-dom";
 import routes from "../../routes/routes.js";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {createQuest, fetchAllQuests, getUUID} from "../../api/api.js";
+import {createQuest, getUUID} from "../../api/api.js";
 import {toast} from "react-hot-toast";
 import {useAuth} from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";

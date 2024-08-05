@@ -36,7 +36,6 @@ export function RouteMedia() {
                     const blob = await response.blob();
                     const file = new File([blob], "promoImage", { type: blob.type });
                     setPromoImageFile(file);
-
                     formik.setFieldValue('promoImage', file);
                 } catch (error) {
                     console.error("Error fetching promo image:", error);
@@ -58,7 +57,7 @@ export function RouteMedia() {
                 .test('fileSize', 'Размер файла не должен превышать 50 МБ', value => !value || (value && value.size <= 50 * 1024 * 1024))
                 .test('fileType', 'Файл должен быть изображением', value => !value || (value && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(value.type))),
         }),
-        onSubmit: (values) => handleSubmit(values, questData, setQuestData, accessToken),
+        onSubmit: (values) => handleSubmit(values, questData, promoImage, setQuestData, accessToken),
     });
 
     const onDrop = useCallback((acceptedFiles, fileRejections) => {
@@ -108,7 +107,8 @@ export function RouteMedia() {
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
             <Card shadow="none" className="w-full">
                 <CardBody>
-                    <div {...getRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
+                    <div {...getRootProps()}
+                         className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
                         <input {...getInputProps()} />
                         <p className="text-large font-bold">Обложка квеста</p>
                         <p>Перетащите сюда изображение или нажмите, чтобы выбрать файл</p>
@@ -130,7 +130,9 @@ export function RouteMedia() {
                         <PopoverTrigger>
                             <Card shadow="sm" isPressable className="w-full max-w-[300px]">
                                 <CardBody className="overflow-visible p-0">
-                                    <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name} shadow="sm" radius="lg" width="100%" className="w-full object-cover h-[140px]" />
+                                    <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
+                                           shadow="sm" radius="lg" width="100%"
+                                           className="w-full object-cover h-[140px]"/>
                                 </CardBody>
                                 <CardFooter className="text-small justify-between">
                                     <p className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{promoImageFile.name}</p>
@@ -140,7 +142,7 @@ export function RouteMedia() {
                         <PopoverContent>
                             <div className="px-1 py-2 flex gap-2">
                                 <Button color="danger" size="sm" onClick={handleRemoveFile}>
-                                    <FontAwesomeIcon icon={faTrashAlt} /> Удалить
+                                    <FontAwesomeIcon icon={faTrashAlt}/> Удалить
                                 </Button>
                                 <Button color="primary" size="sm" onClick={() => {
                                     const link = document.createElement('a');
@@ -150,7 +152,7 @@ export function RouteMedia() {
                                     link.click();
                                     document.body.removeChild(link);
                                 }}>
-                                    <FontAwesomeIcon icon={faDownload} /> Скачать
+                                    <FontAwesomeIcon icon={faDownload}/> Скачать
                                 </Button>
                             </div>
                         </PopoverContent>
@@ -158,7 +160,7 @@ export function RouteMedia() {
                 </div>
             )}
 
-            <SaveAndPublishButtonGroup />
+            <SaveAndPublishButtonGroup/>
         </form>
     );
 }

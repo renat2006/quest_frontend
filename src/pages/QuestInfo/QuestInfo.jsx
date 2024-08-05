@@ -1,121 +1,87 @@
-import {Card, CardHeader, CardBody, CardFooter, Image, Button, ScrollShadow, Input} from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLocationDot, faStar, faSearch} from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect } from "react";
+import { Input, ScrollShadow } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import MainPageQuestCard from "../../componets/MainPageQuestCard/MainPageQuestCard.jsx";
+import { fetchAllQuests } from "../../api/api.js";
+import { useAuth } from "../../providers/AuthProvider.jsx";
+import JSZip from 'jszip';
+import {pathTypes} from "../../data/types.js";
 
 
 const QuestInfo = () => {
-    const questList = [{
-        title: "Тайны города",
-        author: "Движение первых",
-        img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-        author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-        description: "Пройди уникальный квест по Казани!",
-        type: "Пешая прогулка",
-        location: "Казань, Татарстан",
-        cost: "0",
-        rate: "3.8",
-        rate_sum: "20",
-    },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        },
-        {
-            title: "Тайны города",
-            author: "Движение первых",
-            img: "https://ic.pics.livejournal.com/zdorovs/16627846/1557359/1557359_original.jpg",
-            author_img: "/demoImages/QuestAuthorLogo/dvfirst.svg",
-            description: "Пройди уникальный квест по Казани!",
-            type: "Пешая прогулка",
-            location: "Казань, Татарстан",
-            cost: "0",
-            rate: "3.8",
-            rate_sum: "20",
-        }];
+    const { accessToken } = useAuth();
+    const [questList, setQuestList] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const getQuestTypeLabel = (value) => {
+        const pathType = pathTypes.find(type => type.value === value);
+        return pathType ? pathType.label : value;
+    };
+
+    useEffect(() => {
+        const getQuests = async () => {
+            try {
+                const zipBlob = await fetchAllQuests(accessToken);
+                const zip = await JSZip.loadAsync(zipBlob);
+                const quests = [];
+
+                await Promise.all(Object.keys(zip.files).map(async (filePath) => {
+                    if (filePath.endsWith('data.json')) {
+                        const fileData = await zip.file(filePath).async('string');
+                        const questData = JSON.parse(fileData);
+
+                        const folderPath = filePath.split('/').slice(0, -1).join('/');
+
+                        // Extract promo image
+                        const promoFilePath = `${folderPath}/promo.webp`;
+                        const promoFile = zip.file(promoFilePath);
+                        if (promoFile) {
+                            questData.img = URL.createObjectURL(await promoFile.async('blob'));
+                        }
+
+                        // Extract author profile image
+                        questData.author_img = null;
+                        const userProfileFile = Object.keys(zip.files).find(file => file.startsWith(`${folderPath}/user_profile`));
+                        if (userProfileFile) {
+                            questData.author_img = URL.createObjectURL(await zip.file(userProfileFile).async('blob'));
+                        }
+
+                        quests.push(questData);
+                    }
+                }));
+
+                setQuestList(quests);
+            } catch (error) {
+                console.error('Error fetching quests:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getQuests();
+    }, [accessToken]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     const questListCards = questList.map((quest, index) => (
         <MainPageQuestCard
             key={index}
             title={quest.title}
-            author={quest.author}
+            author={quest.author_name}
             img={quest.img}
             author_img={quest.author_img}
             description={quest.description}
-            type={quest.type}
-            location={quest.location}
-            cost={quest.cost}
-            rate={quest.rate}
-            rate_sum={quest.rate_sum}
+            type={getQuestTypeLabel(quest.type)} // Преобразование типа маршрута
+            location="Казань" // Assuming locations is an array of strings
+            cost="0" // Assuming the cost is not provided in data.json
+            rate={quest.rating}
+            rate_sum={quest.rating_count}
         />
-    ))
+    ));
+
     return (
         <div className="quest--container">
             <Input
@@ -127,7 +93,7 @@ const QuestInfo = () => {
                 }}
                 placeholder="Поиск квестов"
                 size="sm"
-                startContent={<FontAwesomeIcon  icon={faSearch}/>}
+                startContent={<FontAwesomeIcon icon={faSearch}/>}
                 type="search"
             />
             <ScrollShadow className="flex flex-col gap-4 h-full" size={20} hideScrollBar>
@@ -135,6 +101,6 @@ const QuestInfo = () => {
             </ScrollShadow>
         </div>
     );
-}
+};
 
 export default QuestInfo;

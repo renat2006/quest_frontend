@@ -9,15 +9,16 @@ export const capitalizeFirstLetter = (string) => {
 }
 
 
-export const handleSubmit = async (values, questData, setQuestData, accessToken) => {
+export const handleSubmit = async (values, questData, promoImage, setQuestData, accessToken) => {
     const toastId = toast.loading("Сохранение...");
 
     try {
-        const newValues = {...questData, ...values};
+        const newValues = {...questData, ...values, promoImage};
 
         console.log("New values:", newValues);
         console.log("Old values:", values);
         console.log("Quest Data:", questData);
+        console.log("promoi", promoImage)
 
         const newQuestData = {
             quest_id: questData.questId,
