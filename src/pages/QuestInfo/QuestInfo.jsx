@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-import { Input, ScrollShadow } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import MainPageQuestCard from "../../componets/MainPageQuestCard/MainPageQuestCard.jsx";
-import { fetchAllQuests } from "../../api/api.js";
-import { useAuth } from "../../providers/AuthProvider.jsx";
+import {useState, useEffect} from "react";
+import {Avatar, Card, CardBody, CardFooter, CardHeader, Image, Input, ScrollShadow, Skeleton} from "@nextui-org/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faLocationDot, faSearch, faStar} from "@fortawesome/free-solid-svg-icons";
+
+import {fetchAllQuests} from "../../api/api.js";
+import {useAuth} from "../../providers/AuthProvider.jsx";
 import JSZip from 'jszip';
 import {pathTypes} from "../../data/types.js";
+import MainPageQuestCard from "../../componets/MainPageQuestCard/MainPageQuestCard.jsx";
 
 
 const QuestInfo = () => {
-    const { accessToken } = useAuth();
+    const {accessToken} = useAuth();
     const [questList, setQuestList] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -62,9 +63,32 @@ const QuestInfo = () => {
         getQuests();
     }, [accessToken]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const renderSkeletons = () => (
+        Array.from({length: 5}, (_, index) => (
+            <Card isPressable isFooterBlurred shadow="none"
+                  onPress={() => console.log("Карточка нажата")}
+                  className="min-w-[315px] w-full max-w-[400px] min-h-[200px] col-span-12 sm:col-span-7">
+                <CardHeader className="absolute z-10 top-1 flex-col items-start ">
+
+                </CardHeader>
+                <CardBody className="overflow-visible p-0">
+                    <Skeleton className="h-full w-full rounded-lg"/>
+                </CardBody>
+                <CardFooter
+                    className="absolute bg-black/40 bottom-0 z-10  border-default-600 dark:border-default-100">
+                    <div className="flex flex-grow gap-2">
+                        <Skeleton className="flex rounded-full w-12 h-12"/>
+                        <div className="flex flex-1 flex-col gap-2">
+                            <Skeleton className="h-3 w-2/5 rounded-lg"/>
+                            <Skeleton className="h-3 w-4/5 rounded-lg"/>
+                            <Skeleton className="h-3 w-3/5 rounded-lg"/>
+                        </div>
+
+                    </div>
+                </CardFooter>
+            </Card>
+        ))
+    );
 
     const questListCards = questList.map((quest, index) => (
         <MainPageQuestCard
@@ -97,7 +121,7 @@ const QuestInfo = () => {
                 type="search"
             />
             <ScrollShadow className="flex flex-col gap-4 h-full" size={20} hideScrollBar>
-                {questListCards}
+                {loading ? renderSkeletons() : questListCards}
             </ScrollShadow>
         </div>
     );

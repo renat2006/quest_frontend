@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_Слой_1" data-name="Слой 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 60">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #000;
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        letter-spacing: 0em;
+      }
+
+      .cls-3 {
+        letter-spacing: 0em;
+      }
+
+      .cls-4 {
+        letter-spacing: 0em;
+      }
+
+      .cls-5 {
+        letter-spacing: 0em;
+      }
+
+      .cls-6 {
+        fill: #fff;
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+        font-size: 12px;
+      }
+
+      .cls-7 {
+        letter-spacing: 0em;
+      }
+
+      .cls-8 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-9 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-10 {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" width="80" height="60"/>
+  <text class="cls-6" transform="translate(9.21 26.87)"><tspan class="cls-2" x="0" y="0">Зд</tspan><tspan x="12.17" y="0">есь </tspan><tspan class="cls-8" x="32.08" y="0">б</tspan><tspan class="cls-9" x="38.29" y="0">у</tspan><tspan class="cls-2" x="43.7" y="0">де</tspan><tspan x="55.98" y="0">т </tspan><tspan class="cls-3" x="7.69" y="14.4">к</tspan><tspan x="13.55" y="14.4">а</tspan><tspan class="cls-10" x="19.34" y="14.4">р</tspan><tspan class="cls-7" x="26.07" y="14.4">т</tspan><tspan class="cls-4" x="30.92" y="14.4">ин</tspan><tspan class="cls-5" x="44.12" y="14.4">к</tspan><tspan x="49.98" y="14.4">а</tspan></text>
+</svg>

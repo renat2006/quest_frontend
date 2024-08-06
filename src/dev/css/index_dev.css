@@ -64,6 +64,7 @@ body {
 
 .quest--container {
     height: calc(100vh - 141px - 80px);
+
     margin-top: 20px;
     display: flex;
     justify-content: center;

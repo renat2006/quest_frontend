@@ -23,7 +23,8 @@ import {
     ModalHeader,
     ModalBody,
     AutocompleteItem,
-    Autocomplete
+    Autocomplete,
+    Skeleton
 } from "@nextui-org/react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -41,7 +42,7 @@ import {useNavigate} from "react-router-dom";
 import routes from "../../routes/routes.js";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {createQuest, getUUID} from "../../api/api.js";
+import {createQuest, getUUID, fetchUserQuests} from "../../api/api.js";
 import {toast} from "react-hot-toast";
 import {useAuth} from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
@@ -136,54 +137,102 @@ const FormModal = ({isOpen, onOpenChange, initialValues, onSubmit}) => {
     );
 };
 
-const AdminCard = ({item}) => {
+const AdminCard = ({item, handleCardPress}) => {
     return (
-        <Card className="w-full border-2" isPressable onPress={() => console.log("item pressed")} shadow="none"
-              key={item.title}>
+        <Card className="w-full border-2" isPressable onPress={() => handleCardPress(item.quest_id)} shadow="none"
+              key={item.quest_id}>
             <CardBody className="flex flex-row gap-5 justify-center items-center">
-                <Image alt={item.title} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1"
-                       src={item.cover}/>
+                <Image alt={item.title_draft} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1"
+                       src={item.cover || '/placeholders/image_placeholder.svg'}/>
                 <div className="flex-1">
-                    <p className="font-bold line-clamp-1">{item.title}</p>
-                    <p className="font-thin text-sm">{item.type}</p>
+                    <p className="font-bold line-clamp-1">{item.title_draft}</p>
+                    <p className="font-thin text-sm">{item.type_draft}</p>
                 </div>
             </CardBody>
         </Card>
     );
 };
 
+const AdminSkeletonCard = () => (
+    <Card className="w-full border-2" shadow="none">
+        <CardBody className="flex flex-row gap-5 justify-center items-center">
+            <Skeleton className="min-w-[80px] w-[80px] h-[60px] flex-1 rounded-lg">
+                <div className="h-60 w-80 rounded-lg bg-default-300"></div>
+            </Skeleton>
+            <div className="flex-1 space-y-3">
+                <Skeleton className="w-3/5 rounded-lg">
+                    <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+                </Skeleton>
+                <Skeleton className="w-4/5 rounded-lg">
+                    <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+                </Skeleton>
+                <Skeleton className="w-2/5 rounded-lg">
+                    <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                </Skeleton>
+            </div>
+        </CardBody>
+    </Card>
+);
+
 const Admin = () => {
     const [openItem, setOpenItem] = useState(null);
     const [pointList, setPointList] = useState([]);
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [routeList, setRouteList] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const {accessToken} = useAuth();
 
-    const [routeList, setRouteList] = useState([
-        {
-            cover: "https://turgeek.ru/upload/tour/image_main/10577/big-tur-v-kazan-zolotoe-kolco-povolze.jpg",
-            title: "Казань - моя родина",
-            type: "Пеший"
-        },
-        {
-            cover: "https://s0.rbk.ru/v6_top_pics/resized/1440xH/media/img/8/20/755953419643208.jpg",
-            title: "Необычные места Казани",
-            type: "Пеший"
-        },
-        {
-            cover: "https://baldezh.top/uploads/posts/2021-04/1618681509_3-funart_pro-p-dvorets-zemledeliya-kazan-krasivie-mesta-f-3.jpg",
-            title: "Супер квест",
-            type: "Пеший"
-        },
-        {
-            cover: "https://putidorogi-nn.ru/images/stories/evropa/rossiya/kazan_2.jpg",
-            title: "Мега квест",
-            type: "Пеший"
-        },
-        {
-            cover: "https://sch159ufa.ru/images/2022/2041_n2065251_big.jpg",
-            title: "Гипер квест",
-            type: "Пеший"
-        }
-    ]);
+    useEffect(() => {
+        const getQuests = async () => {
+            setLoading(true);
+            try {
+                const zipBlob = await fetchUserQuests(accessToken);
+                const zip = await JSZip.loadAsync(zipBlob);
+                const quests = [];
+
+                await Promise.all(Object.keys(zip.files).map(async (filePath) => {
+                    if (filePath.endsWith('data.json')) {
+                        const fileData = await zip.file(filePath).async('string');
+                        const questData = JSON.parse(fileData);
+
+                        const folderPath = filePath.split('/').slice(0, -1).join('/');
+
+                        const promoFilePath = `${folderPath}/promo.webp`;
+                        const promoFile = zip.file(promoFilePath);
+                        if (promoFile) {
+                            questData.cover = URL.createObjectURL(await promoFile.async('blob'));
+                        }
+
+                        quests.push(questData);
+                    }
+                }));
+
+                const unpublishedQuests = quests.map((quest) => ({
+                    quest_id: quest.quest_id,
+                    title_draft: quest.title_draft || quest.title,
+                    description_draft: quest.description_draft || quest.description,
+                    locations_draft: quest.locations_draft || quest.locations,
+                    lang_draft: quest.lang_draft || quest.lang,
+                    type_draft: quest.type_draft || quest.type,
+                    cover: quest.cover,
+                }));
+
+                setRouteList(unpublishedQuests);
+            } catch (error) {
+                console.error('Error fetching quests:', error);
+            }
+            setLoading(false);
+        };
+
+        getQuests();
+    }, [accessToken]);
+
+    const handleCardPress = (questId) => {
+        navigate(routes.admin.routeAdminInfo.url, {
+            state: questId,
+        });
+    };
 
     const accordionInfo = [
         {
@@ -211,19 +260,16 @@ const Admin = () => {
             objCount: "0"
         }
     ];
+
     const blanckCrad = {
         cover: "https://via.placeholder.com/300x200",
         title: "Название",
         type: "Тип"
     };
 
-    const navigate = useNavigate();
-    const {accessToken} = useAuth();
     const handleNext = async (values) => {
         try {
-
             const {uuid} = await getUUID(accessToken);
-
 
             const questData = {
                 quest_id: uuid[0],
@@ -231,25 +277,14 @@ const Admin = () => {
                 description: '',
                 lang: values.routeLanguage,
                 type: values.routeType,
-
             };
             console.log(questData)
-
 
             await createQuest(questData, accessToken);
 
             toast.success("Квест успешно создан");
 
-
-            // setRouteList([...routeList, {
-            //     ...questData,
-            //     cover: "https://via.placeholder.com/300x200",
-            //     type: values.routeType
-            // }]);
-
-
             onOpenChange(false);
-
 
             navigate(routes.admin.routeAdminInfo.url, {
                 state: uuid[0],
@@ -303,12 +338,15 @@ const Admin = () => {
             onClose={() => setOpenItem(null)}
         >
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {item.content.length > 0 ? item.content.map(item => <AdminCard item={item}/>) :
-                    <p>Добавьте первый объект</p>}
+                {loading
+                    ? Array.from({length: 8}, (_, index) => <AdminSkeletonCard key={index}/>)
+                    : item.content.length > 0
+                        ? item.content.map(item => <AdminCard item={item} key={item.quest_id}
+                                                              handleCardPress={handleCardPress}/>)
+                        : <p>Добавьте первый объект</p>}
             </div>
         </AccordionItem>
     ));
-
 
     return (
         <div className="flex flex-col items-center p-5 w-full mt-3">
@@ -358,5 +396,6 @@ const Admin = () => {
         </div>
     );
 };
+
 
 export default Admin;

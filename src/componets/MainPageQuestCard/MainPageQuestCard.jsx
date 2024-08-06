@@ -51,9 +51,9 @@ const MainPageQuestCard = ({title, author, img, author_img, description, type, l
                 />
             </CardBody>
             <CardFooter
-                className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
-                <div className="flex flex-grow gap-2">
-                    <Avatar name={author} src={author_img}/>
+                className="absolute bg-black/40 bottom-0 z-10  border-default-600 dark:border-default-100">
+                <div className="flex flex-grow gap-3 items-center">
+                    <Avatar isBordered color="primary" name={author} src={author_img} className="w-10 h-10" />
                     <div className="flex flex-col text-start flex-1">
                         <p className="text-sm text-white/70 line-clamp-1 font-medium max-w-[150px] indent-0">{description}</p>
                         <p className="text-tiny font-thin text-white/50 line-clamp-1">{type}</p>
@@ -62,7 +62,7 @@ const MainPageQuestCard = ({title, author, img, author_img, description, type, l
                             id="quest--location">{location}</span>
                         </p>
                     </div>
-                    <div className="flex flex-col items-end">
+                    <div className="flex flex-col items-end self-start">
                         <p className="text-sm text-green-600 font-medium">{cost === "0" ? "Бесплатно" : `${cost} руб.`}</p>
                         <p className="text-tiny text-white/60">
                             <FontAwesomeIcon icon={faStar} className="text-yellow-500"/> <span
