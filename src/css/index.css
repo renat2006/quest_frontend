@@ -1111,6 +1111,14 @@ video {
   max-height: calc(100% - 7.5rem);
 }
 
+.max-h-\[300px\] {
+  max-height: 300px;
+}
+
+.max-h-\[200px\] {
+  max-height: 200px;
+}
+
 .min-h-10 {
   min-height: 2.5rem;
 }

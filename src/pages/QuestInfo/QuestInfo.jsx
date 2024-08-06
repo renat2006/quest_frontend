@@ -14,6 +14,7 @@ const QuestInfo = () => {
     const {accessToken} = useAuth();
     const [questList, setQuestList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const getQuestTypeLabel = (value) => {
         const pathType = pathTypes.find(type => type.value === value);
@@ -23,7 +24,7 @@ const QuestInfo = () => {
     useEffect(() => {
         const getQuests = async () => {
             try {
-                const zipBlob = await fetchAllQuests(accessToken);
+                const zipBlob = await fetchAllQuests(accessToken, 0, 10);
                 const zip = await JSZip.loadAsync(zipBlob);
                 const quests = [];
 
@@ -63,11 +64,24 @@ const QuestInfo = () => {
         getQuests();
     }, [accessToken]);
 
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const filteredQuests = questList.filter((quest) => {
+        return (
+            quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            quest.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            quest.author_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            getQuestTypeLabel(quest.type).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
     const renderSkeletons = () => (
         Array.from({length: 5}, (_, index) => (
             <Card isPressable isFooterBlurred shadow="none"
                   onPress={() => console.log("Карточка нажата")}
-                  className="min-w-[315px] w-full max-w-[400px] min-h-[200px] col-span-12 sm:col-span-7">
+                  className="min-w-[315px] w-full max-w-[400px] min-h-[200px] col-span-12 sm:col-span-7" key={index}>
                 <CardHeader className="absolute z-10 top-1 flex-col items-start ">
 
                 </CardHeader>
@@ -90,10 +104,11 @@ const QuestInfo = () => {
         ))
     );
 
-    const questListCards = questList.map((quest, index) => (
+    const questListCards = filteredQuests.map((quest, index) => (
         <MainPageQuestCard
             key={index}
             title={quest.title}
+            questId={quest.quest_id}
             author={quest.author_name}
             img={quest.img}
             author_img={quest.author_img}
@@ -119,6 +134,8 @@ const QuestInfo = () => {
                 size="sm"
                 startContent={<FontAwesomeIcon icon={faSearch}/>}
                 type="search"
+                value={searchTerm}
+                onChange={handleSearch}
             />
             <ScrollShadow className="flex flex-col gap-4 h-full" size={20} hideScrollBar>
                 {loading ? renderSkeletons() : questListCards}

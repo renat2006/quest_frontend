@@ -27,6 +27,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^11.2.11",
     "jszip": "^3.10.1",
+    "lodash.debounce": "^4.0.8",
     "mapbox-gl": "^3.5.1",
     "plyr": "^3.7.8",
     "prop-types": "^15.8.1",
