@@ -1,17 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Image } from "@nextui-org/react";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {languageList} from "../../data/types.js";
+import { languageList } from "../../data/types.js";
 
 
-// Utility function to get the language label in Russian
 const getLanguageLabel = (languageCode) => {
     const language = languageList.find((lang) => lang.value === languageCode);
-    return language ? language.label : languageCode; // Default to language code if not found
+    return language ? language.label : languageCode;
+};
+
+
+const synthesizeTextToSpeech = async (text) => {
+    const apiKey = import.meta.env.VITE_AIMYVOICE_API;
+    const url = "https://aimyvoice.com/api/v1/synthesize";
+    const headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "api-key": apiKey,
+    };
+
+    const payload = new URLSearchParams();
+    payload.append("text", text);
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: payload,
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to generate audio");
+    }
+
+    return response.blob(); // Return the audio as a blob
 };
 
 export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
+    const [audioUrl, setAudioUrl] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handlePlayAudio = async () => {
+        if (!point.description) return;
+        setLoading(true);
+        try {
+            const audioBlob = await synthesizeTextToSpeech(point.description);
+            const audioURL = URL.createObjectURL(audioBlob);
+            setAudioUrl(audioURL);
+        } catch (error) {
+            console.error("Error fetching audio:", error);
+            alert("Ошибка при загрузке аудио. Попробуйте позже.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (!point) return null;
 
     return (
@@ -37,8 +79,10 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                                     color="primary"
                                     className="flex-1"
                                     startContent={<FontAwesomeIcon style={{ width: "16px", height: "16px" }} icon={faPlay} />}
+                                    onClick={handlePlayAudio}
+                                    isDisabled={loading} // Disable button while loading
                                 >
-                                    Слушать
+                                    {loading ? 'Загрузка...' : 'Слушать'}
                                 </Button>
                                 <Button color="default" className="flex-1">
                                     Читать
@@ -51,6 +95,11 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                                     className="h-[200px] w-[400px] object-cover"
                                 />
                             </div>
+                            {audioUrl && (
+                                <audio controls src={audioUrl} className="w-full mt-4">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            )}
                         </ModalBody>
                         <ModalFooter>
                             <Button color="primary" onPress={onClose}>
