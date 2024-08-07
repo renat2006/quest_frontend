@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import { createQuest, publishQuest, createLocation, updateLocation } from "../api/api.js";
+import { createQuest, publishQuest, createLocation, updateLocation, publishLocation } from "../api/api.js";
 
 export const getLastPathPart = (str) => {
     return str.substring(str.lastIndexOf("/") + 1);
@@ -60,7 +60,7 @@ export const handlePublishQuest = async (questData, accessToken) => {
         return;
     }
     const toastId = toast.loading("Сохранение...");
-
+    console.log(questData)
     try {
         const response = await publishQuest(questData.questId, accessToken);
         toast.success(`Квест "${questData.routeName}" успешно опубликован`, { id: toastId });
@@ -80,13 +80,11 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
         console.log("Location Data:", locationData);
 
         const newLocationData = {
-
             title: newValues.locationName,
             description: newValues.locationDescription,
             lang: newValues.locationLanguage,
             coords: newValues.locationCoordinates,
             promoImage: newValues.promoImage,
-
         };
 
         console.log("New Location Data:", newLocationData);
@@ -106,5 +104,26 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
     } catch (error) {
         console.error("Error creating or updating location:", error);
         toast.error("Ошибка при сохранении точки", { id: toastId });
+    }
+};
+
+// New method to publish a location
+export const handlePublishLocation = async (locationData, accessToken) => {
+    // Check if all required fields are filled
+    console.log(locationData)
+    if (!locationData.locationName || !locationData.locationDescription || !locationData.locationLanguage || !locationData.promoImage) {
+        toast.error('Точка должна иметь название, описание, язык и промо изображение.');
+        return;
+    }
+
+    const toastId = toast.loading("Публикация точки...");
+
+    try {
+        const response = await publishLocation(locationData.locationId, accessToken);
+        toast.success("Точка успешно опубликована", { id: toastId });
+        console.log("Publish Location Response:", response);
+    } catch (error) {
+        console.error("Error publishing location:", error);
+        toast.error("Ошибка при публикации точки", { id: toastId });
     }
 };

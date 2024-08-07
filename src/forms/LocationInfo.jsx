@@ -1,16 +1,14 @@
-// LocationInfo.jsx
-
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {Autocomplete, AutocompleteItem, Button, ButtonGroup, Input, Textarea} from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, ButtonGroup, Input, Textarea } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import { useLocationData } from "../providers/LocationProvider.jsx";
-import {handleLocationSubmit, handlePublishQuest} from "../methods/methods.js";
+import { handleLocationSubmit, handlePublishLocation } from "../methods/methods.js";
 import { languageList } from "../data/types.js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faSave} from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
 
 const LocationInfo = () => {
     const { locationData, setLocationData } = useLocationData();
@@ -85,9 +83,14 @@ const LocationInfo = () => {
                 />
             </div>
             <ButtonGroup color="primary">
-                <Button startContent={<FontAwesomeIcon icon={faSave}/>} type="submit">Сохранить</Button>
-                <Button variant="bordered" onPress={() => handlePublishQuest(questData, accessToken)}
-                        startContent={<FontAwesomeIcon icon={faEye}/>}>Опубликовать</Button>
+                <Button startContent={<FontAwesomeIcon icon={faSave} />} type="submit">Сохранить</Button>
+                <Button
+                    variant="bordered"
+                    onPress={() => handlePublishLocation(locationData, accessToken)}
+                    startContent={<FontAwesomeIcon icon={faEye} />}
+                >
+                    Опубликовать
+                </Button>
             </ButtonGroup>
         </form>
     );

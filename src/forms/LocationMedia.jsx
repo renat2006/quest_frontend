@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {handleLocationSubmit, handlePublishQuest} from "../methods/methods.js";
+import {handleLocationSubmit, handlePublishLocation, handlePublishQuest} from "../methods/methods.js";
 import { useLocationData } from "../providers/LocationProvider.jsx";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import {faEye, faSave} from "@fortawesome/free-regular-svg-icons";
@@ -165,9 +165,14 @@ export function LocationMedia() {
             )}
 
             <ButtonGroup color="primary">
-                <Button startContent={<FontAwesomeIcon icon={faSave}/>} type="submit">Сохранить</Button>
-                <Button variant="bordered" onPress={() => handlePublishQuest(questData, accessToken)}
-                        startContent={<FontAwesomeIcon icon={faEye}/>}>Опубликовать</Button>
+                <Button startContent={<FontAwesomeIcon icon={faSave} />} type="submit">Сохранить</Button>
+                <Button
+                    variant="bordered"
+                    onPress={() => handlePublishLocation(locationData, accessToken)}
+                    startContent={<FontAwesomeIcon icon={faEye} />}
+                >
+                    Опубликовать
+                </Button>
             </ButtonGroup>
         </form>
     );

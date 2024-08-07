@@ -1,17 +1,17 @@
-import {useState, useEffect} from "react";
-import {Avatar, Card, CardBody, CardFooter, CardHeader, Image, Input, ScrollShadow, Skeleton} from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLocationDot, faSearch, faStar} from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect } from "react";
+import { Avatar, Card, CardBody, CardFooter, CardHeader, Image, Input, ScrollShadow, Skeleton } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot, faSearch, faStar } from "@fortawesome/free-solid-svg-icons";
 
-import {fetchAllQuests} from "../../api/api.js";
-import {useAuth} from "../../providers/AuthProvider.jsx";
+import { fetchAllQuests } from "../../api/api.js";
+import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from 'jszip';
-import {pathTypes} from "../../data/types.js";
+import { pathTypes } from "../../data/types.js";
 import MainPageQuestCard from "../../componets/MainPageQuestCard/MainPageQuestCard.jsx";
 
 
 const QuestInfo = () => {
-    const {accessToken} = useAuth();
+    const { accessToken } = useAuth();
     const [questList, setQuestList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -78,24 +78,23 @@ const QuestInfo = () => {
     });
 
     const renderSkeletons = () => (
-        Array.from({length: 5}, (_, index) => (
+        Array.from({ length: 5 }, (_, index) => (
             <Card isPressable isFooterBlurred shadow="none"
                   onPress={() => console.log("Карточка нажата")}
                   className="min-w-[315px] w-full max-w-[400px] min-h-[200px] col-span-12 sm:col-span-7" key={index}>
                 <CardHeader className="absolute z-10 top-1 flex-col items-start ">
-
                 </CardHeader>
                 <CardBody className="overflow-visible p-0">
-                    <Skeleton className="h-full w-full rounded-lg"/>
+                    <Skeleton className="h-full w-full rounded-lg" />
                 </CardBody>
                 <CardFooter
                     className="absolute bg-black/40 bottom-0 z-10  border-default-600 dark:border-default-100">
                     <div className="flex flex-grow gap-2">
-                        <Skeleton className="flex rounded-full w-12 h-12"/>
+                        <Skeleton className="flex rounded-full w-12 h-12" />
                         <div className="flex flex-1 flex-col gap-2">
-                            <Skeleton className="h-3 w-2/5 rounded-lg"/>
-                            <Skeleton className="h-3 w-4/5 rounded-lg"/>
-                            <Skeleton className="h-3 w-3/5 rounded-lg"/>
+                            <Skeleton className="h-3 w-2/5 rounded-lg" />
+                            <Skeleton className="h-3 w-4/5 rounded-lg" />
+                            <Skeleton className="h-3 w-3/5 rounded-lg" />
                         </div>
 
                     </div>
@@ -104,11 +103,24 @@ const QuestInfo = () => {
         ))
     );
 
+    const renderNoQuestsMessage = () => (
+        <Card className="flex flex-col items-center justify-center min-h-[200px] max-w-[400px] bg-default-100 dark:bg-default-900">
+            <CardBody className="flex flex-col items-center justify-center">
+                <div  color="primary" className="text-center text-xl font-bold">
+                    Нет доступных квестов
+                </div>
+                <div className="text-center">
+                    Похоже, что на данный момент квесты отсутствуют. Пожалуйста, попробуйте позже или создайте новый квест!
+                </div>
+            </CardBody>
+        </Card>
+    );
+
     const questListCards = filteredQuests.map((quest, index) => (
         <MainPageQuestCard
             key={index}
             title={quest.title}
-            questId={quest.quest_id}
+            quest_id={quest.quest_id}
             author={quest.author_name}
             img={quest.img}
             author_img={quest.author_img}
@@ -132,13 +144,13 @@ const QuestInfo = () => {
                 }}
                 placeholder="Поиск квестов"
                 size="sm"
-                startContent={<FontAwesomeIcon icon={faSearch}/>}
+                startContent={<FontAwesomeIcon icon={faSearch} />}
                 type="search"
                 value={searchTerm}
                 onChange={handleSearch}
             />
             <ScrollShadow className="flex flex-col gap-4 h-full" size={20} hideScrollBar>
-                {loading ? renderSkeletons() : questListCards}
+                {loading ? renderSkeletons() : (questListCards.length > 0 ? questListCards : renderNoQuestsMessage())}
             </ScrollShadow>
         </div>
     );

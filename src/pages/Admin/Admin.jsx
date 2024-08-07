@@ -52,6 +52,7 @@ import { createQuest, getUUID, fetchUserQuests, fetchUserLocations, deleteQuest 
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
+import {downloadBlob} from "../../methods/methods.js";
 
 const validationSchema = yup.object({
     routeName: yup
@@ -209,6 +210,7 @@ const Admin = () => {
             setLoading(true);
             try {
                 const zipBlob = await fetchUserQuests(accessToken);
+
                 const zip = await JSZip.loadAsync(zipBlob);
                 const quests = [];
 
@@ -219,7 +221,7 @@ const Admin = () => {
 
                         const folderPath = filePath.split('/').slice(0, -1).join('/');
 
-                        const promoFilePath = `${folderPath}/promo.webp`;
+                        const promoFilePath = `${folderPath}/promo_draft.webp`;
                         const promoFile = zip.file(promoFilePath);
                         if (promoFile) {
                             questData.cover = URL.createObjectURL(await promoFile.async('blob'));

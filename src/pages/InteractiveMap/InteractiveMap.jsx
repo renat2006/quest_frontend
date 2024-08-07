@@ -19,19 +19,22 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { languageList } from "../../data/types.js";
 import ReactDOM, { createRoot } from "react-dom/client";
-import { capitalizeFirstLetter, handlePublishQuest, handleSubmit } from "../../methods/methods.js";
+import {capitalizeFirstLetter, downloadBlob, handlePublishQuest, handleSubmit} from "../../methods/methods.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { createLocation, getUUID, updateLocation, fetchQuestLocations } from "../../api/api.js";
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import { toast } from "react-hot-toast";
 import { useQuest } from "../../providers/RouteProvider.jsx";
+import { useNavigate } from "react-router-dom";
+import routes from "../../routes/routes.js";
 import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
 
 // Function to handle fetching and parsing the ZIP file
 const fetchAndProcessLocations = async (questId, token) => {
     try {
         const zipBlob = await fetchQuestLocations(questId, token, true);
+
         const zip = await JSZip.loadAsync(zipBlob);
         const locations = [];
 
@@ -41,12 +44,26 @@ const fetchAndProcessLocations = async (questId, token) => {
                     const fileData = await zip.file(filePath).async('string');
                     const dataJson = JSON.parse(fileData);
 
+                    const folderPath = filePath.split('/').slice(0, -1).join('/');
+                    const promoFilePath = `${folderPath}/promo_draft.webp`;
+
+                    const promoFile = zip.file(promoFilePath);
+
+                    let promoUrl = '';
+
+                    if (promoFile) {
+                        const promoBlob = await promoFile.async('blob');
+                        promoUrl = URL.createObjectURL(promoBlob);
+                        console.log("edededede", promoUrl)
+                    }
+
                     locations.push({
                         id: dataJson.location_id,
                         name: dataJson.title_draft || "Untitled",
                         coordinates: dataJson.coords_draft.split(';').map(Number),
                         language: dataJson.lang_draft,
                         description: dataJson.description_draft || '',
+                        promoUrl: promoUrl || 'https://via.placeholder.com/100',
                     });
                 }
             })
@@ -58,16 +75,14 @@ const fetchAndProcessLocations = async (questId, token) => {
         throw error;
     }
 };
-
-const PopupContent = ({ name, languageCode, onEdit }) => {
+const PopupContent = ({ name, languageCode, promoUrl, onEdit }) => {
     const languageName = languageList.find(lang => lang.value === languageCode)?.label || languageCode;
 
     return (
         <div className="flex flex-col gap-1.5 p-2 ">
             <div className="popover-title text-base font-bold flex items-center w-full justify-between">
                 <div className="line-clamp-1 max-w-[75px]"> {capitalizeFirstLetter(name)} </div>
-                <Avatar isBordered color="primary" radius="sm" size="sm"
-                        src="https://avatars.mds.yandex.net/i?id=b6b043354e6d2d770429e29ab4c12394cd63383709223706-12510920-images-thumbs&n=13" />
+                <Avatar isBordered color="primary" radius="sm" size="sm" name={name} src={promoUrl} />
             </div>
             <div className="popover-subtitle flex gap-1.5 items-center"><FontAwesomeIcon icon={faGlobe} /> {languageName}
             </div>
@@ -169,6 +184,7 @@ const InteractiveMap = () => {
     const drawRef = useRef(null);
     const { accessToken } = useAuth();
     const { questData, setQuestData } = useQuest();
+    const navigate = useNavigate();  // Initialize the useNavigate hook
     const { questId } = questData;
 
     useEffect(() => {
@@ -296,7 +312,7 @@ const InteractiveMap = () => {
                         console.log("Adding location to map", location);
                         drawRef.current.add({
                             type: 'Feature',
-                            properties: { name: location.name, language: location.language },
+                            properties: { name: location.name, language: location.language, location_id: location.id, promoUrl: location.promoUrl },
                             geometry: {
                                 type: 'Point',
                                 coordinates: location.coordinates
@@ -337,17 +353,26 @@ const InteractiveMap = () => {
                 const coordinates = feature.geometry.coordinates.slice();
                 const name = feature.properties.name;
                 const languageCode = feature.properties.language;
+                const locationId = feature.properties.location_id;
+                const PromoUrl = feature.properties.promoUrl
+                console.log(PromoUrl)
 
                 const popupNode = document.createElement('div');
 
                 const onEdit = () => {
-                    setNewPoint({ id: feature.id, coordinates });
-                    onOpen();
-                    popup.remove();
+                    // Navigate using location_id
+                    navigate(routes.admin.locationAdminInfo.url, { state: locationId });
                 };
 
                 const root = createRoot(popupNode);
-                root.render(<PopupContent name={name} languageCode={languageCode} onEdit={onEdit} />);
+                root.render(
+                    <PopupContent
+                        name={name}
+                        languageCode={languageCode}
+                        promoUrl={PromoUrl}
+                        onEdit={onEdit}
+                    />
+                );
 
                 const popup = new mapboxgl.Popup({ offset: 25 })
                     .setLngLat(coordinates)
@@ -380,7 +405,8 @@ const InteractiveMap = () => {
                 id: newPointId,
                 coordinates: newPoint.coordinates,
                 name: values.pointName,
-                language: values.pointLanguage
+                language: values.pointLanguage,
+                promoUrl: ''
             };
 
             setPoints(prevPoints => {
@@ -390,7 +416,7 @@ const InteractiveMap = () => {
 
             drawRef.current.add({
                 type: 'Feature',
-                properties: { name: values.pointName, language: values.pointLanguage },
+                properties: { name: values.pointName, language: values.pointLanguage, location_id: newPointId },
                 geometry: {
                     type: 'Point',
                     coordinates: newPoint.coordinates

@@ -36,7 +36,8 @@ const MainPageQuestCard = ({title, quest_id, author, img, author_img, descriptio
     }, [img]);
     const navigate = useNavigate();
     const handleCardPress = (questId) => {
-        navigate(routes.admin.routeAdminInfo.url, {
+        console.log(questId)
+        navigate(routes.map.url, {
             state: questId,
         });
     };

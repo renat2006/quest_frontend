@@ -87,7 +87,7 @@ export const updateLocation = (locationId, locationData, token) => {
         formData.append('promo', locationData.promoImage);
     }
 
-    const { promoImage, ...updatedLocationData} = locationData;
+    const {promoImage, ...updatedLocationData} = locationData;
     console.log(updatedLocationData)
     formData.append('json', JSON.stringify(updatedLocationData));
     return apiRequest(`/location/${locationId}`, 'PUT', formData, token, true);
@@ -107,5 +107,8 @@ export const fetchLocationForEditing = (locationId, token, isDraft = true, addAu
     return apiRequest(endpoint, 'GET', null, token);
 };
 export const deleteQuest = (questId, token) => {
-    return apiRequest('/delete_quest', 'DELETE', { quest_id: questId }, token);
+    return apiRequest('/delete_quest', 'DELETE', {quest_id: questId}, token);
+};
+export const publishLocation = (locationId, token) => {
+    return apiRequest(`/locations/${locationId}/publish`, 'POST', null, token);
 };
