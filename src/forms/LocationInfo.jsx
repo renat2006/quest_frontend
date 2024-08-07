@@ -30,7 +30,7 @@ const LocationInfo = () => {
                 .max(30, "Название точки не может превышать 30 символов"),
             locationLanguage: Yup.string().required("Язык точки обязателен"),
             locationDescription: Yup.string()
-                .max(200, "Описание не может превышать 200 символов"),
+                .max(2000, "Описание не может превышать 2000 символов"),
         }),
         onSubmit: (values) => handleLocationSubmit(values, locationData, setLocationData, accessToken),
     });
