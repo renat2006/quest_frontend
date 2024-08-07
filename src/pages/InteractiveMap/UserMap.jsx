@@ -26,7 +26,7 @@ const UserMap = () => {
         console.log("Quest ID from state:", questId);  // Verify questId
         const loadQuestData = async () => {
             try {
-                const zipBlob = await fetchQuestLocations(questId, accessToken, true);
+                const zipBlob = await fetchQuestLocations(questId, accessToken, false);
                 const zip = await JSZip.loadAsync(zipBlob);
                 const locations = [];
 
@@ -37,7 +37,7 @@ const UserMap = () => {
                             const locationData = JSON.parse(fileData);
 
                             const folderPath = filePath.split('/').slice(0, -1).join('/');
-                            const promoFilePath = `${folderPath}/promo_draft.webp`;
+                            const promoFilePath = `${folderPath}/promo.webp`;
                             const promoFile = zip.file(promoFilePath);
                             let promoUrl = '';
 
@@ -47,11 +47,11 @@ const UserMap = () => {
                             }
 
                             locations.push({
-                                id: locationData.location_id,
-                                name: locationData.title_draft || "Untitled",
-                                coordinates: locationData.coords_draft.split(';').map(Number),
-                                language: locationData.lang_draft,
-                                description: locationData.description_draft || '',
+                                id: locationData.location,
+                                name: locationData.title || "Untitled",
+                                coordinates: locationData.coords.split(';').map(Number),
+                                language: locationData.lang,
+                                description: locationData.description || '',
                                 promoUrl: promoUrl || 'https://via.placeholder.com/100',
                             });
                         }
