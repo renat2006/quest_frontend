@@ -1,3 +1,5 @@
+// Admin.js
+
 import {
     Card,
     CardBody,
@@ -8,7 +10,6 @@ import {
     Divider,
     Accordion,
     AccordionItem,
-    Badge,
     Chip,
     Button,
     Dropdown,
@@ -24,27 +25,32 @@ import {
     ModalBody,
     AutocompleteItem,
     Autocomplete,
-    Skeleton
+    Skeleton,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
 } from "@nextui-org/react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faLandmark,
     faMapLocationDot,
     faMapPin,
     faFolder,
     faFolderOpen,
-    faPlus
+    faPlus,
+    faTrash,
+    faExternalLinkAlt
 } from "@fortawesome/free-solid-svg-icons";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
-import {languageList, pathTypes} from "../../data/types.js";
-import {useNavigate} from "react-router-dom";
+import { languageList, pathTypes } from "../../data/types.js";
+import { useNavigate } from "react-router-dom";
 import routes from "../../routes/routes.js";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
-import {createQuest, getUUID, fetchUserQuests} from "../../api/api.js";
-import {toast} from "react-hot-toast";
-import {useAuth} from "../../providers/AuthProvider.jsx";
+import { createQuest, getUUID, fetchUserQuests, fetchUserLocations, deleteQuest } from "../../api/api.js";
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
 
 const validationSchema = yup.object({
@@ -57,7 +63,7 @@ const validationSchema = yup.object({
     routeLanguage: yup.string().required("Язык маршрута должен быть выбран.")
 });
 
-const FormModal = ({isOpen, onOpenChange, initialValues, onSubmit}) => {
+const FormModal = ({ isOpen, onOpenChange, initialValues, onSubmit }) => {
     const formik = useFormik({
         initialValues,
         validationSchema,
@@ -137,19 +143,34 @@ const FormModal = ({isOpen, onOpenChange, initialValues, onSubmit}) => {
     );
 };
 
-const AdminCard = ({item, handleCardPress}) => {
+const AdminCard = ({ item, handleCardPress, handleDelete, isQuest }) => {
+    const idKey = isQuest ? 'quest_id' : 'location_id';
+    const nameKey = isQuest ? 'title_draft' : 'title';
+    const typeKey = isQuest ? 'type_draft' : 'language';
+
     return (
-        <Card className="w-full border-2" isPressable onPress={() => handleCardPress(item.quest_id)} shadow="none"
-              key={item.quest_id}>
-            <CardBody className="flex flex-row gap-5 justify-center items-center">
-                <Image alt={item.title_draft} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1"
-                       src={item.cover || '/placeholders/image_placeholder.svg'}/>
-                <div className="flex-1">
-                    <p className="font-bold line-clamp-1">{item.title_draft}</p>
-                    <p className="font-thin text-sm">{item.type_draft}</p>
-                </div>
-            </CardBody>
-        </Card>
+        <Popover placement="top" showArrow={true}>
+            <PopoverTrigger>
+                <Card className="w-full border-2" shadow="none" key={item[idKey]}>
+                    <CardBody className="flex flex-row gap-5 justify-center items-center">
+                        <Image alt={item[nameKey]} className="object-cover min-w-[80px] w-[80px] h-[60px] flex-1"
+                               src={item.cover || '/placeholders/image_placeholder.svg'} />
+                        <div className="flex-1">
+                            <p className="font-bold line-clamp-1">{item[nameKey]}</p>
+                            <p className="font-thin text-sm">{item[typeKey]}</p>
+                        </div>
+                    </CardBody>
+                </Card>
+            </PopoverTrigger>
+            <PopoverContent className="flex gap-3 flex-row p-2">
+                <Button color="primary" size="sm" onPress={() => handleCardPress(item[idKey], isQuest)}>
+                    <FontAwesomeIcon icon={faExternalLinkAlt} /> Открыть
+                </Button>
+                <Button color="danger" size="sm" onPress={() => handleDelete(item[idKey], isQuest)}>
+                    <FontAwesomeIcon icon={faTrash} /> Удалить
+                </Button>
+            </PopoverContent>
+        </Popover>
     );
 };
 
@@ -177,11 +198,11 @@ const AdminSkeletonCard = () => (
 const Admin = () => {
     const [openItem, setOpenItem] = useState(null);
     const [pointList, setPointList] = useState([]);
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [routeList, setRouteList] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const {accessToken} = useAuth();
+    const { accessToken } = useAuth();
 
     useEffect(() => {
         const getQuests = async () => {
@@ -225,13 +246,75 @@ const Admin = () => {
             setLoading(false);
         };
 
+        const getLocations = async () => {
+            try {
+                const zipBlob = await fetchUserLocations(accessToken);
+                const zip = await JSZip.loadAsync(zipBlob);
+                const locations = [];
+
+                await Promise.all(Object.keys(zip.files).map(async (filePath) => {
+                    if (filePath.endsWith('data.json')) {
+                        const fileData = await zip.file(filePath).async('string');
+                        const locationData = JSON.parse(fileData);
+
+                        const folderPath = filePath.split('/').slice(0, -1).join('/');
+
+                        const promoFilePath = `${folderPath}/promo_draft.webp`;
+                        const promoFile = zip.file(promoFilePath);
+                        if (promoFile) {
+                            locationData.cover = URL.createObjectURL(await promoFile.async('blob'));
+                        }
+
+                        locations.push(locationData);
+                    }
+                }));
+
+                const userLocations = locations.map((location) => ({
+                    location_id: location.location_id,
+                    title: location.title_draft || location.title || "Untitled",
+                    description: location.description_draft || location.description,
+                    coordinates: location.coords_draft || location.coords,
+                    lang: location.lang_draft || location.lang,
+                    cover: location.cover,
+                }));
+
+                setPointList(userLocations);
+            } catch (error) {
+                console.error('Error fetching user locations:', error);
+            }
+        };
+
         getQuests();
+        getLocations();
     }, [accessToken]);
 
-    const handleCardPress = (questId) => {
-        navigate(routes.admin.routeAdminInfo.url, {
-            state: questId,
-        });
+    const handleCardPress = (id, isQuest) => {
+        if (isQuest) {
+            navigate(routes.admin.routeAdminInfo.url, {
+                state: id,
+            });
+        } else {
+            // Navigate to LocationInfo with locationId in the state
+            navigate(routes.admin.locationAdminInfo.url, {
+                state:  id ,
+            });
+        }
+    };
+
+    const handleDelete = async (id, isQuest) => {
+        try {
+            if (isQuest) {
+                await deleteQuest(id, accessToken);
+                setRouteList((prev) => prev.filter((quest) => quest.quest_id !== id));
+                toast.success("Квест успешно удалён");
+            } else {
+                // Handle location deletion if needed
+                console.log("Deleting location with ID:", id);
+            }
+        } catch (error) {
+            toast.error("Ошибка при удалении");
+            console.error("Error deleting:", error);
+        }
     };
 
     const accordionInfo = [
@@ -269,7 +352,7 @@ const Admin = () => {
 
     const handleNext = async (values) => {
         try {
-            const {uuid} = await getUUID(accessToken);
+            const { uuid } = await getUUID(accessToken);
 
             const questData = {
                 quest_id: uuid[0],
@@ -312,8 +395,8 @@ const Admin = () => {
             key={item.key}
             aria-label={item.title}
             disableIndicatorAnimation
-            indicator={({isOpen}) => (isOpen ? <FontAwesomeIcon icon={faFolderOpen}/> :
-                <FontAwesomeIcon icon={faFolder}/>)}
+            indicator={({ isOpen }) => (isOpen ? <FontAwesomeIcon icon={faFolderOpen} /> :
+                <FontAwesomeIcon icon={faFolder} />)}
             className="transition-all"
             title={
                 <>
@@ -339,10 +422,9 @@ const Admin = () => {
         >
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {loading
-                    ? Array.from({length: 8}, (_, index) => <AdminSkeletonCard key={index}/>)
+                    ? Array.from({ length: 8 }, (_, index) => <AdminSkeletonCard key={index} />)
                     : item.content.length > 0
-                        ? item.content.map(item => <AdminCard item={item} key={item.quest_id}
-                                                              handleCardPress={handleCardPress}/>)
+                        ? item.content.map(item => <AdminCard item={item} key={item.quest_id || item.location_id} handleCardPress={handleCardPress} handleDelete={handleDelete} isQuest={item.quest_id !== undefined} />)
                         : <p>Добавьте первый объект</p>}
             </div>
         </AccordionItem>
@@ -356,7 +438,7 @@ const Admin = () => {
                     <h1 className="text-xl font-bold">Мои объекты</h1>
                     <Dropdown>
                         <DropdownTrigger>
-                            <Button color="primary" size="sm" startContent={<FontAwesomeIcon icon={faPlus}/>}>
+                            <Button color="primary" size="sm" startContent={<FontAwesomeIcon icon={faPlus} />}>
                                 Добавить
                             </Button>
                         </DropdownTrigger>
@@ -365,7 +447,7 @@ const Admin = () => {
                             <DropdownItem
                                 key="route"
                                 description="Добавить новый маршрут с новыми или ранее созданными точками"
-                                startContent={<FontAwesomeIcon icon={faMapLocationDot}/>}
+                                startContent={<FontAwesomeIcon icon={faMapLocationDot} />}
                                 onPress={onOpen}
                             >
                                 Маршрут
@@ -373,19 +455,19 @@ const Admin = () => {
                             <DropdownItem
                                 key="point"
                                 description="Добавить новую точку для маршрутов"
-                                startContent={<FontAwesomeIcon icon={faMapPin}/>}
+                                startContent={<FontAwesomeIcon icon={faMapPin} />}
                                 onPress={() => setPointList(oldPointList => [...oldPointList, blanckCrad])}
                             >
                                 Точку
                             </DropdownItem>
                             <DropdownItem key="museum" description="В разработке..."
-                                          startContent={<FontAwesomeIcon icon={faLandmark}/>}>
+                                          startContent={<FontAwesomeIcon icon={faLandmark} />}>
                                 Музей
                             </DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </CardHeader>
-                <Divider/>
+                <Divider />
                 <CardBody>
                     <Accordion disabledKeys={["3"]} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
                         {accordionComponents}
@@ -396,6 +478,5 @@ const Admin = () => {
         </div>
     );
 };
-
 
 export default Admin;

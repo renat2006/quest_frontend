@@ -1,6 +1,7 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
-import React, {useEffect, useRef, useState, memo} from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
+import JSZip from 'jszip';
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import {
     Modal,
@@ -12,38 +13,75 @@ import {
     ModalBody,
     ModalFooter,
     Autocomplete,
-    AutocompleteItem, Avatar
+    AutocompleteItem, Avatar, ButtonGroup
 } from "@nextui-org/react";
-import {Formik, Form, Field} from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import {languageList} from "../../data/types.js";
-import ReactDOM, {createRoot} from "react-dom/client";
-import {capitalizeFirstLetter} from "../../methods/methods.js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faGlobe, faLanguage} from "@fortawesome/free-solid-svg-icons";
+import { languageList } from "../../data/types.js";
+import ReactDOM, { createRoot } from "react-dom/client";
+import { capitalizeFirstLetter, handlePublishQuest, handleSubmit } from "../../methods/methods.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { createLocation, getUUID, updateLocation, fetchQuestLocations } from "../../api/api.js";
+import { useAuth } from "../../providers/AuthProvider.jsx";
+import { toast } from "react-hot-toast";
+import { useQuest } from "../../providers/RouteProvider.jsx";
+import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
 
-const PopupContent = ({name, languageCode, onEdit}) => {
+// Function to handle fetching and parsing the ZIP file
+const fetchAndProcessLocations = async (questId, token) => {
+    try {
+        const zipBlob = await fetchQuestLocations(questId, token, true);
+        const zip = await JSZip.loadAsync(zipBlob);
+        const locations = [];
+
+        await Promise.all(
+            Object.keys(zip.files).map(async (filePath) => {
+                if (filePath.endsWith('data.json')) {
+                    const fileData = await zip.file(filePath).async('string');
+                    const dataJson = JSON.parse(fileData);
+
+                    locations.push({
+                        id: dataJson.location_id,
+                        name: dataJson.title_draft || "Untitled",
+                        coordinates: dataJson.coords_draft.split(';').map(Number),
+                        language: dataJson.lang_draft,
+                        description: dataJson.description_draft || '',
+                    });
+                }
+            })
+        );
+
+        return locations;
+    } catch (error) {
+        console.error('Error fetching or processing locations:', error);
+        throw error;
+    }
+};
+
+const PopupContent = ({ name, languageCode, onEdit }) => {
     const languageName = languageList.find(lang => lang.value === languageCode)?.label || languageCode;
 
     return (
         <div className="flex flex-col gap-1.5 p-2 ">
-            <div className="popover-title text-base font-bold flex items-center w-full  justify-between">
+            <div className="popover-title text-base font-bold flex items-center w-full justify-between">
                 <div className="line-clamp-1 max-w-[75px]"> {capitalizeFirstLetter(name)} </div>
                 <Avatar isBordered color="primary" radius="sm" size="sm"
-                        src="https://avatars.mds.yandex.net/i?id=b6b043354e6d2d770429e29ab4c12394cd63383709223706-12510920-images-thumbs&n=13"/>
+                        src="https://avatars.mds.yandex.net/i?id=b6b043354e6d2d770429e29ab4c12394cd63383709223706-12510920-images-thumbs&n=13" />
             </div>
-            <div className="popover-subtitle flex gap-1.5 items-center"><FontAwesomeIcon icon={faGlobe}/> {languageName}
+            <div className="popover-subtitle flex gap-1.5 items-center"><FontAwesomeIcon icon={faGlobe} /> {languageName}
             </div>
             <Button size="sm"
                     color="primary"
                     onClick={onEdit}
-                    startContent={<FontAwesomeIcon icon={faEdit}/>}
+                    startContent={<FontAwesomeIcon icon={faEdit} />}
             >
                 Редактировать
             </Button>
         </div>
     );
 };
+
 const validationSchema = Yup.object().shape({
     pointName: Yup.string()
         .required("Название не может быть пустым.")
@@ -52,7 +90,7 @@ const validationSchema = Yup.object().shape({
     pointLanguage: Yup.string().required("Язык точки должен быть выбран."),
 });
 
-const PointFormModal = ({isOpen, onClose, onSubmit, initialValues}) => {
+const PointFormModal = ({ isOpen, onClose, onSubmit, initialValues }) => {
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} placement="auto">
             <ModalContent>
@@ -65,12 +103,12 @@ const PointFormModal = ({isOpen, onClose, onSubmit, initialValues}) => {
                             onClose();
                         }}
                     >
-                        {({setFieldValue, errors, touched}) => (
+                        {({ setFieldValue, errors, touched }) => (
                             <Form>
                                 <ModalHeader className="flex flex-col gap-1">Создать точку</ModalHeader>
                                 <ModalBody>
                                     <Field name="pointName">
-                                        {({field}) => (
+                                        {({ field }) => (
                                             <Input
                                                 {...field}
                                                 autoFocus
@@ -85,7 +123,7 @@ const PointFormModal = ({isOpen, onClose, onSubmit, initialValues}) => {
                                         )}
                                     </Field>
                                     <Field name="pointLanguage">
-                                        {({field}) => (
+                                        {({ field }) => (
                                             <Autocomplete
                                                 {...field}
                                                 isRequired
@@ -125,13 +163,13 @@ const InteractiveMap = () => {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
     const initialPositionSet = useRef(false);
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [newPoint, setNewPoint] = useState(null);
-    const [points, setPoints] = useState(() => {
-        const savedPoints = localStorage.getItem('points');
-        return savedPoints ? JSON.parse(savedPoints) : [];
-    });
+    const [points, setPoints] = useState([]);
     const drawRef = useRef(null);
+    const { accessToken } = useAuth();
+    const { questData, setQuestData } = useQuest();
+    const { questId } = questData;
 
     useEffect(() => {
         mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -204,12 +242,7 @@ const InteractiveMap = () => {
                         });
 
                         mapRef.current.addControl(Draw);
-                        drawRef.current = Draw;
-
-                        const savedData = localStorage.getItem('mapData');
-                        if (savedData) {
-                            Draw.set(JSON.parse(savedData));
-                        }
+                        drawRef.current = Draw; // Correctly assign the instance
 
                         mapRef.current.on('draw.create', handleDrawCreate);
                         mapRef.current.on('draw.delete', handleDrawDelete);
@@ -243,11 +276,42 @@ const InteractiveMap = () => {
                             const zoomLevel = mapRef.current.getZoom();
                             adjustMarkersBasedOnZoom(zoomLevel);
                         });
+
+                        // Load locations only after the map is fully loaded
+                        loadLocations();
                     }
                 );
             });
         }
-    }, []);
+
+        const loadLocations = async () => {
+            try {
+                const locations = await fetchAndProcessLocations(questId, accessToken);
+                console.log("Loaded locations", locations);
+                setPoints(locations);
+
+                // Ensure drawRef.current is set before adding locations
+                if (drawRef.current) {
+                    locations.forEach(location => {
+                        console.log("Adding location to map", location);
+                        drawRef.current.add({
+                            type: 'Feature',
+                            properties: { name: location.name, language: location.language },
+                            geometry: {
+                                type: 'Point',
+                                coordinates: location.coordinates
+                            }
+                        });
+                    });
+                } else {
+                    console.warn('Draw control not initialized yet');
+                }
+            } catch (error) {
+                console.error('Error loading locations', error);
+                toast.error('Error loading locations');
+            }
+        };
+    }, [accessToken, questId]);
 
     const handleDrawCreate = (e) => {
         const createdFeature = e.features[0];
@@ -259,16 +323,11 @@ const InteractiveMap = () => {
             onOpen();
             drawRef.current.delete([createdFeature.id]);
         }
-        saveData();
     };
 
-    const handleDrawDelete = () => {
-        saveData();
-    };
+    const handleDrawDelete = () => { };
 
-    const handleDrawUpdate = () => {
-        saveData();
-    };
+    const handleDrawUpdate = () => { };
 
     const handleSelectionChange = (e) => {
         const selectedFeatures = e.features;
@@ -282,15 +341,15 @@ const InteractiveMap = () => {
                 const popupNode = document.createElement('div');
 
                 const onEdit = () => {
-                    setNewPoint({id: feature.id, coordinates});
+                    setNewPoint({ id: feature.id, coordinates });
                     onOpen();
                     popup.remove();
                 };
 
                 const root = createRoot(popupNode);
-                root.render(<PopupContent name={name} languageCode={languageCode} onEdit={onEdit}/>);
+                root.render(<PopupContent name={name} languageCode={languageCode} onEdit={onEdit} />);
 
-                const popup = new mapboxgl.Popup({offset: 25})
+                const popup = new mapboxgl.Popup({ offset: 25 })
                     .setLngLat(coordinates)
                     .setDOMContent(popupNode)
                     .addTo(mapRef.current);
@@ -298,34 +357,57 @@ const InteractiveMap = () => {
         }
     };
 
-    const handleFormSubmit = (values) => {
-        const newPointData = {
-            id: newPoint.id,
-            coordinates: newPoint.coordinates,
-            name: values.pointName,
-            language: values.pointLanguage
-        };
-        setPoints(prevPoints => {
-            const updatedPoints = [...prevPoints, newPointData];
-            localStorage.setItem('points', JSON.stringify(updatedPoints));
-            return updatedPoints;
-        });
+    const handleFormSubmit = async (values) => {
+        const toastId = toast.loading("Создание...");
+        try {
+            const { uuid } = await getUUID(accessToken);
+            const newPointId = uuid[0];
 
-        drawRef.current.add({
-            type: 'Feature',
-            properties: {name: values.pointName, language: values.pointLanguage},
-            geometry: {
-                type: 'Point',
-                coordinates: newPoint.coordinates
-            }
-        });
-        saveData();
+            const createResponse = await createLocation(newPointId, accessToken);
+            console.log('Location created:', createResponse);
+
+            const updateData = {
+                title: values.pointName,
+                coords: newPoint.coordinates.join(';'),
+                lang: values.pointLanguage,
+                description: ''
+            };
+
+            const updateResponse = await updateLocation(newPointId, updateData, accessToken);
+            console.log('Location updated:', updateResponse);
+
+            const newPointData = {
+                id: newPointId,
+                coordinates: newPoint.coordinates,
+                name: values.pointName,
+                language: values.pointLanguage
+            };
+
+            setPoints(prevPoints => {
+                const updatedPoints = [...prevPoints, newPointData];
+                return updatedPoints;
+            });
+
+            drawRef.current.add({
+                type: 'Feature',
+                properties: { name: values.pointName, language: values.pointLanguage },
+                geometry: {
+                    type: 'Point',
+                    coordinates: newPoint.coordinates
+                }
+            });
+
+            toast.success("Точка успешно создана", { id: toastId });
+        } catch (error) {
+            console.error('Error creating or updating location:', error);
+            toast.error("Ошибка при создании точки", { id: toastId });
+        }
     };
 
-    const saveData = () => {
-        const data = drawRef.current.getAll();
-        console.log(data)
-        localStorage.setItem('mapData', JSON.stringify(data));
+    const handleSave = async () => {
+        const routeLocations = points.map(point => point.id);
+        const values = { routeLocations };
+        await handleSubmit(values, questData, setQuestData, accessToken);
     };
 
     const adjustMarkersBasedOnZoom = (zoomLevel) => {
@@ -333,10 +415,15 @@ const InteractiveMap = () => {
     };
 
     return (
-        <div className="w-full h-[calc(100dvh_-_200px)]">
+        <div className="w-full flex gap-3 flex-col h-[calc(100dvh_-_200px)]">
             <div id="map" ref={mapContainerRef}></div>
+            <ButtonGroup color="primary">
+                <Button startContent={<FontAwesomeIcon icon={faSave} />} onPress={handleSave}>Сохранить</Button>
+                <Button variant="bordered" onPress={() => handlePublishQuest(questData, accessToken)}
+                        startContent={<FontAwesomeIcon icon={faEye} />}>Опубликовать</Button>
+            </ButtonGroup>
             <PointFormModal isOpen={isOpen} onClose={onOpenChange} onSubmit={handleFormSubmit}
-                            initialValues={{pointName: "", pointLanguage: languageList[0].value}}/>
+                            initialValues={{ pointName: "", pointLanguage: languageList[0].value }} />
         </div>
     );
 };

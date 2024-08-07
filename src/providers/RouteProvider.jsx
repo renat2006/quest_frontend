@@ -1,17 +1,18 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {createContext, useContext, useState, useEffect} from 'react';
 
 const QuestContext = createContext();
 
-export const QuestProvider = ({ children }) => {
+export const QuestProvider = ({children}) => {
     const [questData, setQuestData] = useState({
         routeName: '',
         routeLanguage: '',
         routeType: '',
-        audioFile:'',
+        audioFile: '',
         routeDescription: '',
         routeAudioTeaser: '',
         questId: localStorage.getItem('questId') || '',
         promoImage: '',
+        routeLocations: []
     });
 
     useEffect(() => {
@@ -22,7 +23,7 @@ export const QuestProvider = ({ children }) => {
     }, [questData]);
 
     return (
-        <QuestContext.Provider value={{ questData, setQuestData }}>
+        <QuestContext.Provider value={{questData, setQuestData}}>
             {children}
         </QuestContext.Provider>
     );

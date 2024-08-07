@@ -77,3 +77,35 @@ export const publishQuest = (questId, token) => {
 export const fetchUserQuests = (token) => {
     return apiRequest('/user_quests', 'GET', null, token);
 };
+export const createLocation = (locationId, token) => {
+    console.log(locationId)
+    return apiRequest('/locations', 'POST', {location_id: locationId}, token);
+};
+export const updateLocation = (locationId, locationData, token) => {
+    const formData = new FormData();
+    if (locationData.promoImage) {
+        formData.append('promo', locationData.promoImage);
+    }
+
+    const { promoImage, ...updatedLocationData} = locationData;
+    console.log(updatedLocationData)
+    formData.append('json', JSON.stringify(updatedLocationData));
+    return apiRequest(`/location/${locationId}`, 'PUT', formData, token, true);
+};
+export const fetchQuestLocations = (questId, token, isDraft = false) => {
+
+    const endpoint = `/quests/${questId}/locations?is_draft=${isDraft}`;
+    console.log(endpoint)
+    return apiRequest(endpoint, 'GET', null, token);
+};
+export const fetchUserLocations = (token) => {
+    return apiRequest('/users/locations', 'GET', null, token);
+};
+export const fetchLocationForEditing = (locationId, token, isDraft = true, addAuthor = false) => {
+    const endpoint = `/locations/${locationId}?is_draft=${isDraft}&add_author=${addAuthor}`;
+    console.log(endpoint)
+    return apiRequest(endpoint, 'GET', null, token);
+};
+export const deleteQuest = (questId, token) => {
+    return apiRequest('/delete_quest', 'DELETE', { quest_id: questId }, token);
+};

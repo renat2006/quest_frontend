@@ -46,6 +46,7 @@ const RouteAdmin = () => {
                         routeLanguage: parsedQuestData.lang_draft,
                         routeType: parsedQuestData.type_draft,
                         routeDescription: parsedQuestData.description_draft,
+                        routeLocations: parsedQuestData.locations_draft,
                     };
 
                     if (audioFile) {

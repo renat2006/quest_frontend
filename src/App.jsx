@@ -15,6 +15,7 @@ import routes from "./routes/routes.js";
 import {Toaster} from "react-hot-toast";
 import NotFound from "./pages/NotFound/NotFound.jsx";
 import ProtectedRoute from "./componets/ProtectedRoute/ProtectedRoute.jsx";
+import LocationAdmin from "./pages/LocationAdmin/LocationAdmin.jsx";
 
 
 const UserMap = lazy(() => import("./pages/InteractiveMap/UserMap.jsx"));
@@ -36,6 +37,11 @@ function App() {
                     <Route path={routes.admin.routeAdmin.url + "/*"} element={
                         <Suspense fallback={<div>Загрузка...</div>}>
                             <RouteAdmin/>
+                        </Suspense>
+                    }/>
+                    <Route path={routes.admin.locationAdmin.url + "/*"} element={
+                        <Suspense fallback={<div>Загрузка...</div>}>
+                            <LocationAdmin/>
                         </Suspense>
                     }/>
                     <Route path={routes.profile.url} element={<Profile/>}/>
