@@ -74,7 +74,7 @@ const UserMap = () => {
                 container: mapContainerRef.current,
                 style: import.meta.env.VITE_MAP_STYLE,
                 center: [49.106414, 55.796127],
-                zoom: 16,
+                zoom: 15,
             });
 
             const geolocate = new mapboxgl.GeolocateControl({
