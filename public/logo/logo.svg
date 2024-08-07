@@ -1,14 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
-<g>
-	<path d="M486.1,66.3L29.9,856.5c-11.5,19.9,2.9,44.8,25.9,44.8h912.4c23,0,37.4-24.9,25.9-44.8L537.9,66.3
-		C526.4,46.4,497.6,46.4,486.1,66.3z"/>
-	<circle class="st0" cx="512" cy="603" r="196.2"/>
-	<circle cx="512" cy="603" r="51.5"/>
-</g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_Слой_1" data-name="Слой 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #329f5b;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-2" width="1000" height="1000"/>
+    </clipPath>
+  </defs>
+  <g class="cls-3">
+    <g>
+      <path class="cls-1" d="M50.27,723.86l312.83-423.99H59.13v-123.95h478.1v112.15l-310.86,419.07h310.86v123.95H50.27v-107.23Z"/>
+      <path class="cls-1" d="M541.99,429.72l213.47-253.8h170.19l-269.54,310.86,255.77,344.31h-173.14l-196.75-264.63v-136.74Z"/>
+    </g>
+  </g>
 </svg>
