@@ -3,8 +3,6 @@ import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef, useState } from "react";
 import { useDisclosure } from "@nextui-org/react";
 import { useLocation } from "react-router-dom";
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import { fetchQuestLocations } from "../../api/api.js";
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
@@ -105,7 +103,6 @@ const UserMap = () => {
         }
     }, [accessToken, questId]);
 
-    // Separate effect for adding points to the map
     useEffect(() => {
         console.log("Points to be added to the map:", points);
 
@@ -140,6 +137,42 @@ const UserMap = () => {
 
                 markerElement.dataset.id = location.id;
             });
+
+            if (points.length > 1) {
+                // Request directions data from the Mapbox Directions API
+                const coordinates = points.map(point => point.coordinates.join(',')).join(';');
+
+                fetch(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.routes && data.routes.length > 0) {
+                            const route = data.routes[0].geometry;
+
+                            // Add the route as a GeoJSON line
+                            mapRef.current.addLayer({
+                                id: 'route',
+                                type: 'line',
+                                source: {
+                                    type: 'geojson',
+                                    data: {
+                                        type: 'Feature',
+                                        properties: {},
+                                        geometry: route
+                                    }
+                                },
+                                layout: {
+                                    'line-join': 'round',
+                                    'line-cap': 'round'
+                                },
+                                paint: {
+                                    'line-color': '#007aff',
+                                    'line-width': 4
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error fetching directions:', error));
+            }
         }
     }, [points]);
 

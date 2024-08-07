@@ -15,6 +15,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mapbox/mapbox-gl-directions": "^4.3.1",
     "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@nextui-org/react": "^2.4.2",
     "@pbe/react-yandex-maps": "^1.2.5",
