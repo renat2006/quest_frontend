@@ -257,6 +257,7 @@ const InteractiveMap = () => {
                             ]
                         });
 
+
                         mapRef.current.addControl(Draw);
                         drawRef.current = Draw;
 
