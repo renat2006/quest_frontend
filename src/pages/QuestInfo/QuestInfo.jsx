@@ -35,14 +35,14 @@ const QuestInfo = () => {
 
                         const folderPath = filePath.split('/').slice(0, -1).join('/');
 
-                        // Extract promo image
+
                         const promoFilePath = `${folderPath}/promo.webp`;
                         const promoFile = zip.file(promoFilePath);
                         if (promoFile) {
                             questData.img = URL.createObjectURL(await promoFile.async('blob'));
                         }
 
-                        // Extract author profile image
+
                         questData.author_img = null;
                         const userProfileFile = Object.keys(zip.files).find(file => file.startsWith(`${folderPath}/user_profile`));
                         if (userProfileFile) {
@@ -125,9 +125,9 @@ const QuestInfo = () => {
             img={quest.img}
             author_img={quest.author_img}
             description={quest.description}
-            type={getQuestTypeLabel(quest.type)} // Преобразование типа маршрута
-            location="Казань" // Assuming locations is an array of strings
-            cost="0" // Assuming the cost is not provided in data.json
+            type={getQuestTypeLabel(quest.type)}
+            location="Казань"
+            cost="0"
             rate={quest.rating}
             rate_sum={quest.rating_count}
         />

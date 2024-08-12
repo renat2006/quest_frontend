@@ -1,5 +1,3 @@
-// LocationAdmin.js
-
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react";
 import routes from "../../routes/routes.js";

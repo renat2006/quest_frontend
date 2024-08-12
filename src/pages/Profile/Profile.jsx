@@ -1,5 +1,3 @@
-// src/pages/Profile.jsx
-
 import React from 'react';
 import {useAuth} from "../../providers/AuthProvider.jsx";
 import {Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip, Link, User, Image} from "@nextui-org/react";

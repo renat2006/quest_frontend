@@ -29,7 +29,7 @@ export function RouteMedia() {
 
     useEffect(() => {
         if (promoImage && !(promoImage instanceof File)) {
-            // Create a File object from promoImage if it's not a File
+
             const fetchImage = async () => {
                 try {
                     const response = await fetch(promoImage);

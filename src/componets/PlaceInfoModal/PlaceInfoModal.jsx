@@ -32,7 +32,7 @@ const synthesizeTextToSpeech = async (text) => {
         throw new Error("Failed to generate audio");
     }
 
-    return response.blob(); // Return the audio as a blob
+    return response.blob();
 };
 
 export default function QuestInfoModal({ isOpen, onOpenChange, point }) {

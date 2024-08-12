@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 import routes from "../../routes/routes.js";
 import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
 
-// Function to handle fetching and parsing the ZIP file
+
 const fetchAndProcessLocations = async (questId, token) => {
     try {
         const zipBlob = await fetchQuestLocations(questId, token, true);
@@ -184,7 +184,7 @@ const InteractiveMap = () => {
     const drawRef = useRef(null);
     const { accessToken } = useAuth();
     const { questData, setQuestData } = useQuest();
-    const navigate = useNavigate();  // Initialize the useNavigate hook
+    const navigate = useNavigate();
     const { questId } = questData;
 
     useEffect(() => {
@@ -258,7 +258,7 @@ const InteractiveMap = () => {
                         });
 
                         mapRef.current.addControl(Draw);
-                        drawRef.current = Draw; // Correctly assign the instance
+                        drawRef.current = Draw;
 
                         mapRef.current.on('draw.create', handleDrawCreate);
                         mapRef.current.on('draw.delete', handleDrawDelete);
@@ -293,7 +293,7 @@ const InteractiveMap = () => {
                             adjustMarkersBasedOnZoom(zoomLevel);
                         });
 
-                        // Load locations only after the map is fully loaded
+
                         loadLocations();
                     }
                 );
@@ -306,7 +306,7 @@ const InteractiveMap = () => {
                 console.log("Loaded locations", locations);
                 setPoints(locations);
 
-                // Ensure drawRef.current is set before adding locations
+
                 if (drawRef.current) {
                     locations.forEach(location => {
                         console.log("Adding location to map", location);
@@ -360,7 +360,7 @@ const InteractiveMap = () => {
                 const popupNode = document.createElement('div');
 
                 const onEdit = () => {
-                    // Navigate using location_id
+
                     navigate(routes.admin.locationAdminInfo.url, { state: locationId });
                 };
 
@@ -437,7 +437,7 @@ const InteractiveMap = () => {
     };
 
     const adjustMarkersBasedOnZoom = (zoomLevel) => {
-        // Adjust marker styles based on zoom level if necessary
+
     };
 
     return (

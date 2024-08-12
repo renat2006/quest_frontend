@@ -90,11 +90,11 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
         console.log("New Location Data:", newLocationData);
 
         if (!locationData.locationId) {
-            // If there is no locationId, create a new location
+
             await createLocation(newLocationData, accessToken);
             toast.success("Точка успешно создана", { id: toastId });
         } else {
-            // If locationId exists, update the existing location
+
             await updateLocation(locationData.locationId, newLocationData, accessToken);
             toast.success("Точка успешно обновлена", { id: toastId });
         }
@@ -107,9 +107,9 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
     }
 };
 
-// New method to publish a location
+
 export const handlePublishLocation = async (locationData, accessToken) => {
-    // Check if all required fields are filled
+
     console.log(locationData)
     if (!locationData.locationName || !locationData.locationDescription || !locationData.locationLanguage || !locationData.promoImage) {
         toast.error('Точка должна иметь название, описание, язык и промо изображение.');

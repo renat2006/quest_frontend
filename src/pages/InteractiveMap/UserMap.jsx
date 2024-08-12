@@ -17,11 +17,11 @@ const UserMap = () => {
     const [zoomLevel, setZoomLevel] = useState(12);
     const { accessToken } = useAuth();
     const location = useLocation();
-    const questId = location.state;  // Extract questId from state
+    const questId = location.state;
     const [points, setPoints] = useState([]);
 
     useEffect(() => {
-        console.log("Quest ID from state:", questId);  // Verify questId
+        console.log("Quest ID from state:", questId);
         const loadQuestData = async () => {
             try {
                 const zipBlob = await fetchQuestLocations(questId, accessToken, false);
@@ -56,7 +56,7 @@ const UserMap = () => {
                     })
                 );
 
-                console.log("Locations loaded:", locations);  // Log locations
+                console.log("Locations loaded:", locations);
                 setPoints(locations);
             } catch (error) {
                 console.error("Error loading quest locations:", error);
@@ -139,7 +139,7 @@ const UserMap = () => {
             });
 
             if (points.length > 1) {
-                // Request directions data from the Mapbox Directions API
+
                 const coordinates = points.map(point => point.coordinates.join(',')).join(';');
 
                 fetch(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
@@ -148,7 +148,7 @@ const UserMap = () => {
                         if (data.routes && data.routes.length > 0) {
                             const route = data.routes[0].geometry;
 
-                            // Add the route as a GeoJSON line
+
                             mapRef.current.addLayer({
                                 id: 'route',
                                 type: 'line',

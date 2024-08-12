@@ -1,7 +1,5 @@
-// LocationMedia.jsx
-
-import React, { useState, useCallback, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
+import React, {useState, useCallback, useEffect} from "react";
+import {useDropzone} from "react-dropzone";
 import {
     Button, ButtonGroup,
     Card,
@@ -12,25 +10,23 @@ import {
     PopoverContent,
     PopoverTrigger
 } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faDownload } from "@fortawesome/free-solid-svg-icons";
-import { useFormik } from "formik";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrashAlt, faDownload} from "@fortawesome/free-solid-svg-icons";
+import {useFormik} from "formik";
 import * as Yup from "yup";
 import {handleLocationSubmit, handlePublishLocation, handlePublishQuest} from "../methods/methods.js";
-import { useLocationData } from "../providers/LocationProvider.jsx";
-import { useAuth } from "../providers/AuthProvider.jsx";
+import {useLocationData} from "../providers/LocationProvider.jsx";
+import {useAuth} from "../providers/AuthProvider.jsx";
 import {faEye, faSave} from "@fortawesome/free-regular-svg-icons";
-
-
 
 
 export function LocationMedia() {
     const [fileError, setFileError] = useState("");
-    const { locationData, setLocationData } = useLocationData();
-    const { promoImage } = locationData;
+    const {locationData, setLocationData} = useLocationData();
+    const {promoImage} = locationData;
 
     const [promoImageFile, setPromoImageFile] = useState(promoImage instanceof File ? promoImage : null);
-    const { accessToken } = useAuth();
+    const {accessToken} = useAuth();
 
     useEffect(() => {
         if (promoImage && !(promoImage instanceof File)) {
@@ -38,7 +34,7 @@ export function LocationMedia() {
                 try {
                     const response = await fetch(promoImage);
                     const blob = await response.blob();
-                    const file = new File([blob], "promoImage", { type: blob.type });
+                    const file = new File([blob], "promoImage", {type: blob.type});
                     setPromoImageFile(file);
                     formik.setFieldValue('promoImage', file);
                 } catch (error) {
@@ -101,7 +97,7 @@ export function LocationMedia() {
         setFileError("");
     };
 
-    const { getRootProps, getInputProps } = useDropzone({
+    const {getRootProps, getInputProps} = useDropzone({
         onDrop,
         accept: 'image/*',
         maxSize: 50 * 1024 * 1024
@@ -136,7 +132,7 @@ export function LocationMedia() {
                                 <CardBody className="overflow-visible p-0">
                                     <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
                                            shadow="sm" radius="lg" width="100%"
-                                           className="w-full object-cover h-[140px]" />
+                                           className="w-full object-cover h-[140px]"/>
                                 </CardBody>
                                 <CardFooter className="text-small justify-between">
                                     <p className="line-clamp-1 font-thin text-gray-500 text-tiny mb-2">{promoImageFile.name}</p>
@@ -146,7 +142,7 @@ export function LocationMedia() {
                         <PopoverContent>
                             <div className="px-1 py-2 flex gap-2">
                                 <Button color="danger" size="sm" onClick={handleRemoveFile}>
-                                    <FontAwesomeIcon icon={faTrashAlt} /> Удалить
+                                    <FontAwesomeIcon icon={faTrashAlt}/> Удалить
                                 </Button>
                                 <Button color="primary" size="sm" onClick={() => {
                                     const link = document.createElement('a');
@@ -156,7 +152,7 @@ export function LocationMedia() {
                                     link.click();
                                     document.body.removeChild(link);
                                 }}>
-                                    <FontAwesomeIcon icon={faDownload} /> Скачать
+                                    <FontAwesomeIcon icon={faDownload}/> Скачать
                                 </Button>
                             </div>
                         </PopoverContent>
@@ -165,11 +161,11 @@ export function LocationMedia() {
             )}
 
             <ButtonGroup color="primary">
-                <Button startContent={<FontAwesomeIcon icon={faSave} />} type="submit">Сохранить</Button>
+                <Button startContent={<FontAwesomeIcon icon={faSave}/>} type="submit">Сохранить</Button>
                 <Button
                     variant="bordered"
                     onPress={() => handlePublishLocation(locationData, accessToken)}
-                    startContent={<FontAwesomeIcon icon={faEye} />}
+                    startContent={<FontAwesomeIcon icon={faEye}/>}
                 >
                     Опубликовать
                 </Button>

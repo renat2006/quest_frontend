@@ -1,5 +1,3 @@
-// Admin.js
-
 import {
     Card,
     CardBody,
@@ -296,7 +294,7 @@ const Admin = () => {
                 state: id,
             });
         } else {
-            // Navigate to LocationInfo with locationId in the state
+
             navigate(routes.admin.locationAdminInfo.url, {
                 state:  id ,
             });
@@ -310,7 +308,7 @@ const Admin = () => {
                 setRouteList((prev) => prev.filter((quest) => quest.quest_id !== id));
                 toast.success("Квест успешно удалён");
             } else {
-                // Handle location deletion if needed
+
                 console.log("Deleting location with ID:", id);
             }
         } catch (error) {
