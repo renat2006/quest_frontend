@@ -9,7 +9,9 @@ export const LocationProvider = ({ children }) => {
         locationCoordinates: [],
         locationDescription: '',
         locationId: localStorage.getItem('locationId') || '',
-        associatedQuests: []
+        associatedQuests: [],
+        promoImage: null,
+        mediaFiles: [],
     });
 
     useEffect(() => {

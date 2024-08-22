@@ -443,7 +443,7 @@ const InteractiveMap = () => {
 
     return (
         <div className="w-full flex gap-3 flex-col h-[calc(100dvh_-_200px)]">
-            <div id="map" ref={mapContainerRef}></div>
+            <div id="map" ref={mapContainerRef} className="h-full w-full"></div>
             <ButtonGroup color="primary">
                 <Button startContent={<FontAwesomeIcon icon={faSave} />} onPress={handleSave}>Сохранить</Button>
                 <Button variant="bordered" onPress={() => handlePublishQuest(questData, accessToken)}

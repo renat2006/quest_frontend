@@ -85,16 +85,13 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
             lang: newValues.locationLanguage,
             coords: newValues.locationCoordinates,
             promoImage: newValues.promoImage,
+            mediaFiles: newValues.mediaFiles,
         };
 
-        console.log("New Location Data:", newLocationData);
-
         if (!locationData.locationId) {
-
             await createLocation(newLocationData, accessToken);
             toast.success("Точка успешно создана", { id: toastId });
         } else {
-
             await updateLocation(locationData.locationId, newLocationData, accessToken);
             toast.success("Точка успешно обновлена", { id: toastId });
         }
@@ -106,7 +103,6 @@ export const handleLocationSubmit = async (values, locationData, setLocationData
         toast.error("Ошибка при сохранении точки", { id: toastId });
     }
 };
-
 
 export const handlePublishLocation = async (locationData, accessToken) => {
 

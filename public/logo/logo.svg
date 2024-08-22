@@ -1,31 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="_Слой_1" data-name="Слой 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
+<svg id="_Слой_2" data-name="Слой 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1456.06 1456.06">
   <defs>
     <style>
       .cls-1 {
         fill: #329f5b;
-      }
-
-      .cls-1, .cls-2 {
         stroke-width: 0px;
       }
 
       .cls-2 {
         fill: none;
-      }
-
-      .cls-3 {
-        clip-path: url(#clippath);
+        stroke: #fff;
+        stroke-width: 51px;
       }
     </style>
-    <clipPath id="clippath">
-      <rect class="cls-2" width="1000" height="1000"/>
-    </clipPath>
   </defs>
-  <g class="cls-3">
-    <g>
-      <path class="cls-1" d="M50.27,723.86l312.83-423.99H59.13v-123.95h478.1v112.15l-310.86,419.07h310.86v123.95H50.27v-107.23Z"/>
-      <path class="cls-1" d="M541.99,429.72l213.47-253.8h170.19l-269.54,310.86,255.77,344.31h-173.14l-196.75-264.63v-136.74Z"/>
-    </g>
+  <g id="_Слой_1-2" data-name="Слой 1">
+    <rect class="cls-1" x="149.95" y="149.62" width="1156.17" height="1156.83" rx="216.64" ry="216.64" transform="translate(-301.56 728.03) rotate(-45)"/>
+    <path class="cls-2" d="M1063.94,728.46c0,185.28-150.2,335.48-335.48,335.48s-335.48-150.2-335.48-335.48,150.2-335.48,335.48-335.48,335.48,150.2,335.48,335.48Z"/>
   </g>
 </svg>

@@ -7,6 +7,9 @@ import { fetchQuestLocations } from "../../api/api.js";
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
 import QuestInfoModal from "../../componets/PlaceInfoModal/PlaceInfoModal.jsx";
+import Preload from "../../componets/Preloader/Preloader.jsx";
+import {downloadBlob} from "../../methods/methods.js";
+
 
 const UserMap = () => {
     const mapContainerRef = useRef(null);
@@ -19,12 +22,14 @@ const UserMap = () => {
     const location = useLocation();
     const questId = location.state;
     const [points, setPoints] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        console.log("Quest ID from state:", questId);
         const loadQuestData = async () => {
             try {
                 const zipBlob = await fetchQuestLocations(questId, accessToken, false);
+
+
                 const zip = await JSZip.loadAsync(zipBlob);
                 const locations = [];
 
@@ -37,11 +42,33 @@ const UserMap = () => {
                             const folderPath = filePath.split('/').slice(0, -1).join('/');
                             const promoFilePath = `${folderPath}/promo.webp`;
                             const promoFile = zip.file(promoFilePath);
-                            let promoUrl = '';
+                            let promoImage = null;
 
                             if (promoFile) {
                                 const promoBlob = await promoFile.async('blob');
-                                promoUrl = URL.createObjectURL(promoBlob);
+                                promoImage = new File([promoBlob], 'promo.webp', { type: 'image/webp' });
+                            }
+
+                            const mediaFiles = [];
+                            let index = 0;
+
+                            const mediaExtensions = ['png', 'jpg', 'jpeg', 'webp', 'mp4', 'webm', 'ogg'];
+                            for (const ext of mediaExtensions) {
+                                let mediaFilePath;
+                                while ((mediaFilePath = `${folderPath}/media_${index}.${ext}`), zip.file(mediaFilePath)) {
+                                    const mediaFileBlob = await zip.file(mediaFilePath).async('blob');
+                                    let mediaFileType = '';
+
+                                    if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+                                        mediaFileType = 'image/webp';
+                                    } else if (['mp4', 'webm', 'ogg'].includes(ext)) {
+                                        mediaFileType = 'video/webm';
+                                    }
+
+                                    const mediaFile = new File([mediaFileBlob], `media_${index}.${ext}`, { type: mediaFileType });
+                                    mediaFiles.push(mediaFile);
+                                    index++;
+                                }
                             }
 
                             locations.push({
@@ -50,20 +77,20 @@ const UserMap = () => {
                                 coordinates: locationData.coords.split(';').map(Number),
                                 language: locationData.lang,
                                 description: locationData.description || '',
-                                promoUrl: promoUrl || 'https://via.placeholder.com/100',
+                                promoImage: promoImage || null,
+                                mediaFiles: mediaFiles,
                             });
                         }
                     })
                 );
 
-                console.log("Locations loaded:", locations);
                 setPoints(locations);
             } catch (error) {
                 console.error("Error loading quest locations:", error);
             }
         };
 
-        loadQuestData();
+        loadQuestData().then(() => setIsLoading(false));
 
         mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
@@ -104,15 +131,13 @@ const UserMap = () => {
     }, [accessToken, questId]);
 
     useEffect(() => {
-        console.log("Points to be added to the map:", points);
-
         if (mapRef.current) {
             points.forEach(location => {
                 const markerElement = document.createElement('div');
                 markerElement.className = 'custom-marker';
 
                 const markerImage = document.createElement('img');
-                markerImage.src = location.promoUrl;
+                markerImage.src = URL.createObjectURL(location.promoImage);
                 markerImage.className = 'marker-image';
 
                 const markerPoint = document.createElement('div');
@@ -139,7 +164,6 @@ const UserMap = () => {
             });
 
             if (points.length > 1) {
-
                 const coordinates = points.map(point => point.coordinates.join(',')).join(';');
 
                 fetch(`https://api.mapbox.com/directions/v5/mapbox/walking/${coordinates}?geometries=geojson&access_token=${mapboxgl.accessToken}`)
@@ -147,7 +171,6 @@ const UserMap = () => {
                     .then(data => {
                         if (data.routes && data.routes.length > 0) {
                             const route = data.routes[0].geometry;
-
 
                             mapRef.current.addLayer({
                                 id: 'route',
@@ -236,16 +259,18 @@ const UserMap = () => {
     };
 
     return (
-        <div className="map--container h-full w-full">
-            <div id="map" ref={mapContainerRef} className="h-full w-full"></div>
-            {selectedPoint && (
-                <QuestInfoModal
-                    isOpen={isOpen}
-                    onOpenChange={handleCloseModal}
-                    point={selectedPoint}
-                />
-            )}
-        </div>
+        <Preload isLoading={isLoading}>
+            <div className="map--container h-[calc(100dvh_-_65px)] w-full">
+                <div id="map" ref={mapContainerRef} className="h-full w-full"></div>
+                {selectedPoint && (
+                    <QuestInfoModal
+                        isOpen={isOpen}
+                        onOpenChange={handleCloseModal}
+                        point={selectedPoint}
+                    />
+                )}
+            </div>
+        </Preload>
     );
 };
 

@@ -46,11 +46,10 @@ import { useNavigate } from "react-router-dom";
 import routes from "../../routes/routes.js";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { createQuest, getUUID, fetchUserQuests, fetchUserLocations, deleteQuest } from "../../api/api.js";
+import { createQuest, getUUID, fetchUserQuests, fetchUserLocations, deleteQuest, deleteLocation } from "../../api/api.js";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import JSZip from "jszip";
-import {downloadBlob} from "../../methods/methods.js";
 
 const validationSchema = yup.object({
     routeName: yup
@@ -199,13 +198,15 @@ const Admin = () => {
     const [pointList, setPointList] = useState([]);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [routeList, setRouteList] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingQuests, setLoadingQuests] = useState(true);
+    const [loadingLocations, setLoadingLocations] = useState(true);
     const navigate = useNavigate();
     const { accessToken } = useAuth();
 
+    const isLoading = loadingQuests || loadingLocations;
+
     useEffect(() => {
         const getQuests = async () => {
-            setLoading(true);
             try {
                 const zipBlob = await fetchUserQuests(accessToken);
 
@@ -243,7 +244,7 @@ const Admin = () => {
             } catch (error) {
                 console.error('Error fetching quests:', error);
             }
-            setLoading(false);
+            setLoadingQuests(false);
         };
 
         const getLocations = async () => {
@@ -282,6 +283,7 @@ const Admin = () => {
             } catch (error) {
                 console.error('Error fetching user locations:', error);
             }
+            setLoadingLocations(false);
         };
 
         getQuests();
@@ -294,25 +296,26 @@ const Admin = () => {
                 state: id,
             });
         } else {
-
             navigate(routes.admin.locationAdminInfo.url, {
-                state:  id ,
+                state: id,
             });
         }
     };
 
     const handleDelete = async (id, isQuest) => {
+        const toastId = toast.loading("Удаление...");
         try {
             if (isQuest) {
                 await deleteQuest(id, accessToken);
                 setRouteList((prev) => prev.filter((quest) => quest.quest_id !== id));
-                toast.success("Квест успешно удалён");
+                toast.success("Квест успешно удалён", { id: toastId });
             } else {
-
-                console.log("Deleting location with ID:", id);
+                await deleteLocation(id, accessToken);
+                setPointList((prev) => prev.filter((location) => location.location_id !== id));
+                toast.success("Точка успешно удалёна", { id: toastId });
             }
         } catch (error) {
-            toast.error("Ошибка при удалении");
+            toast.error("Ошибка при удалении", { id: toastId });
             console.error("Error deleting:", error);
         }
     };
@@ -324,7 +327,6 @@ const Admin = () => {
             subtitle: "",
             startContent: faMapLocationDot,
             content: routeList,
-            objCount: "1"
         },
         {
             key: "2",
@@ -332,7 +334,6 @@ const Admin = () => {
             subtitle: "",
             startContent: faMapPin,
             content: pointList,
-            objCount: "4"
         },
         {
             key: "3",
@@ -340,15 +341,8 @@ const Admin = () => {
             subtitle: "",
             startContent: faLandmark,
             content: [],
-            objCount: "0"
         }
     ];
-
-    const blanckCrad = {
-        cover: "https://via.placeholder.com/300x200",
-        title: "Название",
-        type: "Тип"
-    };
 
     const handleNext = async (values) => {
         try {
@@ -361,7 +355,6 @@ const Admin = () => {
                 lang: values.routeLanguage,
                 type: values.routeType,
             };
-            console.log(questData)
 
             await createQuest(questData, accessToken);
 
@@ -421,7 +414,7 @@ const Admin = () => {
             onClose={() => setOpenItem(null)}
         >
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {loading
+                {isLoading
                     ? Array.from({ length: 8 }, (_, index) => <AdminSkeletonCard key={index} />)
                     : item.content.length > 0
                         ? item.content.map(item => <AdminCard item={item} key={item.quest_id || item.location_id} handleCardPress={handleCardPress} handleDelete={handleDelete} isQuest={item.quest_id !== undefined} />)

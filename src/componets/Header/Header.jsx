@@ -37,7 +37,7 @@ export default function Header() {
                 <NavbarMenuToggle aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}/>
             </NavbarContent>
 
-            <NavbarContent className="sm:hidden pr-3" justify="center">
+            <NavbarContent className="sm:hidden" justify="center">
                 <NavbarBrand>
                     <Logo/>
                     <p className="font-bold text-inherit">Нулевой километр</p>

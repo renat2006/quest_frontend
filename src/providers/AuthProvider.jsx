@@ -12,9 +12,8 @@ const AuthProvider = ({children}) => {
         "first_name": "1",
         "last_name": "1",
         "username": "belorusstaner",
-        "auth_date": 1722783414,
-        "hash": "40bc6592d40b64088f4ecd5c73e2d5f2621e270b354cccd366bd96be3d738256"
-
+        "auth_date": 1723639527,
+        "hash": "c144415411883b1ada076d5dcf7e95a56e5dafb1453882e7ad6de110be0f1f7e"
     } : null);
     const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || "");
     const [refreshTokenValue, setRefreshTokenValue] = useState(localStorage.getItem("refreshToken") || "");

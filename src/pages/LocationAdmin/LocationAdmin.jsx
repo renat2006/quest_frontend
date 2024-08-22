@@ -1,20 +1,15 @@
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import routes from "../../routes/routes.js";
-import { Button, Card, CardBody, CardHeader, Divider, Image, Skeleton } from "@nextui-org/react";
-
-
-import {downloadBlob, getLastPathPart} from "../../methods/methods.js";
-
+import { Card, CardBody, CardHeader, Divider, Image, Skeleton } from "@nextui-org/react";
 import { fetchLocationForEditing } from "../../api/api";
 import JSZip from 'jszip';
 import { useAuth } from "../../providers/AuthProvider.jsx";
 import { LocationProvider, useLocationData } from "../../providers/LocationProvider.jsx";
-
-import {LocationMedia} from "../../forms/LocationMedia.jsx";
+import { LocationMedia } from "../../forms/LocationMedia.jsx";
 import LocationInfo from "../../forms/LocationInfo.jsx";
 import LocationBreadCrumbs from "../../componets/LocationBreadCrumbs/LocationBreadCrumbs.jsx";
-
+import {getLastPathPart} from "../../methods/methods.js";
 
 const LocationAdmin = () => {
     const location = useLocation();
@@ -35,28 +30,52 @@ const LocationAdmin = () => {
                     const parsedLocationData = JSON.parse(content);
 
                     let imageFile = null;
+                    let mediaFiles = [];
+
                     zip.forEach((relativePath, zipEntry) => {
                         if (relativePath.startsWith(`${locationId}/promo_draft`) && /\.(webp|jpg|png|gif|jpeg)$/i.test(relativePath)) {
                             imageFile = zipEntry;
                         }
+
+                        if (relativePath.startsWith(`${locationId}/media_`) && relativePath.includes('_draft') && /\.(webp|jpg|png|gif|jpeg|webm|mp4)$/i.test(relativePath)) {
+                            mediaFiles.push(zipEntry);
+                        }
                     });
-                    console.log(parsedLocationData)
+
                     const updatedLocationData = {
                         locationId,
                         locationName: parsedLocationData.title_draft || parsedLocationData.title,
                         locationLanguage: parsedLocationData.lang_draft || parsedLocationData.lang,
                         locationDescription: parsedLocationData.description_draft[0] || parsedLocationData.description,
-                        locationCoordinates:parsedLocationData.coords_draft
+                        locationCoordinates: parsedLocationData.coords_draft,
+                        mediaFiles: []
                     };
 
                     if (imageFile) {
                         const imageBlob = await imageFile.async('blob');
-                        const imageFileName = imageFile.name.split('/').pop();
-                        const imageFileObj = new File([imageBlob], imageFileName, { type: imageBlob.type });
+                        const imageFileObj = new File([imageBlob], 'promo_draft.webp', { type: "image/webp" });
                         updatedLocationData.promoImage = imageFileObj;
                     }
 
-                    console.log("Updated Location Data:", updatedLocationData);
+                    if (mediaFiles.length > 0) {
+                        const mediaFilePromises = mediaFiles.map(async (file) => {
+                            const fileBlob = await file.async('blob');
+                            const fileName = file.name.split('/').pop();
+                            const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                            let fileType = '';
+                            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                                fileType = `image/webp`;
+                            } else if (['webm', 'mp4'].includes(fileExtension)) {
+                                fileType = `video/webm`;
+                            }
+
+                            return new File([fileBlob], fileName, { type: fileType });
+                        });
+
+                        updatedLocationData.mediaFiles = await Promise.all(mediaFilePromises);
+                    }
+
                     setLocationData(updatedLocationData);
                 }
             } catch (error) {
@@ -64,11 +83,11 @@ const LocationAdmin = () => {
             } finally {
                 setIsLoaded(true);
             }
+
         };
 
         const locationId = location.state || locationData.locationId;
         if (locationId) {
-            console.log("ddfdfl", locationId)
             loadLocationData(locationId);
         } else {
             navigate(routes.admin.root.url);
@@ -90,7 +109,6 @@ const LocationAdmin = () => {
                             <Routes>
                                 <Route path={getLastPathPart(routes.admin.locationAdminMedia.url)} element={<LocationMedia />} />
                                 <Route path={getLastPathPart(routes.admin.locationAdminInfo.url)} element={<LocationInfo />} />
-
                             </Routes>
                         ) : (
                             <Image

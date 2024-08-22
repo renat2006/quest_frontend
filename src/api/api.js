@@ -45,7 +45,6 @@ export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {re
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
 export const createQuest = (questData, token) => {
-
     const formData = new FormData();
 
     console.log(questData);
@@ -77,38 +76,54 @@ export const publishQuest = (questId, token) => {
 export const fetchUserQuests = (token) => {
     return apiRequest('/user_quests', 'GET', null, token);
 };
+
 export const createLocation = (locationId, token) => {
-    console.log(locationId)
+    console.log(locationId);
     return apiRequest('/locations', 'POST', {location_id: locationId}, token);
 };
+
 export const updateLocation = (locationId, locationData, token) => {
     const formData = new FormData();
+    console.log(locationData)
     if (locationData.promoImage) {
         formData.append('promo', locationData.promoImage);
     }
 
-    const {promoImage, ...updatedLocationData} = locationData;
-    console.log(updatedLocationData)
-    formData.append('json', JSON.stringify(updatedLocationData));
-    return apiRequest(`/location/${locationId}`, 'PUT', formData, token, true);
-};
-export const fetchQuestLocations = (questId, token, isDraft = false) => {
+    if (locationData.mediaFiles && locationData.mediaFiles.length > 0) {
+        locationData.mediaFiles.forEach((file) => {
+            formData.append('media', file);
+        });
+    }
 
+    const {promoImage, mediaFiles, ...updatedLocationData} = locationData;
+    formData.append('json', JSON.stringify(updatedLocationData));
+
+    return apiRequest(`/locations/${locationId}`, 'PUT', formData, token, true);
+};
+
+export const fetchQuestLocations = (questId, token, isDraft = false) => {
     const endpoint = `/quests/${questId}/locations?is_draft=${isDraft}`;
-    console.log(endpoint)
+    console.log(endpoint);
     return apiRequest(endpoint, 'GET', null, token);
 };
+
 export const fetchUserLocations = (token) => {
     return apiRequest('/users/locations', 'GET', null, token);
 };
+
 export const fetchLocationForEditing = (locationId, token, isDraft = true, addAuthor = false) => {
     const endpoint = `/locations/${locationId}?is_draft=${isDraft}&add_author=${addAuthor}`;
-    console.log(endpoint)
+    console.log(endpoint);
     return apiRequest(endpoint, 'GET', null, token);
 };
+
 export const deleteQuest = (questId, token) => {
     return apiRequest('/delete_quest', 'DELETE', {quest_id: questId}, token);
 };
+
 export const publishLocation = (locationId, token) => {
     return apiRequest(`/locations/${locationId}/publish`, 'POST', null, token);
+};
+export const deleteLocation = (locationId, token) => {
+    return apiRequest(`/locations/${locationId}`, 'DELETE', null, token);
 };
