@@ -107,7 +107,7 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                 stories={stories}
                 defaultInterval={1500}
                 width="100%"
-                height="90vh"
+                height="75vh"
                 loop
                 keyboardNavigation
             />
