@@ -168,7 +168,7 @@ export default function QuestInfoModal({isOpen, onOpenChange, point}) {
                         <ModalBody className="h-fit">
                             {!isListening ? (
                                 <>
-                                    <p className="line-clamp-3">{point.description}</p>
+                                    <p className="line-clamp-3 min-h-[70px] h-fit">{point.description}</p>
                                     <div className="flex gap-2 items-center justify-center w-full mt-4">
                                         <Button
                                             color="primary"

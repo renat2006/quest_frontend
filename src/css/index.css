@@ -1198,6 +1198,10 @@ video {
   min-height: 70px;
 }
 
+.min-h-\[50px\] {
+  min-height: 50px;
+}
+
 .w-1 {
   width: 0.25rem;
 }
