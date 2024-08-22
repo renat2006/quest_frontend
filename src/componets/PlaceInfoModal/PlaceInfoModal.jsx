@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Image, Avatar } from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import React, {useState, useEffect} from "react";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    Image,
+    Avatar,
+    Card,
+    CardHeader, CardBody
+} from "@nextui-org/react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlay, faArrowLeft, faVideoCamera} from "@fortawesome/free-solid-svg-icons";
 import CustomAudioPlayer from "../CustomAudioPlayer/CustomAudioPlayer.jsx";
 import Stories from 'react-insta-stories';
-import { Swiper, SwiperSlide } from "swiper/react";
+import {Swiper, SwiperSlide} from "swiper/react";
 import "swiper/css";
-import { languageList } from "../../data/types.js";
+import {languageList} from "../../data/types.js";
 
 const getLanguageLabel = (languageCode) => {
     const language = languageList.find((lang) => lang.value === languageCode);
@@ -37,7 +48,7 @@ const synthesizeTextToSpeech = async (text) => {
     return response.blob();
 };
 
-export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
+export default function QuestInfoModal({isOpen, onOpenChange, point}) {
     const [audioUrl, setAudioUrl] = useState("");
     const [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
@@ -93,7 +104,7 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
     };
 
     const renderMedia = (url) => (
-        <Image src={url} alt="Media" className="h-[200px] w-[400px] object-cover" />
+        <Image src={url} alt="Media" className="h-[200px] w-[400px] object-cover"/>
     );
 
     const renderStories = () => {
@@ -162,7 +173,8 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                                         <Button
                                             color="primary"
                                             className="flex-1"
-                                            startContent={<FontAwesomeIcon style={{ width: "16px", height: "16px" }} icon={faPlay} />}
+                                            startContent={<FontAwesomeIcon style={{width: "16px", height: "16px"}}
+                                                                           icon={faPlay}/>}
                                             onClick={handlePlayAudio}
                                             isDisabled={loading}
                                         >
@@ -193,6 +205,16 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                                             />
                                         )}
                                     </div>
+                                    {videoMediaUrls.length > 0 && (
+
+                                        <Card shadow="none" className="bg-primary overflow-hidden h-auto"><CardBody className="flex justify-between flex-row px-4">
+                                            <div className="flex  gap-2 items-center text-white">
+                                                <FontAwesomeIcon icon={faVideoCamera}/>
+                                                <h1 className=" text-medium font-medium">Видео сюжет</h1></div>
+                                            <Button onPress={handleShowStories} variant="light" color="default" size="sm" className="bg-primary-600 text-white ">Смотреть <FontAwesomeIcon icon={faPlay}/></Button>
+                                        </CardBody></Card>
+
+                                    )}
                                 </>
                             ) : (
                                 <>
@@ -208,7 +230,7 @@ export default function QuestInfoModal({ isOpen, onOpenChange, point }) {
                             ) : (
                                 audioUrl && (
                                     <div className="flex flex-col items-center rounded-lg w-full">
-                                        <CustomAudioPlayer audioSrc={audioUrl} autoPlay={autoPlay} />
+                                        <CustomAudioPlayer audioSrc={audioUrl} autoPlay={autoPlay}/>
                                     </div>
                                 )
                             )}
