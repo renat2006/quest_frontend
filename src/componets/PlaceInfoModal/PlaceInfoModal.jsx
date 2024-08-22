@@ -165,7 +165,7 @@ export default function QuestInfoModal({isOpen, onOpenChange, point}) {
                                 />
                             )}
                         </ModalHeader>
-                        <ModalBody>
+                        <ModalBody className="h-fit">
                             {!isListening ? (
                                 <>
                                     <p className="line-clamp-3">{point.description}</p>
@@ -207,7 +207,7 @@ export default function QuestInfoModal({isOpen, onOpenChange, point}) {
                                     </div>
                                     {videoMediaUrls.length > 0 && (
 
-                                        <Card shadow="none" className="bg-primary overflow-hidden h-auto"><CardBody className="flex justify-between flex-row px-4">
+                                        <Card shadow="none" className="bg-primary overflow-hidden min-h-[70px] h-auto"><CardBody className="flex justify-between  items-center flex-row px-4">
                                             <div className="flex  gap-2 items-center text-white">
                                                 <FontAwesomeIcon icon={faVideoCamera}/>
                                                 <h1 className=" text-medium font-medium">Видео сюжет</h1></div>
