@@ -31,17 +31,15 @@ const AuthProvider = ({children}) => {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+    useEffect(() => {
+        if (accessToken) {
+            const interval = setInterval(() => {
+                refreshAccessToken(refreshTokenValue);
+            }, 9 * 60 * 1000);
 
-    // useEffect(() => {
-    //     if (refreshTokenValue) {
-    //         const interval = setInterval(() => {
-    //             refreshAccessToken(refreshTokenValue);
-    //             console.log("updated")
-    //         }, 10 * 60 * 1000);
-    //
-    //         return () => clearInterval(interval);
-    //     }
-    // }, [refreshTokenValue]);
+            return () => clearInterval(interval);
+        }
+    }, [accessToken, refreshTokenValue]);
 
     const loginAction = async (telegramData) => {
         try {

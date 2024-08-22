@@ -21,7 +21,17 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
         console.log(config.body);
     }
 
-    const response = await fetch(`${API_URL}${endpoint}`, config);
+    let response = await fetch(`${API_URL}${endpoint}`, config);
+    if (response.status === 401) {
+        const newToken = await refreshToken();
+
+        if (newToken) {
+            headers['Authorization'] = `Bearer ${newToken}`;
+            response = await fetch(`${API_URL}${endpoint}`, config);
+        } else {
+            throw new Error('Failed to refresh token');
+        }
+    }
 
     if (response.headers.get('Content-Type')?.includes('application/zip')) {
         const blob = await response.blob();
@@ -40,7 +50,18 @@ export const apiRequest = async (endpoint, method = 'GET', body = null, token = 
 
 export const authenticate = (telegramData) => apiRequest('/auth', 'POST', telegramData);
 
-export const refreshToken = (refreshToken) => apiRequest('/refresh', 'POST', {refresh_token: refreshToken});
+export const refreshToken = async () => {
+    const storedRefreshToken = localStorage.getItem('refreshToken');
+    if (storedRefreshToken) {
+        const response = await apiRequest('/refresh', 'POST', { refresh_token: storedRefreshToken });
+        const { access_token } = response;
+        if (access_token) {
+            localStorage.setItem('accessToken', access_token);
+            return access_token;
+        }
+    }
+    return null;
+};
 
 export const saveProgress = (progressData, token) => apiRequest('/save_progress', 'PUT', progressData, token);
 
