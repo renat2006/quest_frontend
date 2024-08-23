@@ -55,8 +55,8 @@ const validationSchema = yup.object({
     routeName: yup
         .string()
         .required("Название не может быть пустым.")
-        .max(30, "Название не должно превышать 30 символов.")
-        .matches(/^[\p{L}\p{N}\s]+$/u, "Название может содержать только стандартные символы Unicode."),
+        .max(30, "Название не должно превышать 30 символов."),
+        // .matches(/^[\p{L}\p{N}\s]+$/u, "Название может содержать только стандартные символы Unicode."),
     routeType: yup.string().required("Тип маршрута должен быть выбран."),
     routeLanguage: yup.string().required("Язык маршрута должен быть выбран.")
 });

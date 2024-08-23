@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@diffusion-studio/ffmpeg-js": "^0.2.3",
+    "@ffmpeg/ffmpeg": "^0.11.6",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
@@ -21,9 +22,12 @@
     "@pbe/react-yandex-maps": "^1.2.5",
     "@turf/turf": "^7.0.0",
     "@types/node": "^20.14.5",
+    "browser-image-compression": "^2.0.2",
     "classnames": "^2.5.1",
     "colorthief": "^2.4.0",
+    "compressorjs": "^1.2.1",
     "dotenv": "^16.4.5",
+    "ffmpeg.js": "^4.2.9003",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.11",
@@ -45,6 +49,7 @@
     "react-player": "^2.16.0",
     "react-router-dom": "^6.23.1",
     "react-token-auth": "^2.3.8",
+    "sharp": "^0.33.5",
     "swiper": "^11.1.10",
     "yup": "^1.4.0"
   },

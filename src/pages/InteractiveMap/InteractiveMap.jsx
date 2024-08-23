@@ -100,8 +100,8 @@ const PopupContent = ({ name, languageCode, promoUrl, onEdit }) => {
 const validationSchema = Yup.object().shape({
     pointName: Yup.string()
         .required("Название не может быть пустым.")
-        .max(30, "Название не должно превышать 30 символов.")
-        .matches(/^[\p{L}\p{N}\s]+$/u, "Название может содержать только стандартные символы Unicode."),
+        .max(30, "Название не должно превышать 30 символов."),
+        // .matches(/^[\p{L}\p{N}\s]+$/u, "Название может содержать только стандартные символы Unicode."),
     pointLanguage: Yup.string().required("Язык точки должен быть выбран."),
 });
 

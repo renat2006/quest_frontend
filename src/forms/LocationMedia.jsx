@@ -17,6 +17,9 @@ import { handleLocationSubmit, handlePublishLocation } from "../methods/methods.
 import { useLocationData } from "../providers/LocationProvider.jsx";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
+import {compressAndConvertImage, compressAndConvertVideo} from "../methods/conversion.js";
+
+
 
 export function LocationMedia() {
     const { locationData, setLocationData } = useLocationData();
@@ -63,9 +66,9 @@ export function LocationMedia() {
         },
     });
 
-    const onDropPromo = useCallback((acceptedFiles) => {
+    const onDropPromo = useCallback(async (acceptedFiles) => {
         if (acceptedFiles.length > 0) {
-            const file = acceptedFiles[0];
+            const file = await compressAndConvertImage(acceptedFiles[0]);
             setPromoImageFile(file);
             formik.setFieldValue('promoImage', file);
             setLocationData(prevData => ({
@@ -75,13 +78,21 @@ export function LocationMedia() {
         }
     }, [formik, setLocationData]);
 
-    const onDropMedia = useCallback((acceptedFiles) => {
-        const newFiles = [...uploadedMediaFiles, ...acceptedFiles];
-        setUploadedMediaFiles(newFiles);
-        formik.setFieldValue('mediaFiles', newFiles);
+    const onDropMedia = useCallback(async (acceptedFiles) => {
+        const processedFiles = await Promise.all(acceptedFiles.map(async (file) => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                return await compressAndConvertImage(file);
+            } else if (['mp4'].includes(fileExtension)) {
+                return await compressAndConvertVideo(file);
+            }
+            return file;
+        }));
+        setUploadedMediaFiles(processedFiles);
+        formik.setFieldValue('mediaFiles', processedFiles);
         setLocationData(prevData => ({
             ...prevData,
-            mediaFiles: newFiles,
+            mediaFiles: processedFiles,
         }));
     }, [uploadedMediaFiles, formik, setLocationData]);
 
@@ -118,95 +129,37 @@ export function LocationMedia() {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-            <Card shadow="none" className="w-full">
-                <CardBody>
-                    <div {...getPromoRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
-                        <input {...getPromoInputProps()} />
-                        <p className="text-large font-bold">Главное изображение точки</p>
-                        <p>Перетащите сюда изображение или нажмите, чтобы выбрать файл</p>
-                    </div>
-                </CardBody>
-                {promoImageFile && (
-                    <div className="gap-2 flex items-center justify-center mt-4">
-                        <Popover placement="top" showArrow={true}>
-                            <PopoverTrigger>
-                                <Card shadow="sm" isPressable className="w-full max-w-[300px]">
-                                    <CardBody className="overflow-visible p-0">
-                                        <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
-                                               shadow="sm" radius="lg" width="100%"
-                                               className="w-full object-cover h-[140px]" />
-                                    </CardBody>
-                                </Card>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <div className="px-1 py-2 flex gap-2">
-                                    <Button color="danger" size="sm" onClick={handleRemovePromoImage}>
-                                        <FontAwesomeIcon icon={faTrashAlt} /> Удалить
-                                    </Button>
-                                    <Button color="primary" size="sm" onClick={() => {
-                                        const link = document.createElement('a');
-                                        link.href = URL.createObjectURL(promoImageFile);
-                                        link.download = promoImageFile.name;
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
-                                    }}>
-                                        <FontAwesomeIcon icon={faDownload} /> Скачать
-                                    </Button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                )}
-                {formik.touched.promoImage && formik.errors.promoImage && (
-                    <div className="text-danger text-tiny mt-2">{formik.errors.promoImage}</div>
-                )}
-            </Card>
-
-            <Card shadow="none" className="w-full mt-4">
-                <CardBody>
-                    <div {...getMediaRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
-                        <input {...getMediaInputProps()} />
-                        <p className="text-large font-bold">Медиафайлы</p>
-                        <p>Перетащите сюда изображения или видео, или нажмите, чтобы выбрать файлы</p>
-                    </div>
-                </CardBody>
-                {formik.touched.mediaFiles && formik.errors.mediaFiles && (
-                    <div className="text-danger text-tiny mt-2">{formik.errors.mediaFiles}</div>
-                )}
-            </Card>
-
-            {uploadedMediaFiles.length > 0 && (
-                <div className="flex flex-wrap gap-4 mt-4">
-                    {uploadedMediaFiles.map((file, index) => {
-                        const fileExtension = file.name.split('.').pop().toLowerCase();
-                        const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
-                        const isVideo = ['mp4', 'webm'].includes(fileExtension);
-
-                        return (
-                            <Popover key={index} placement="top" showArrow={true}>
+        <>
+            <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+                <Card shadow="none" className="w-full">
+                    <CardBody>
+                        <div {...getPromoRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
+                            <input {...getPromoInputProps()} />
+                            <p className="text-large font-bold">Главное изображение точки</p>
+                            <p>Перетащите сюда изображение или нажмите, чтобы выбрать файл</p>
+                        </div>
+                    </CardBody>
+                    {promoImageFile && (
+                        <div className="gap-2 flex items-center justify-center mt-4">
+                            <Popover placement="top" showArrow={true}>
                                 <PopoverTrigger>
-                                    <div className="relative cursor-pointer">
-                                        {isImage ? (
-                                            <Image src={URL.createObjectURL(file)} alt={file.name} shadow="sm" radius="lg" className="w-[140px] h-[140px] object-cover" />
-                                        ) : isVideo ? (
-                                            <video controls className="w-[140px] h-[140px]">
-                                                <source src={URL.createObjectURL(file)} type={`video/${fileExtension}`} />
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        ) : null}
-                                    </div>
+                                    <Card shadow="sm" isPressable className="w-full max-w-[300px]">
+                                        <CardBody className="overflow-visible p-0">
+                                            <Image src={URL.createObjectURL(promoImageFile)} alt={promoImageFile.name}
+                                                   shadow="sm" radius="lg" width="100%"
+                                                   className="w-full object-cover h-[140px]" />
+                                        </CardBody>
+                                    </Card>
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <div className="px-1 py-2 flex gap-2">
-                                        <Button color="danger" size="sm" onClick={() => handleRemoveFile(index)}>
+                                        <Button color="danger" size="sm" onClick={handleRemovePromoImage}>
                                             <FontAwesomeIcon icon={faTrashAlt} /> Удалить
                                         </Button>
                                         <Button color="primary" size="sm" onClick={() => {
                                             const link = document.createElement('a');
-                                            link.href = URL.createObjectURL(file);
-                                            link.download = file.name;
+                                            link.href = URL.createObjectURL(promoImageFile);
+                                            link.download = promoImageFile.name;
                                             document.body.appendChild(link);
                                             link.click();
                                             document.body.removeChild(link);
@@ -216,21 +169,80 @@ export function LocationMedia() {
                                     </div>
                                 </PopoverContent>
                             </Popover>
-                        );
-                    })}
-                </div>
-            )}
+                        </div>
+                    )}
+                    {formik.touched.promoImage && formik.errors.promoImage && (
+                        <div className="text-danger text-tiny mt-2">{formik.errors.promoImage}</div>
+                    )}
+                </Card>
 
-            <ButtonGroup color="primary" className="mt-4">
-                <Button startContent={<FontAwesomeIcon icon={faSave} />} type="submit">Сохранить</Button>
-                <Button
-                    variant="bordered"
-                    onPress={() => handlePublishLocation(locationData, accessToken)}
-                    startContent={<FontAwesomeIcon icon={faEye} />}
-                >
-                    Опубликовать
-                </Button>
-            </ButtonGroup>
-        </form>
+                <Card shadow="none" className="w-full mt-4">
+                    <CardBody>
+                        <div {...getMediaRootProps()} className="border-2 border-dashed border-gray-300 p-4 text-center cursor-pointer">
+                            <input {...getMediaInputProps()} />
+                            <p className="text-large font-bold">Медиафайлы</p>
+                            <p>Перетащите сюда изображения или видео (продолжительностью до 60 секунд), или нажмите, чтобы выбрать файлы</p>
+                        </div>
+                    </CardBody>
+                    {formik.touched.mediaFiles && formik.errors.mediaFiles && (
+                        <div className="text-danger text-tiny mt-2">{formik.errors.mediaFiles}</div>
+                    )}
+                </Card>
+
+                {uploadedMediaFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mt-4">
+                        {uploadedMediaFiles.map((file, index) => {
+                            const fileExtension = file.name.split('.').pop().toLowerCase();
+                            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
+                            const isVideo = ['mp4', 'webm'].includes(fileExtension);
+
+                            return (
+                                <Popover key={index} placement="top" showArrow={true}>
+                                    <PopoverTrigger>
+                                        <div className="relative cursor-pointer">
+                                            {isImage ? (
+                                                <Image src={URL.createObjectURL(file)} alt={file.name} shadow="sm" radius="lg" className="w-[140px] h-[140px] object-cover" />
+                                            ) : isVideo ? (
+                                                <video loop autoPlay muted className="w-[140px] h-[140px] object-cover">
+                                                    <source src={URL.createObjectURL(file)} type={`video/${fileExtension}`} />
+                                                </video>
+                                            ) : null}
+                                        </div>
+                                    </PopoverTrigger>
+                                    <PopoverContent>
+                                        <div className="px-1 py-2 flex gap-2">
+                                            <Button color="danger" size="sm" onClick={() => handleRemoveFile(index)}>
+                                                <FontAwesomeIcon icon={faTrashAlt} /> Удалить
+                                            </Button>
+                                            <Button color="primary" size="sm" onClick={() => {
+                                                const link = document.createElement('a');
+                                                link.href = URL.createObjectURL(file);
+                                                link.download = file.name;
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                            }}>
+                                                <FontAwesomeIcon icon={faDownload} /> Скачать
+                                            </Button>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            );
+                        })}
+                    </div>
+                )}
+
+                <ButtonGroup color="primary" className="mt-4">
+                    <Button startContent={<FontAwesomeIcon icon={faSave} />} type="submit">Сохранить</Button>
+                    <Button
+                        variant="bordered"
+                        onPress={() => handlePublishLocation(locationData, accessToken)}
+                        startContent={<FontAwesomeIcon icon={faEye} />}
+                    >
+                        Опубликовать
+                    </Button>
+                </ButtonGroup>
+            </form>
+        </>
     );
 }

@@ -1190,16 +1190,8 @@ video {
   min-height: 32px;
 }
 
-.min-h-\[100px\] {
-  min-height: 100px;
-}
-
 .min-h-\[70px\] {
   min-height: 70px;
-}
-
-.min-h-\[50px\] {
-  min-height: 50px;
 }
 
 .w-1 {
@@ -2529,6 +2521,11 @@ video {
   background-color: hsl(var(--nextui-primary-50) / var(--nextui-primary-50-opacity, var(--tw-bg-opacity)));
 }
 
+.bg-primary-600 {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--nextui-primary-600) / var(--nextui-primary-600-opacity, var(--tw-bg-opacity)));
+}
+
 .bg-primary\/20 {
   background-color: hsl(var(--nextui-primary) / 0.2);
 }
@@ -2590,39 +2587,6 @@ video {
 
 .bg-white\/30 {
   background-color: rgb(255 255 255 / 0.3);
-}
-
-.bg-primary\/10 {
-  background-color: hsl(var(--nextui-primary) / 0.1);
-}
-
-.bg-primary\/50 {
-  background-color: hsl(var(--nextui-primary) / 0.5);
-}
-
-.bg-blue-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(59 130 246 / var(--tw-bg-opacity));
-}
-
-.bg-primary-300 {
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--nextui-primary-300) / var(--nextui-primary-300-opacity, var(--tw-bg-opacity)));
-}
-
-.bg-primary-500 {
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--nextui-primary-500) / var(--nextui-primary-500-opacity, var(--tw-bg-opacity)));
-}
-
-.bg-primary-700 {
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--nextui-primary-700) / var(--nextui-primary-700-opacity, var(--tw-bg-opacity)));
-}
-
-.bg-primary-600 {
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--nextui-primary-600) / var(--nextui-primary-600-opacity, var(--tw-bg-opacity)));
 }
 
 .bg-gradient-to-r {
