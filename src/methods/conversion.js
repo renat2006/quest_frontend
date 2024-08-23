@@ -26,8 +26,8 @@ export const compressAndConvertVideo = async (file) => {
             video.src = URL.createObjectURL(file);
             video.onloadedmetadata = () => {
                 const mediaRecorderOptions = {
-                    mimeType: 'video/mp4; codecs=avc1.42E01E, mp4a.40.2', // Используем MP4 формат
-                    videoBitsPerSecond: 1000000,  // Битрейт 1 Мбит/с
+                    mimeType: 'video/mp4; codecs=avc1.42E01E, mp4a.40.2',
+                    videoBitsPerSecond: 1000000,
                 };
                 const stream = video.captureStream();
                 const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
