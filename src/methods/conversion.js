@@ -32,6 +32,7 @@ export const compressAndConvertVideo = async (file) => {
                 const stream = video.captureStream();
                 const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
 
+
                 const chunks = [];
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
