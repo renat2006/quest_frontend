@@ -80,13 +80,12 @@ export function LocationMedia() {
         const processedFiles = await Promise.all(acceptedFiles.map(async (file) => {
             const fileExtension = file.name.split('.').pop().toLowerCase();
             if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                return file; /
+                return file;
             } else if (['mp4'].includes(fileExtension)) {
                 return await compressAndConvertVideo(file);
             }
             return file;
         }));
-
 
         const newFiles = [...uploadedMediaFiles, ...processedFiles];
         setUploadedMediaFiles(newFiles);
