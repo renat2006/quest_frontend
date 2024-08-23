@@ -1,5 +1,4 @@
 import { toast } from "react-hot-toast";
-import imageCompression from 'browser-image-compression';
 
 export const compressAndConvertImage = async (file) => {
     const toastId = toast.loading("Сжатие изображения...");
@@ -8,12 +7,10 @@ export const compressAndConvertImage = async (file) => {
             maxSizeMB: 1,
             maxWidthOrHeight: 800,
             useWebWorker: true,
-            fileType: 'image/webp'
         };
         const compressedImage = await imageCompression(file, options);
-        const webpFile = new File([compressedImage], `${file.name.split('.')[0]}.webp`, { type: 'image/webp' });
-        toast.success('Изображение оптимизированно', { id: toastId });
-        return webpFile;
+        toast.success('Изображение оптимизировано', { id: toastId });
+        return compressedImage;
     } catch (error) {
         toast.error('Ошибка при сжатии изображения', { id: toastId });
         console.error('Ошибка при сжатии изображения:', error);
@@ -29,8 +26,8 @@ export const compressAndConvertVideo = async (file) => {
             video.src = URL.createObjectURL(file);
             video.onloadedmetadata = () => {
                 const mediaRecorderOptions = {
-                    mimeType: 'video/webm; codecs=vp9',
-                    videoBitsPerSecond: 500000,
+                    mimeType: 'video/mp4; codecs=avc1.42E01E, mp4a.40.2', // Используем MP4 формат
+                    videoBitsPerSecond: 1000000,  // Битрейт 1 Мбит/с
                 };
                 const stream = video.captureStream();
                 const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
@@ -43,7 +40,7 @@ export const compressAndConvertVideo = async (file) => {
                 };
 
                 mediaRecorder.onstop = () => {
-                    const compressedBlob = new Blob(chunks, { type: 'video/webm' });
+                    const compressedBlob = new Blob(chunks, { type: 'video/mp4' });
                     resolve(compressedBlob);
                 };
 
@@ -53,7 +50,6 @@ export const compressAndConvertVideo = async (file) => {
 
                 mediaRecorder.start();
                 video.play();
-
 
                 const stopRecording = () => {
                     if (mediaRecorder.state === "recording") {
@@ -66,8 +62,8 @@ export const compressAndConvertVideo = async (file) => {
             };
         });
 
-        const compressedFile = new File([videoBlob], `${file.name.split('.')[0]}.webm`, { type: 'video/webm' });
-        toast.success('Видео оптимизированно', { id: toastId });
+        const compressedFile = new File([videoBlob], `${file.name}`, { type: 'video/mp4' });
+        toast.success('Видео оптимизировано', { id: toastId });
         return compressedFile;
     } catch (error) {
         toast.error(`Ошибка при сжатии видео: ${error.message}`, { id: toastId });

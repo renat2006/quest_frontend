@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@diffusion-studio/ffmpeg-js": "^0.2.3",
+    "@ffmpeg/core": "^0.12.6",
     "@ffmpeg/ffmpeg": "^0.11.6",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",

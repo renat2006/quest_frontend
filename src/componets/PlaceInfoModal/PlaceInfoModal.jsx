@@ -191,7 +191,7 @@ export default function QuestInfoModal({isOpen, onOpenChange, point}) {
                                     <div className="w-full mt-4">
                                         {imageMediaUrls.length > 0 ? (
                                             <Swiper spaceBetween={5} slidesPerView={1.07}>
-                                                {imageMediaUrls.map((url, index) => (
+                                                {[URL.createObjectURL(point.promoImage), ...imageMediaUrls].map((url, index) => (
                                                     <SwiperSlide key={index}>
                                                         {renderMedia(url)}
                                                     </SwiperSlide>
@@ -207,11 +207,16 @@ export default function QuestInfoModal({isOpen, onOpenChange, point}) {
                                     </div>
                                     {videoMediaUrls.length > 0 && (
 
-                                        <Card shadow="none" className="bg-primary overflow-hidden min-h-[70px] h-auto"><CardBody className="flex justify-between  items-center flex-row px-4">
+                                        <Card shadow="none"
+                                              className="bg-primary overflow-hidden min-h-[70px] h-auto"><CardBody
+                                            className="flex justify-between  items-center flex-row px-4">
                                             <div className="flex  gap-2 items-center text-white">
                                                 <FontAwesomeIcon icon={faVideoCamera}/>
                                                 <h1 className=" text-medium font-medium">Видео сюжет</h1></div>
-                                            <Button onPress={handleShowStories} variant="light" color="default" size="sm" className="bg-primary-600 text-white ">Смотреть <FontAwesomeIcon icon={faPlay}/></Button>
+                                            <Button onPress={handleShowStories} variant="light" color="default"
+                                                    size="sm"
+                                                    className="bg-primary-600 text-white ">Смотреть <FontAwesomeIcon
+                                                icon={faPlay}/></Button>
                                         </CardBody></Card>
 
                                     )}

@@ -17,9 +17,7 @@ import { handleLocationSubmit, handlePublishLocation } from "../methods/methods.
 import { useLocationData } from "../providers/LocationProvider.jsx";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import { faEye, faSave } from "@fortawesome/free-regular-svg-icons";
-import {compressAndConvertImage, compressAndConvertVideo} from "../methods/conversion.js";
-
-
+import { compressAndConvertVideo } from "../methods/conversion.js"; // Убираем compressAndConvertImage
 
 export function LocationMedia() {
     const { locationData, setLocationData } = useLocationData();
@@ -66,9 +64,9 @@ export function LocationMedia() {
         },
     });
 
-    const onDropPromo = useCallback(async (acceptedFiles) => {
+    const onDropPromo = useCallback((acceptedFiles) => {
         if (acceptedFiles.length > 0) {
-            const file = await compressAndConvertImage(acceptedFiles[0]);
+            const file = acceptedFiles[0]; // Сохраняем файл без конвертации
             setPromoImageFile(file);
             formik.setFieldValue('promoImage', file);
             setLocationData(prevData => ({
@@ -82,17 +80,19 @@ export function LocationMedia() {
         const processedFiles = await Promise.all(acceptedFiles.map(async (file) => {
             const fileExtension = file.name.split('.').pop().toLowerCase();
             if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                return await compressAndConvertImage(file);
+                return file; // Возвращаем исходный файл без конвертации
             } else if (['mp4'].includes(fileExtension)) {
                 return await compressAndConvertVideo(file);
             }
             return file;
         }));
-        setUploadedMediaFiles(processedFiles);
-        formik.setFieldValue('mediaFiles', processedFiles);
+        // Объединяем новые файлы с уже существующими
+        const newFiles = [...uploadedMediaFiles, ...processedFiles];
+        setUploadedMediaFiles(newFiles);
+        formik.setFieldValue('mediaFiles', newFiles);
         setLocationData(prevData => ({
             ...prevData,
-            mediaFiles: processedFiles,
+            mediaFiles: newFiles,
         }));
     }, [uploadedMediaFiles, formik, setLocationData]);
 
