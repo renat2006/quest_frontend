@@ -87,6 +87,7 @@ export function LocationMedia() {
             return file;
         }));
 
+
         const newFiles = [...uploadedMediaFiles, ...processedFiles];
         setUploadedMediaFiles(newFiles);
         formik.setFieldValue('mediaFiles', newFiles);
